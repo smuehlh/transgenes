@@ -9,4 +9,13 @@ Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
 end
 
 options = CommandlineOptions.new(ARGV)
-# access options using options.input etc..!
+
+# read in and parse data
+gene = Gene.new(options.input)
+
+# tweak exons
+gene.tweak_exons
+
+# remove introns (but the first)
+
+# output sequence
