@@ -19,17 +19,13 @@ class Gene
         end
 
         #  reached this line? must be a valid file extension
-        input_data = if FileHelper.get_file_extension(@path) == ".gb"
+        data_obj = if FileHelper.get_file_extension(@path) == ".gb"
                         GenebankToGene.new(@path)
                     else
                         # must be fasta, as this is the only other allowed file format
                         FastaToGene.new(@path)
                     end
-        @translation = input_data.translation
-        @description = input_data.description
-        @exons = input_data.exons
-        @introns = input_data.introns
-
+        save_input_data(data_obj)            
     end
 
     def tweak_exons
@@ -48,4 +44,11 @@ class Gene
             false
         end
     end
+
+    def save_input_data(file_to_gene_obj)
+        @translation = input_data.translation
+        @description = input_data.description
+        @exons = input_data.exons
+        @introns = input_data.introns
+    end 
 end
