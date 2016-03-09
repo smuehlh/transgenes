@@ -8,4 +8,8 @@ class String
         ! self.match /[[:upper:]]/
     end
     
+    def regexp_delete(regexp)
+        gsub(regexp, '')
+    end
+
 end
