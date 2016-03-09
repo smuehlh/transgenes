@@ -184,8 +184,6 @@ class Gene
                 @introns.push(complete_dna_sequence[intron_start..intron_stop])
             end
         end
-
-        are_exons_and_introns_found
     end
 
     def parse_fasta_file
