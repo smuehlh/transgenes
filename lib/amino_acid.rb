@@ -26,7 +26,7 @@ module AminoAcid
 
         non_codons = codons - Constants.genetic_code.keys
         if non_codons.any?
-            abort "Cannot trans cDNA: unrecognized codons: #{non_codons}."
+            abort "Cannot translate cDNA: unrecognized codons: #{non_codons}."
         end
 
     end
