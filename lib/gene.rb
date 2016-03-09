@@ -2,7 +2,7 @@ class Gene
 
     def initialize(file)
         @path = file
-        @translation = nil
+        @translation = ""
         @descriptions = []
         @exons = []
         @introns = []
@@ -11,7 +11,7 @@ class Gene
         convert_exons_and_introns_to_upper_case
 
         ensure_exon_and_intron_numbers_match_specification
-        ensure_exon_translation_matches_given_translation if @translation
+        ensure_exon_translation_matches_given_translation if ! @translation.empty?
     end
 
     def tweak_exons
@@ -38,17 +38,28 @@ class Gene
     private
 
     def parse_file
-        # parse file assuming a certain format
-        if successfully_parsed_genebank_file 
+        # determine file format
 
-        elsif successfully_parsed_fasta_file
-
+        # file is either in genebank or in fasta format.
+        filename, extension = FileHelper.split_filename_and_extension(@path)   
+        if [".gb"].include?(extension.downcase)
+            parse_genebank_file
+        elsif [".fasta", ".fa", ".fas"].include?(extension.downcase)
+            parse_fasta_file
         else
             # ops. neither genebank nor fasta file?!
-            abort "Unrecognized file format: #{@path}."\
+            abort "Unrecognized file format: #{@path}.\n"\
                 "Input has to be either a GeneBank record or "\
                 "a FASTA file containing exons and introns."
         end
+
+        if ! are_exons_and_introns_found
+            # ops. extension was not too informative.
+            abort "Unrecognized file format: #{@path}.\n"\
+                "Input has to be either a GeneBank record or "\
+                "a FASTA file containing exons and introns."
+        end
+
     end
 
     def convert_exons_and_introns_to_upper_case
@@ -71,52 +82,113 @@ class Gene
         end
     end
 
-    def ensure_exon_translation_matches_given_translation
+    def translate_exons
         joined_exons = @exons.join("")
-        translated_exon = AminoAcid.translate(joined_exons)
-        if @translation != translated_exon
+        AminoAcid.translate(joined_exons)
+    end
+
+    def ensure_exon_translation_matches_given_translation
+        if @translation != translate_exons
             abort "Invalid gene format: Specified translation does not match translated exons."
         end
     end
 
-    def successfully_parsed_genebank_file
-        sequence = nil
-        exon_positions = []
-# todo: 
-#  nicht exons parsen, weil die nicht immer da sein muessen. besser: cds/gene parsen
-#  falls >1 cda: liste aller genename sammeln & ausgeben, dass dann das gen spezifiert werden muss. 
-# todo: optional argument: genename
-# todo: falls optional argument: nach diesem gen suchen in fasta (!) und genbank. falls nicht gefunden, gesonderte fehlermeldugn ausgeben!
+    def parse_genebank_file
+        complete_dna_sequence = ""
+        exon_positions_in_dna = []
 
-# - save seq in @translation
-        is_feature = false
-        is_sequence = false
+        # remember current field to access all lines of multi-line fields.
+        field = "" 
+        nested_features_field = ""
+        nested_cds_features_field = ""
+
+        whitespaces_other_than_newline_regexp = '[^\S\n]+'
+        capture_uppercase_string_regexp = '([A-Z]+)'
+        cds_field_exon_position_regexp = 'CDS\s+.*\d'
+        cds_field_unspecific_key_value_regexp = '\/\w+='
+        capture_unspecific_key = '\/(\w+)='
+
         IO.foreach(@path) do |line|
-            # new description started
-            if 
-                # howto find desc. line: starts with char. only uppercase chars
-                is_feature = false
-                is_sequence = false 
+            if this_field = line[/^#{capture_uppercase_string_regexp}/, 1]
+                field = this_field
+                next
             end
-            line = line.strip
+            # INFO
+            # don't line.strip here to leave white space intact for checking nested fields
 
-            if line == "FEATURES"
-                is_feature = true
-            end
-            if line == "ORIGIN" 
-                is_sequence = true
-            end
+            if field == "FEATURES" 
+                # require blanks/tabs before AND after to ensure not to match a sequence translation
+                if this_nested_field = line[
+                    /
+                        ^ # beginning of the line
+                        #{whitespaces_other_than_newline_regexp}
+                        #{capture_uppercase_string_regexp}
+                        #{whitespaces_other_than_newline_regexp}
+                    /x, 1
+                    ]
+                    nested_features_field = this_nested_field
+                end
 
+                line = line.strip            
+                if nested_features_field == "CDS"
+                    if this_nested_field = line[
+                        /
+                            ^ # beginning of the line
+                            (
+                                #{cds_field_unspecific_key_value_regexp}
+                                |
+                                #{cds_field_exon_position_regexp}
+                            ) # alternative
+                        /x, 1
+                        ]
+                        nested_cds_features_field = 
+                            extract_field_from_cds_line(
+                                line,
+                                cds_field_exon_position_regexp, 
+                                cds_field_unspecific_key_value_regexp
+                            )
+                    end
+
+                    feature = extract_feature_from_cds_line(line, cds_field_exon_position_regexp, cds_field_unspecific_key_value_regexp)
+
+                    if nested_cds_features_field == "exon-position" 
+                        puts feature
+                        exon_positions_in_dna = convert_to_numerical_position_list(feature)
+                    elsif nested_cds_features_field == "gene" 
+                        @descriptions.push(feature)
+                    elsif nested_cds_features_field == "translation" 
+                        @translation += feature
+                    end                      
+                end
+            end
+            if field == "ORIGIN"
+                line = line.strip
+
+                seq_wo_invalid_chars = line.gsub(/[^a-zA-Z]/, "")
+                complete_dna_sequence += seq_wo_invalid_chars
+            end
+        end
+
+        # collect exons and introns
+        exon_positions_in_dna.each do |exon_start, exon_stop|
+            @exons.push(complete_dna_sequence[exon_start..exon_stop])
+
+            exon_index = @exons.size - 1
+            next_exon_index = exon_index + 1
+
+            # all but last exon are followed by an intron
+            if next_exon_positions = exon_positions_in_dna[next_exon_index]
+                intron_start = exon_stop + 1
+                intron_stop = next_exon_positions.last
+
+                @introns.push(complete_dna_sequence[intron_start..intron_stop])
+            end
         end
 
         are_exons_and_introns_found
     end
 
-# sanity check: translate gene & check if transl is same as the noted one!!!
-# only for genebank file; no transl given in fasta
-
-
-    def successfully_parsed_fasta_file
+    def parse_fasta_file
         last_seq = nil
 
         IO.foreach(@path) do |line|
@@ -147,7 +219,9 @@ class Gene
             end
         end
 
-        are_exons_and_introns_found
+        # TODO
+        # translate exons & save as @translations
+        # remove 'if @translations.empty?' from above!
     end
 
     def are_exons_and_introns_found
