@@ -2,9 +2,11 @@ module AminoAcid
 
     extend self
 
-
     def translate(cdna)
         codons = split_cdna_into_codons(cdna)
+        codons.map do |codon|
+            Constants.genetic_code[codon]
+        end.join("")
     end
 
     def split_cdna_into_codons(cdna)
@@ -24,9 +26,9 @@ module AminoAcid
             abort "Cannot translate cDNA: last codon is splitted."
         end
 
-        non_codons = codons - Constants.genetic_code.keys
-        if non_codons.any?
-            abort "Cannot translate cDNA: unrecognized codons: #{non_codons}."
+        invalid_codons = codons - Constants.genetic_code.keys
+        if invalid_codons.any?
+            abort "Cannot translate cDNA: unrecognized codons: #{invalid_codons}."
         end
 
     end
