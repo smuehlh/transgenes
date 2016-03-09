@@ -13,23 +13,26 @@ class CommandlineOptions
         @output = nil
 
         # call parser for every class instance
+        ensure_help_is_printed_if_no_options_given
         parse_options
     end
 
     def parse_options
         opt_parser = OptionParser.new do |opts|
-            opts.banner = "SequenceOptimiser enhances transgenes by removing ESEs"
+            opts.banner = "Alter synonymous sites to enhance transgenes."
             opts.separator "Contact: Laurence Hurst (l.d.hurst@bath.ac.uk)"
             opts.separator ""
             opts.separator "Usage: ruby sequence_optimiser.rb -i input -o output [options]"
 
-            opts.on("-i", "--input GFF",
-                "Path to input file, in GFF format.") do |path|
+            opts.on("-i", "--input FILE",
+                "Path to input file in one of the following formats:",
+                "GeneBank record OR",
+                "FASTA with exons in upper case and introns in lower case.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @input = path
             end
-            opts.on("-o", "--output GFF",
-                "Path to output file, in GFF format.") do |path|
+            opts.on("-o", "--output FILE",
+                "Path to output file, in FASTA format.") do |path|
                 @output = path
             end
 
@@ -49,16 +52,20 @@ class CommandlineOptions
 
         ensure_mandatory_arguments_are_set
 
-        # ensure dependencies are met...
+        # TODO ensure dependencies are met...
 
         # use the own format of fatal error messages!               
-        rescue OptionParser::MissingArgument, OptionParser::InvalidArgument, OptionParser::InvalidOption, OptionParser::AmbiguousOption => exc
-            abort exc.to_s.capitalize
+        rescue OptionParser::MissingArgument, OptionParser::InvalidArgument, OptionParser::InvalidOption, OptionParser::AmbiguousOption => exception
+            abort exception.to_s.capitalize
+    end
+
+    def ensure_help_is_printed_if_no_options_given
+        @args.push "-h" if @args.empty?
     end
 
     def ensure_mandatory_arguments_are_set
         @@mandatory_arguments.each do |arg|
-            opt_str = arg.gsub("@", "--")
+            opt_str = arg.sub("@", "--")
             abort "Missing mandatory option: '#{opt_str}'." if 
                 ! instance_variable_get(arg) 
         end
