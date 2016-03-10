@@ -1,13 +1,13 @@
 class String
 
     def is_upper?
-        ! self.match /[[:lower:]]/
+        self.match /[[:upper:]]/
     end
 
     def is_lower?
-        ! self.match /[[:upper:]]/
+        self.match /[[:lower:]]/
     end
-    
+
     def regexp_delete(regexp)
         gsub(regexp, '')
     end
