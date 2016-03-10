@@ -4,6 +4,7 @@ module AminoAcid
 
     def translate(cdna)
         codons = split_cdna_into_codons(cdna)
+        delete_trailing_stopcodon_if_present(codons)
         codons.map do |codon|
             Constants.genetic_code[codon]
         end.join("")
@@ -28,9 +29,19 @@ module AminoAcid
 
         invalid_codons = codons - Constants.genetic_code.keys
         if invalid_codons.any?
-            abort "Cannot translate cDNA: unrecognized codons: #{invalid_codons}."
+            abort "Cannot translate cDNA: found invalid codons #{invalid_codons.join(", ")}."
         end
 
+    end
+
+    def delete_trailing_stopcodon_if_present(codons)
+        if is_stopcodon(codons.last)
+            codons.pop
+        end
+    end
+
+    def is_stopcodon(codon)
+        Constants.genetic_code[codon] == "X"
     end
 
 end
