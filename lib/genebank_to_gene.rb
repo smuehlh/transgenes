@@ -8,129 +8,177 @@ class GenebankToGene
         @exons = []
         @introns = []
 
-        @gene_description_identifier = /^\s+\/gene=/
-        @gene_translation_identifier = /^\s+\/translation=/
-        @gene_position_identifier = /^\s+CDS\s+(join\()?\d\)?/
-
         read_file(path)
+
+        ensure_exon_translation_matches_given_translation(@exons, translation)
     end
 
     private
 
     def read_file(path)
-        current_field = ""
-        current_gene_info_field = ""
+        @field = ""
+        @gene_info_field = ""
+        @gene_info_coding_seq_field = ""
 
         gene_sequence = ""
         exon_positions = []
 
         IO.foreach(path) do |line|
             # detect with information is contained in this line
-            current_field = update_current_field(line) if   is_line_contains_new_field_entry(line)
-
-            current_gene_info_field = update_current_gene_info_field(line) if is_line_contains_new_gene_info_entry(current_field, line)
-
-#  TODO
-#  gene-fields (level below CDS) can all last for several lines!!!
-#  - not all translation lines are catched as it is multi-line field (same for exon-positions in fanca???)
+            update_current_fields(line)
 
             # update results variables as appropriate
-            @description = get_description(line) if
-                is_gene_description_field(
-                    current_field, current_gene_info_field, line
-                )
+            @description = get_gene_description(line) if is_gene_description_field
 
-            @translation = get_translation(line) if
-                is_gene_translation_field(
-                    current_field, current_gene_info_field, line
-                )
+            @translation = get_translation(line) if is_gene_translation_field
 
-            exon_positions = get_exon_positions(line) if is_gene_positions_field(
-                    current_field, current_gene_info_field, line
-                )
+            exon_positions = get_exon_positions(line) if is_gene_positions_field
 
-            gene_sequence = update_gene_seq(gene_sequence, line) if is_sequence_field(current_field)
-
+            gene_sequence += get_gene_sequence(line) if is_sequence_field
         end
 
         cut_gene_sequence_into_exons_and_introns(gene_sequence, exon_positions)
-        # TODO
-        # @exons mit translation vergleichen! (besser in gene.rb oder hier?)
-
     end
 
-    def update_current_field(line)
+    # regular expressions
+    def gene_info_coding_seq_identifier
+        /
+            ^   # match beginning of line
+            #{tab_or_several_blanks_identifier} # whitespace other than newline and single blank
+            (   # alternative match either
+                    # standard identifier or
+                    # exonpositions identifier
+                #{coding_sequence_key_identifier}
+            |
+                #{coding_sequence_exon_position_identifier}
+            )
+        /x
+    end
+
+    def tab_or_several_blanks_identifier
+        /[^\S\n]{2,}/
+    end
+
+    def coding_sequence_exon_position_identifier
+        /CDS\s+(join\()?\d\)?/
+    end
+
+    def coding_sequence_key_identifier
+        /\/\w+=/
+    end
+
+    def gene_description_identifier
+        /\/gene=/
+    end
+
+    def gene_translation_identifier
+        /\/translation=/
+    end
+    # end - regular expression
+
+    def update_current_fields(line)
+        if is_line_contains_new_field_entry(line)
+            @field = get_field(line)
+            @gene_info_field = ""
+            @gene_info_coding_seq_field = ""
+        end
+
+        # nested field. check for parent field as well
+        if is_gene_info_field && is_line_contains_new_gene_info_entry(line)
+            @gene_info_field = get_gene_info_field(line)
+            @gene_info_coding_seq_field = ""
+        end
+
+        # nested field. check for parent field as well
+        if is_gene_info_coding_seq_field &&
+                is_line_contains_new_gene_info_coding_seq_entry(line)
+            @gene_info_coding_seq_field = get_gene_info_coding_seq_field(line)
+        end
+    end
+
+    def get_field(line)
         line.split("\s")[0]
     end
 
-    def update_current_gene_info_field(line)
-        update_current_field(line.lstrip)
+    def get_gene_info_field(line)
+        get_field(line.lstrip)
+    end
+
+    def get_gene_info_coding_seq_field(line)
+        if line[coding_sequence_exon_position_identifier]
+            # exon positions
+            "exon_positions"
+        else
+            # standard key
+            line[coding_sequence_key_identifier]
+        end
+    end
+
+    def get_gene_description(line)
+        gene_description =
+            line.regexp_delete(gene_description_identifier)
+        gene_description.delete("\"").strip
+    end
+
+    def get_translation(line)
+        gene_translation = line.regexp_delete(gene_translation_identifier)
+        gene_translation.delete("\"").strip
+    end
+
+    def get_exon_positions(line)
+        # HACK
+        # gene position identifier deletes first digit -- add it back!
+        first_digit = line[/\d/]
+        positions = line.regexp_delete(coding_sequence_exon_position_identifier)
+        positions = first_digit + positions.delete("\)").strip
+        convert_positions_string_to_array_of_integers(positions)
+    end
+
+    def get_gene_sequence(line)
+        line.regexp_delete(/ORIGIN/).regexp_delete(/[^atcg]/i)
     end
 
     def is_line_contains_new_field_entry(line)
         line[0].is_upper?
     end
 
-    def is_line_contains_new_gene_info_entry(field, line)
+    def is_line_contains_new_gene_info_entry(line)
         regexp = /
             ^           # match beginning of line
-            [^\S\n]{2,} # whitespace other than newline and single blank
+            #{tab_or_several_blanks_identifier} # whitespace other than newline and single blank
             [a-zA-Z]+   # character
-            [^\S\n]{2,} # whitespace other than newline and single blank
+            #{tab_or_several_blanks_identifier} # whitespace other than newline and single blank
             \w+         # any word character
-        /x
-        is_gene_info_field(field) && line[regexp]
+            /x
+        line[regexp]
     end
 
-    def is_sequence_field(field)
-        field == "ORIGIN"
+    def is_line_contains_new_gene_info_coding_seq_entry(line)
+        line[gene_info_coding_seq_identifier]
     end
 
-    def is_gene_info_field(field)
-        field == "FEATURES"
+    def is_sequence_field
+        @field == "ORIGIN"
     end
 
-    def is_gene_coding_seq_info_field(field, gene_info_field)
-        is_gene_info_field(field) && gene_info_field == "CDS"
+    def is_gene_info_field
+        @field == "FEATURES"
     end
 
-    def is_gene_description_field(field, gene_info_field, line)
-        is_gene_coding_seq_info_field(field, gene_info_field) &&
-        line[@gene_description_identifier]
+    def is_gene_info_coding_seq_field
+        @gene_info_field == "CDS"
     end
 
-    def is_gene_positions_field(field, gene_info_field, line)
-        is_gene_coding_seq_info_field(field, gene_info_field) &&
-        line[@gene_position_identifier]
+    def is_gene_description_field
+        @gene_info_coding_seq_field == "/gene="
     end
 
-    def is_gene_translation_field(field, gene_info_field, line)
-        is_gene_coding_seq_info_field(field, gene_info_field) &&
-        line[@gene_translation_identifier]
+    def is_gene_translation_field
+        @gene_info_coding_seq_field == "/translation="
     end
 
-    def update_gene_seq(seq, line)
-        if is_line_contains_new_field_entry(line)
-            seq
-        else
-            seq += line.regexp_delete(/[^atcg]/i)
-        end
-    end
-
-    def get_description(line)
-        line.regexp_delete(@gene_description_identifier).delete("\"")
-    end
-
-    def get_translation(line)
-        puts line
-    end
-
-    def get_exon_positions(line)
-        # HACK
-        # gene position idenfier deletes first digit -- add it back!
-        first_digit = line[/\d/]
-        positions = first_digit + line.regexp_delete(@gene_position_identifier)
-        convert_positions_string_to_array_of_integers(positions)
+    def is_gene_positions_field
+        @gene_info_coding_seq_field == "exon_positions"
     end
 
     def convert_positions_string_to_array_of_integers(str)
