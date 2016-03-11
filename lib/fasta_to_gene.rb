@@ -5,7 +5,7 @@ class FastaToGene < ToGene
     attr_reader :translation, :description, :exons, :introns
 
     def initialize(path)
-        @description = []
+        @description = ""
         @exons = []
         @introns = []
 

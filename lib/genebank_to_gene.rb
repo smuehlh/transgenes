@@ -6,7 +6,7 @@ class GenebankToGene < ToGene
 
     def initialize(path)
         @translation = ""
-        @description = []
+        @description = ""
         @exons = []
         @introns = []
 
