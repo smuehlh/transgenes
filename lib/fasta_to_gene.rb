@@ -1,4 +1,6 @@
-class FastaToGene
+require_relative 'to_gene.rb'
+
+class FastaToGene < ToGene
 
     attr_reader :translation, :description, :exons, :introns
 
@@ -8,9 +10,10 @@ class FastaToGene
         @introns = []
 
         read_file(path)
+        @exons = convert_to_uppercase(@exons)
 
         # exon translation is not part of file; translate them manually
-        @translation = translate_exons
+        @translation = translate_exons(@exons)
     end
 
     private
@@ -72,10 +75,4 @@ class FastaToGene
         end
         parts
     end
-
-    def translate_exons
-        joined_exons = @exons.join("")
-        AminoAcid.translate(joined_exons)
-    end
-
 end

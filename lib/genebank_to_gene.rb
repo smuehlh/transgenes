@@ -1,4 +1,6 @@
-class GenebankToGene
+require_relative 'to_gene.rb'
+
+class GenebankToGene < ToGene
 
     attr_reader :translation, :description, :exons, :introns
 
@@ -9,6 +11,7 @@ class GenebankToGene
         @introns = []
 
         read_file(path)
+        @exons = convert_to_uppercase(@exons)
 
         ensure_exon_translation_matches_given_translation(@exons, translation)
     end
