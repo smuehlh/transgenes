@@ -25,7 +25,7 @@ class Gene
                         # must be fasta, as this is the only other allowed file format
                         FastaToGene.new(@path)
                     end
-        save_input_data(data_obj)            
+        save_input_data_or_die(data_obj)
     end
 
     def tweak_exons
@@ -45,10 +45,51 @@ class Gene
         end
     end
 
-    def save_input_data(file_to_gene_obj)
-        @translation = input_data.translation
-        @description = input_data.description
-        @exons = input_data.exons
-        @introns = input_data.introns
-    end 
+    def save_input_data_or_die(to_gene_obj)
+        @translation = to_gene_obj.translation
+        @description = to_gene_obj.description
+        @exons = to_gene_obj.exons
+        @introns = to_gene_obj.introns
+
+        # ensure file format
+        abort "Unrecognized file format: #{@path}.\n"\
+            "Input has to be either a GeneBank record or "\
+            "a FASTA file containing exons and introns."\
+            if ! are_exons_and_introns_found
+
+        abort "Invalid gene format: #{@path}.\n"\
+            "There should be one exon more than introns."\
+            if ! are_exons_and_introns_numbers_matching_specification
+
+        abort "Nothing to do: #{@path}.\n"\
+            "Must leave all #{n_exons()} exons intact."\
+            if ! is_minimum_number_exons_given
+
+    end
+
+    def are_exons_and_introns_found
+        # check file format the duck-typing way...
+        # a proper genebank/fasta-file specifies a description, exons and introns
+        @exons.any? && @introns.any? && @description != ""
+    end
+
+    def are_exons_and_introns_numbers_matching_specification
+        # check file format the duck-typing way...
+        # a proper gene has at least one exon to tweak
+        # and is of format: exon-intron[-exon-intron]*-exon
+        n_exons == n_introns + 1
+    end
+
+    def is_minimum_number_exons_given
+        Constants.minimum_number_of_exons < n_exons
+    end
+
+    def n_exons
+        @exons.size
+    end
+
+    def n_introns
+        @introns.size
+    end
+
 end
