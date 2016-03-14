@@ -43,6 +43,7 @@ class GenebankToGene < ToGene
         end
 
         cut_gene_sequence_into_exons_and_introns(gene_sequence, exon_positions)
+        fix_minus_strand if @is_gene_on_minus_strand
     end
 
     # regular expressions
@@ -235,13 +236,13 @@ class GenebankToGene < ToGene
             @exons.push(sequence[exon_start..exon_stop])
             last_exon_stop = exon_stop
         end
+    end
 
-        if @is_gene_on_minus_strand
-            @exons = @exons.reverse
-            @introns = @introns.reverse
+    def fix_minus_strand
+        @exons = @exons.reverse
+        @introns = @introns.reverse
 
-            @exons = @exons.map{ |e| Nucleotide.reverse_complement(e) }
-            @introns = @introns.map{ |i| Nucleotide.reverse_complement(i) }
-        end
+        @exons = @exons.map{ |e| Nucleotide.reverse_complement(e) }
+        @introns = @introns.map{ |i| Nucleotide.reverse_complement(i) }
     end
 end
