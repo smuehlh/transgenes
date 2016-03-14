@@ -2,7 +2,7 @@ module Constants
 
     extend self
 
-    def keep_first_intron? 
+    def keep_first_intron?
         true
     end
 
@@ -36,13 +36,22 @@ module Constants
             "GAA" => "E", "GAG" => "E",
             "TGT" => "C", "TGC" => "C",
             "TGG" => "W",
-            "CGT" => "R", "CGC" => "R", "CGA" => "R", "CGG" => "R", 
+            "CGT" => "R", "CGC" => "R", "CGA" => "R", "CGG" => "R",
                 "AGA" => "R", "AGG" => "R",
             "GGT" => "G", "GGC" => "G", "GGA" => "G", "GGG" => "G",
             "TAA" => "X", "TAG" => "X", "TGA" => "X"
         }
 # TODO
 # is X best representation for stopcodon???
+    end
+
+    def dna_base_complement
+        {
+            "A" => "T",
+            "T" => "A",
+            "C" => "G",
+            "G" => "C"
+        }
     end
 
 end

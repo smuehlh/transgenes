@@ -11,7 +11,7 @@ class GenebankToGene < ToGene
         @introns = []
 
         read_file(path)
-        @exons = convert_to_uppercase(@exons)
+        convert_exons_to_uppercase_and_introns_to_lowercase(@exons, @introns)
 
         ensure_exon_translation_matches_given_translation(@exons, translation)
     end
@@ -22,6 +22,7 @@ class GenebankToGene < ToGene
         @field = ""
         @gene_info_field = ""
         @gene_info_coding_seq_field = ""
+        @is_gene_on_minus_strand = false
 
         gene_sequence = ""
         exon_positions = []
@@ -29,6 +30,7 @@ class GenebankToGene < ToGene
         IO.foreach(path) do |line|
             # detect with information is contained in this line
             update_current_fields(line)
+            set_strand(line)
 
             # update results variables as appropriate
             @description = get_gene_description(line) if is_gene_description_field
@@ -63,7 +65,11 @@ class GenebankToGene < ToGene
     end
 
     def coding_sequence_exon_position_identifier
-        /CDS\s+(join\()?\d\)?/
+        /CDS\s+(complement\()?(join\()?\d\)?\)?/
+    end
+
+    def exon_positions_on_minus_strand_identifier
+        /complement\(/
     end
 
     def coding_sequence_key_identifier
@@ -96,6 +102,13 @@ class GenebankToGene < ToGene
         if is_gene_info_coding_seq_field &&
                 is_line_contains_new_gene_info_coding_seq_entry(line)
             @gene_info_coding_seq_field = get_gene_info_coding_seq_field(line)
+        end
+    end
+
+    def set_strand(line)
+        # no update; as long as only one CDS is read, being on the reverse strand is a universal property.
+        if is_gene_positions_field && is_line_contains_complementarty_coding_seq_entry(line)
+            @is_gene_on_minus_strand = true
         end
     end
 
@@ -171,6 +184,10 @@ class GenebankToGene < ToGene
         line[gene_info_coding_seq_identifier]
     end
 
+    def is_line_contains_complementarty_coding_seq_entry(line)
+        line[exon_positions_on_minus_strand_identifier]
+    end
+
     def is_sequence_field
         @field == "ORIGIN"
     end
@@ -217,6 +234,14 @@ class GenebankToGene < ToGene
             # exon
             @exons.push(sequence[exon_start..exon_stop])
             last_exon_stop = exon_stop
+        end
+
+        if @is_gene_on_minus_strand
+            @exons = @exons.reverse
+            @introns = @introns.reverse
+
+            @exons = @exons.map{ |e| Nucleotide.reverse_complement(e) }
+            @introns = @introns.map{ |i| Nucleotide.reverse_complement(i) }
         end
     end
 end
