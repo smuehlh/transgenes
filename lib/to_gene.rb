@@ -10,7 +10,7 @@ class ToGene
     end
 
     def ensure_exon_translation_matches_given_translation(exons, translation)
-        if translate_exons(exons) != translate_exons(exons)
+        if translate_exons(exons) != translation
             abort "Invalid gene format: Specified translation does not match translated exons."
         end
     end
