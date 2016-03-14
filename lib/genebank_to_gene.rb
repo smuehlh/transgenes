@@ -129,11 +129,22 @@ class GenebankToGene < ToGene
     end
 
     def get_exon_positions(line)
-        # HACK
-        # gene position identifier deletes first digit -- add it back!
-        first_digit = line[/\d/]
-        positions = line.regexp_delete(coding_sequence_exon_position_identifier)
-        positions = first_digit + positions.delete("\)").strip
+        positions =
+            if line[coding_sequence_exon_position_identifier]
+                # first exon-positions line contains identifier and exon-positions
+
+                # HACK
+                # gene position identifier deletes first digit -- add it back!
+                first_digit = line[/\d/]
+                first_digit + trim_positions_string(
+                    line.regexp_delete(
+                        coding_sequence_exon_position_identifier
+                    )
+                )
+            else
+                # all other lines contain only exon-positions, no additional identifiers
+                trim_positions_string(line)
+            end
         convert_positions_string_to_array_of_integers(positions)
     end
 
@@ -182,6 +193,10 @@ class GenebankToGene < ToGene
 
     def is_gene_positions_field
         @gene_info_coding_seq_field == "exon_positions"
+    end
+
+    def trim_positions_string(str)
+        str.delete("\)").strip
     end
 
     def convert_positions_string_to_array_of_integers(str)
