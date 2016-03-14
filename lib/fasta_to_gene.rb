@@ -10,7 +10,7 @@ class FastaToGene < ToGene
         @introns = []
 
         read_file(path)
-        @exons = convert_to_uppercase(@exons)
+        convert_exons_to_uppercase_and_introns_to_lowercase(@exons, @introns)
 
         # exon translation is not part of file; translate them manually
         @translation = translate_exons(@exons)

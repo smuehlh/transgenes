@@ -15,8 +15,9 @@ class ToGene
         end
     end
 
-    def convert_to_uppercase(arr)
-        arr.map{ |e| e.upcase }
+    def convert_exons_to_uppercase_and_introns_to_lowercase(exons, introns)
+        exons.map!{ |e| e.upcase }
+        introns.map!{ |i| i.downcase }
     end
 
 end
