@@ -33,7 +33,7 @@ class GenebankToGene < ToGene
             # update results variables as appropriate
             @description = get_gene_description(line) if is_gene_description_field
 
-            @translation = get_translation(line) if is_gene_translation_field
+            @translation += get_translation(line) if is_gene_translation_field
 
             exon_positions = get_exon_positions(line) if is_gene_positions_field
 
