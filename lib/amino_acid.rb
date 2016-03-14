@@ -6,7 +6,7 @@ module AminoAcid
         codons = split_cdna_into_codons(cdna)
         delete_trailing_stopcodon_if_present(codons)
         codons.map do |codon|
-            Constants.genetic_code[codon]
+            Constants.genetic_code.fetch(codon)
         end.join("")
     end
 
@@ -19,11 +19,11 @@ module AminoAcid
 
     def ensure_codons_can_be_translated(codons)
         # ensure all codons can be translated into amino acid!
-        if codons.size == 0  
+        if codons.size == 0
             abort "Cannot translate cDNA: empty sequence."
         end
 
-        if codons.last.size != 3 
+        if codons.last.size != 3
             abort "Cannot translate cDNA: last codon is splitted."
         end
 
@@ -41,7 +41,7 @@ module AminoAcid
     end
 
     def is_stopcodon(codon)
-        Constants.genetic_code[codon] == "X"
+        Constants.genetic_code.fetch(codon) == "X"
     end
 
 end
