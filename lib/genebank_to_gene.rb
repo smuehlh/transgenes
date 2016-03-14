@@ -35,7 +35,7 @@ class GenebankToGene < ToGene
 
             @translation += get_translation(line) if is_gene_translation_field
 
-            exon_positions = get_exon_positions(line) if is_gene_positions_field
+            exon_positions += get_exon_positions(line) if is_gene_positions_field
 
             gene_sequence += get_gene_sequence(line) if is_sequence_field
         end
