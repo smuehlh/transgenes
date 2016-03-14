@@ -37,7 +37,10 @@ class GenebankToGene < ToGene
 
             @translation += get_translation(line) if is_gene_translation_field
 
-            exon_positions += get_exon_positions(line) if is_gene_positions_field
+            if is_gene_positions_field
+                warn_if_gene_is_partial(line)
+                exon_positions += get_exon_positions(line)
+            end
 
             gene_sequence += get_gene_sequence(line) if is_sequence_field
         end
@@ -66,7 +69,7 @@ class GenebankToGene < ToGene
     end
 
     def coding_sequence_exon_position_identifier
-        /CDS\s+(complement\()?(join\()?\d\)?\)?/
+        /CDS\s+(complement\()?(join\()?<?\d\)?\)?/
     end
 
     def exon_positions_on_minus_strand_identifier
@@ -176,7 +179,7 @@ class GenebankToGene < ToGene
             #{tab_or_several_blanks_identifier} # whitespace other than newline and single blank
             [a-zA-Z]+   # character
             #{tab_or_several_blanks_identifier} # whitespace other than newline and single blank
-            \w+         # any word character
+            \S+         # any word character
             /x
         line[regexp]
     end
@@ -214,7 +217,14 @@ class GenebankToGene < ToGene
     end
 
     def trim_positions_string(str)
-        str.delete("\)").strip
+        str.delete("\)<>").strip
+    end
+
+    def warn_if_gene_is_partial(line)
+        warn "CDS: partial on the 5' end"\
+            if line[/<\d/]
+        warn "CDS: partial on the 3' end"\
+            if line[/\d>/]
     end
 
     def convert_positions_string_to_array_of_integers(str)
