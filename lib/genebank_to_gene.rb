@@ -2,18 +2,18 @@ require_relative 'to_gene.rb'
 
 class GenebankToGene < ToGene
 
-    attr_reader :translation, :description, :exons, :introns
+    attr_reader :translation, :exons, :introns,
+        :descriptions, :genestart_lines
 
     def initialize(path)
         @translation = ""
-        @description = ""
+        @descriptions = []
+        @genestart_lines = []
         @exons = []
         @introns = []
 
         read_file(path)
         convert_exons_to_uppercase_and_introns_to_lowercase(@exons, @introns)
-
-        ensure_exon_translation_matches_given_translation(@exons, translation)
     end
 
     def self.valid_file_extensions
@@ -31,13 +31,20 @@ class GenebankToGene < ToGene
         gene_sequence = ""
         exon_positions = []
 
+        line_number = 0 # line number in human readalbe format
+
         IO.foreach(path) do |line|
+            line_number += 1
+
             # detect with information is contained in this line
             update_current_fields(line)
             set_strand(line)
 
             # update results variables as appropriate
-            @description = get_gene_description(line) if is_gene_description_field
+            if is_gene_description_field
+                @descriptions.push(get_gene_description(line))
+                @genestart_lines.push(line_number)
+            end
 
             @translation += get_translation(line) if is_gene_translation_field
 

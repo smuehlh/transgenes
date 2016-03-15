@@ -2,18 +2,18 @@ require_relative 'to_gene.rb'
 
 class FastaToGene < ToGene
 
-    attr_reader :translation, :description, :exons, :introns
+    attr_reader :translation, :exons, :introns,
+        :descriptions, :genestart_lines
 
     def initialize(path)
-        @description = ""
+        @translation = nil # exon translation is not part of file
+        @descriptions = []
+        @genestart_lines = []
         @exons = []
         @introns = []
 
         read_file(path)
         convert_exons_to_uppercase_and_introns_to_lowercase(@exons, @introns)
-
-        # exon translation is not part of file; translate them manually
-        @translation = translate_exons(@exons)
     end
 
     def self.valid_file_extensions
@@ -24,12 +24,15 @@ class FastaToGene < ToGene
 
     def read_file(path)
         last_seq = nil
+        line_number = 0 # line number in human readalbe format
 
         IO.foreach(path) do |line|
             line = line.chomp
+            line_number += 1
             if line.start_with?(">")
                 str_wo_leading_char = line.sub(">", "")
-                @description = str_wo_leading_char
+                @descriptions.push(str_wo_leading_char)
+                @genestart_lines.push(line_number)
             else
                 sequences = split_into_upper_and_lower_case(line)
                 sequences.each do |seq|

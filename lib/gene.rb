@@ -47,12 +47,20 @@ class Gene
     end
 
     def save_input_data_or_die(to_gene_obj)
-        @translation = to_gene_obj.translation
-        @description = to_gene_obj.description
+        @descriptions = to_gene_obj.descriptions
         @exons = to_gene_obj.exons
         @introns = to_gene_obj.introns
 
         # ensure file format
+        if ! is_single_gene_description
+            str = ToGene.format_gene_descriptions_line_numbers_for_printing(
+                @descriptions, to_gene_obj.genestart_lines
+            )
+            abort "Multiple genes found in file: #{@path}\n"\
+                "#{str}\n"\
+                "Specify gene of interest using argument --XXX <starting-line>"
+        end
+
         abort "Unrecognized file format: #{@path}.\n"\
             "Input has to be either a GeneBank record or "\
             "a FASTA file containing exons and introns."\
@@ -66,15 +74,24 @@ class Gene
             "Must leave all #{n_exons()} exons intact."\
             if ! is_minimum_number_exons_given
 
+
+        # reached this line? exons must be present. translate them & ensure translation is correct
+        @translation = to_gene_obj.translation ||
+            to_gene_obj.translate_exons(@exonss)
+
         abort "Invalid gene format: \n"\
             "Specified translation does not match translated exons."\
             if ! is_given_translation_and_exons_translation_same
     end
 
+    def is_single_gene_description
+        @descriptions.size == 1
+    end
+
     def are_exons_and_introns_found
         # check file format the duck-typing way...
         # a proper genebank/fasta-file specifies a description, exons and introns
-        @exons.any? && @introns.any? && @description != ""
+        @exons.any? && @introns.any?
     end
 
     def are_exons_and_introns_numbers_matching_specification
