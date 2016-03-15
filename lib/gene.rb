@@ -66,6 +66,9 @@ class Gene
             "Must leave all #{n_exons()} exons intact."\
             if ! is_minimum_number_exons_given
 
+        abort "Invalid gene format: \n"\
+            "Specified translation does not match translated exons."\
+            if ! is_given_translation_and_exons_translation_same
     end
 
     def are_exons_and_introns_found
@@ -83,6 +86,10 @@ class Gene
 
     def is_minimum_number_exons_given
         Constants.minimum_number_of_exons < n_exons
+    end
+
+    def is_given_translation_and_exons_translation_same
+        ToGene.translate_exons(@exons) == @translation
     end
 
     def n_exons
