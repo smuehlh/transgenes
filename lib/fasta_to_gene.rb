@@ -25,7 +25,7 @@ class FastaToGene < ToGene
             line = line.chomp
             if line.start_with?(">")
                 str_wo_leading_char = line.sub(">", "")
-                @description.push(str_wo_leading_char)
+                @description = str_wo_leading_char
             else
                 sequences = split_into_upper_and_lower_case(line)
                 sequences.each do |seq|
