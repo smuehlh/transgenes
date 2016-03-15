@@ -2,13 +2,13 @@ class Gene
 
     def initialize(file)
         @path = file
+
+        # parse file and set variables describing gene
         @translation = ""
         @description = []
         @exons = []
         @introns = []
-
         parse_file
-
     end
 
     def parse_file
@@ -36,9 +36,10 @@ class Gene
 
     def is_valid_file_extension
         case FileHelper.get_file_extension(@path)
-        when ".gb"
+        when GenebankToGene.valid_file_extensions
             true
-        when ".fas", ".fa", ".fasta"
+        when *FastaToGene.valid_file_extensions
+            # INFO: * turns array into comma-separated list of strings
             true
         else
             false

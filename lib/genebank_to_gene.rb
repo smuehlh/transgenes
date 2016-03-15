@@ -16,6 +16,10 @@ class GenebankToGene < ToGene
         ensure_exon_translation_matches_given_translation(@exons, translation)
     end
 
+    def self.valid_file_extensions
+        ".gb"
+    end
+
     private
 
     def read_file(path)

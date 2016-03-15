@@ -4,6 +4,10 @@ class ToGene
         # implement in sub-class
     end
 
+    def self.valid_file_extensions
+        # implement in sub-class
+    end
+
     def translate_exons(exons)
         joined_exons = exons.join("")
         AminoAcid.translate(joined_exons)

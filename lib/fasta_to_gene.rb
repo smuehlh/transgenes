@@ -16,6 +16,10 @@ class FastaToGene < ToGene
         @translation = translate_exons(@exons)
     end
 
+    def self.valid_file_extensions
+        [".fas", ".fa", ".fasta"]
+    end
+
     private
 
     def read_file(path)
