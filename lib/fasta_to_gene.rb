@@ -3,13 +3,13 @@ require_relative 'to_gene.rb'
 class FastaToGene < ToGene
 
     attr_reader :translations, :exons, :introns,
-        :descriptions, :genestart_lines
+        :descriptions, :warning_messages_if_gene_is_partial,
+        :genestart_lines
 
     def initialize(path)
         @genestart_lines = []
 
         # keys: elements of genestart_lines
-        @translations = {} # will remain empty hash as file is not expected to contain translation
         @descriptions = {}
         @exons = {}
         @introns = {}
@@ -20,6 +20,11 @@ class FastaToGene < ToGene
                 @exons[key], @introns[key]
             )
         end
+
+        # not part of file
+        @translations = {}
+        @warning_messages_if_gene_is_partial = {}
+
     end
 
     def self.valid_file_extensions

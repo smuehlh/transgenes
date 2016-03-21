@@ -13,9 +13,15 @@ class ToGene
         # implement in sub-class
     end
 
-    def self.format_gene_descriptions_line_numbers_for_printing(descriptions, lines)
+    def self.format_gene_descriptions_line_numbers_for_printing(descriptions, additional_infos, lines)
         descriptions.map.each_with_index do |desc, ind|
-            "\tline #{lines[ind]}: #{desc}\n"
+            line = lines[ind]
+            add_info = if str = additional_infos[ind]
+                "(#{str})"
+            else
+                ""
+            end
+            "\tline #{line}: #{desc} #{add_info}\n"
         end.join("")
     end
 

@@ -49,9 +49,10 @@ class Gene
     end
 
     def save_input_data_or_die(to_gene_obj)
-        description, exons, introns, translation =  reduce_data_to_single_gene_or_die(to_gene_obj)
+        description, warn_message_for_partial, exons, introns, translation =  reduce_data_to_single_gene_or_die(to_gene_obj)
 
         save_description_or_die(description)
+        warn_if_gene_is_partial(warn_message_for_partial)
         save_exons_and_introns_or_die(exons, introns)
         save_or_generate_translation_or_die(translation)
     end
@@ -61,6 +62,7 @@ class Gene
 
         valid_gene_start_info = ToGene.format_gene_descriptions_line_numbers_for_printing(
                 to_gene_obj.descriptions.values,
+                to_gene_obj.warning_messages_if_gene_is_partial.values,
                 gene_starts
             )
         abort_message_missing_gene_start =
@@ -89,6 +91,7 @@ class Gene
 
         [
             to_gene_obj.descriptions[wanted_gene_start],
+            to_gene_obj.warning_messages_if_gene_is_partial[wanted_gene_start],
             to_gene_obj.exons[wanted_gene_start],
             to_gene_obj.introns[wanted_gene_start],
             to_gene_obj.translations[wanted_gene_start]
@@ -97,6 +100,10 @@ class Gene
 
     def save_description_or_die(description)
         @description = description
+    end
+
+    def warn_if_gene_is_partial(message_if_partial)
+        warn message_if_partial if message_if_partial
     end
 
     def save_exons_and_introns_or_die(exons, introns)

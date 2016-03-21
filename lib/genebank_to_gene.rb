@@ -3,16 +3,18 @@ require_relative 'to_gene.rb'
 class GenebankToGene < ToGene
 
     attr_reader :translations, :exons, :introns,
-        :descriptions, :genestart_lines
+        :descriptions, :warning_messages_if_gene_is_partial,
+        :genestart_lines
 
     def initialize(path)
         @genestart_lines = []
 
         # keys: elements of genestart_lines
-        @translations = {} # will remain empty hash as file is not expected to contain translation
+        @translations = {}
         @descriptions = {}
         @exons = {}
         @introns = {}
+        @warning_messages_if_gene_is_partial = {}
 
         read_file(path)
         @genestart_lines.each do |key|
@@ -51,7 +53,7 @@ class GenebankToGene < ToGene
 
             # update results variables as appropriate
             if is_gene_positions_field
-                warn_if_gene_is_partial(line)
+                @warning_messages_if_gene_is_partial[@current_genestart_line] = get_partial_warning_message_if_gene_is_partial(line)
                 @exon_positions[@current_genestart_line] += get_exon_positions(line)
                 @are_genes_on_minus_strand[@current_genestart_line] = true if is_line_contains_complementarty_coding_seq_entry(line)
             end
@@ -241,11 +243,14 @@ class GenebankToGene < ToGene
         str.delete("\)<>").strip
     end
 
-    def warn_if_gene_is_partial(line)
-        warn "CDS: partial on the 5' end"\
-            if line[/<\d/]
-        warn "CDS: partial on the 3' end"\
-            if line[/\d>/]
+    def get_partial_warning_message_if_gene_is_partial(line)
+        if line[/(<\d|\d<)/]
+            "CDS partial on the 5' end"
+        elsif line[/(\d>|>\d)/]
+            "CDS partial on the 3' end"
+        else
+            nil
+        end
     end
 
     def convert_positions_string_to_array_of_integers(str)
@@ -293,6 +298,7 @@ class GenebankToGene < ToGene
         @translations[@current_genestart_line] = ""
         @exons[@current_genestart_line] = []
         @introns[@current_genestart_line] = []
+        @warning_messages_if_gene_is_partial[@current_genestart_line] = ""
 
         @exon_positions[@current_genestart_line] = []
         @are_genes_on_minus_strand[@current_genestart_line] = false
