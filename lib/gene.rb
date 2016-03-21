@@ -117,7 +117,7 @@ class Gene
             ! are_exons_and_introns_found
 
         abort "Invalid gene format: #{@path}.\n"\
-            "There should be one exon more than introns." if
+            "Ratio between exons and introns not met: Expecting one exon more than introns." if
             ! are_exons_and_introns_numbers_matching_specification
 
         abort_message_exon_numbers =
