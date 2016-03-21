@@ -100,6 +100,9 @@ class Gene
 
     def save_description_or_die(description)
         @description = description
+        abort "Unrecognized file format: #{@path}.\n"\
+            "Cannot find gene entry with gene description." if
+            ! is_description_found
     end
 
     def warn_if_gene_is_partial(message_if_partial)
@@ -141,6 +144,10 @@ class Gene
 
     def is_gene_starting_in_specified_line(gene_starts)
         gene_starts.include?(@use_gene_starting_in_line)
+    end
+
+    def is_description_found
+        @description != ""
     end
 
     def are_exons_and_introns_found
