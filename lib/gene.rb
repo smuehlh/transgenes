@@ -75,20 +75,19 @@ class Gene
             "#{valid_gene_start_info}\n"\
             "Specify gene of interest using argument --line <starting-line>"
 
-        wanted_gene_start = if is_single_gene_found(gene_starts)
-                                gene_starts.first
+        wanted_gene_start = if is_gene_start_specified
+                                if is_gene_starting_in_specified_line(gene_starts)
+                                    @use_gene_starting_in_line
+                                else
+                                    abort abort_message_invalid_gene_start
+                                end
                             else
-                                if is_gene_start_specified
-                                    if is_gene_starting_in_specified_line(gene_starts)
-                                        @use_gene_starting_in_line
-                                    else
-                                        abort abort_message_invalid_gene_start
-                                    end
+                                if is_single_gene_found(gene_starts)
+                                    gene_starts.first
                                 else
                                     abort abort_message_missing_gene_start
                                 end
                             end
-
         [
             to_gene_obj.descriptions[wanted_gene_start],
             to_gene_obj.warning_messages_if_gene_is_partial[wanted_gene_start],
