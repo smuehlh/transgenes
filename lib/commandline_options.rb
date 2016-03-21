@@ -50,7 +50,6 @@ class CommandlineOptions
 
             opts.separator ""
             opts.on_tail("-h", "--help", "Show this message") do
-                # delete all hidden params from help
                 puts opts
                 exit
             end
@@ -64,7 +63,7 @@ class CommandlineOptions
 
         # use the own format of fatal error messages!
         rescue OptionParser::MissingArgument, OptionParser::InvalidArgument, OptionParser::InvalidOption, OptionParser::AmbiguousOption => exception
-            abort exception.to_s.capitalize
+            abort_with_reference_to_help_option(exception.to_s.capitalize)
     end
 
     def ensure_help_is_printed_if_no_options_given
@@ -74,8 +73,12 @@ class CommandlineOptions
     def ensure_mandatory_arguments_are_set
         @@mandatory_arguments.each do |arg|
             opt_str = arg.sub("@", "--")
-            abort "Missing mandatory option: '#{opt_str}'." if
-                ! instance_variable_get(arg)
+            abort_with_reference_to_help_option("Missing mandatory option: '#{opt_str}'.") if ! instance_variable_get(arg)
         end
+    end
+
+    def abort_with_reference_to_help_option(str)
+        abort "#{str}\n"\
+            "Add --help to program call to view all options and their arguments."
     end
 end
