@@ -121,8 +121,10 @@ class Gene
             "There should be one exon more than introns." if
             ! are_exons_and_introns_numbers_matching_specification
 
+        abort_message_exon_numbers =
+            n_exons == 1 ? "single exon" : "all #{n_exons} exons"
         abort "Nothing to do: #{@path}.\n"\
-            "Must leave all #{n_exons()} exons intact." if
+            "Must leave #{abort_message_exon_numbers} intact." if
             ! is_minimum_number_exons_given
     end
 
@@ -153,7 +155,8 @@ class Gene
     def are_exons_and_introns_found
         # check file format the duck-typing way...
         # a proper genebank/fasta-file specifies exons and introns
-        @exons.any? && @introns.any?
+        @exons.any? &&
+        (@introns.any? || ! @introns.any? && n_exons == 1)
     end
 
     def are_exons_and_introns_numbers_matching_specification
