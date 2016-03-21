@@ -58,7 +58,14 @@ class GenebankToGene < ToGene
                 @are_genes_on_minus_strand[@current_genestart_line] = true if is_line_contains_complementarty_coding_seq_entry(line)
             end
 
-            @descriptions[@current_genestart_line] = get_gene_description(line) if is_gene_description_field
+            if is_gene_description_field
+                @descriptions[@current_genestart_line] =
+                    if @descriptions[@current_genestart_line] == ""
+                        get_gene_description(line)
+                    else
+                        "#{@descriptions[@current_genestart_line]} #{get_gene_description(line)}"
+                    end
+            end
 
             @translations[@current_genestart_line] += get_translation(line) if is_gene_translation_field
 
