@@ -2,18 +2,24 @@ require_relative 'to_gene.rb'
 
 class GenebankToGene < ToGene
 
-    attr_reader :translation, :exons, :introns,
+    attr_reader :translations, :exons, :introns,
         :descriptions, :genestart_lines
 
     def initialize(path)
-        @translation = ""
-        @descriptions = []
         @genestart_lines = []
-        @exons = []
-        @introns = []
+
+        # keys: elements of genestart_lines
+        @translations = {} # will remain empty hash as file is not expected to contain translation
+        @descriptions = {}
+        @exons = {}
+        @introns = {}
 
         read_file(path)
-        convert_exons_to_uppercase_and_introns_to_lowercase(@exons, @introns)
+        @genestart_lines.each do |key|
+            convert_exons_to_uppercase_and_introns_to_lowercase(
+                @exons[key], @introns[key]
+            )
+        end
     end
 
     def self.valid_file_extensions
@@ -26,38 +32,39 @@ class GenebankToGene < ToGene
         @field = ""
         @gene_info_field = ""
         @gene_info_coding_seq_field = ""
-        @is_gene_on_minus_strand = false
+        @first_gene_info_coding_seq_line = nil
 
-        gene_sequence = ""
-        exon_positions = []
+        @gene_sequence = "" # single gene sequence for all genes
+        @exon_positions = {}
+        @are_genes_on_minus_strand = {}
 
         line_number = 0 # line number in human readalbe format
+        @current_genestart_line = nil
 
         IO.foreach(path) do |line|
             line_number += 1
 
             # detect with information is contained in this line
             update_current_fields(line)
-            set_strand(line)
+
+            init_class_variables_for_given_genestart_line(line_number) if @first_gene_info_coding_seq_line
 
             # update results variables as appropriate
-            if is_gene_description_field
-                @descriptions.push(get_gene_description(line))
-                @genestart_lines.push(line_number)
-            end
-
-            @translation += get_translation(line) if is_gene_translation_field
-
             if is_gene_positions_field
                 warn_if_gene_is_partial(line)
-                exon_positions += get_exon_positions(line)
+                @exon_positions[@current_genestart_line] += get_exon_positions(line)
+                @are_genes_on_minus_strand[@current_genestart_line] = true if is_line_contains_complementarty_coding_seq_entry(line)
             end
 
-            gene_sequence += get_gene_sequence(line) if is_sequence_field
+            @descriptions[@current_genestart_line] = get_gene_description(line) if is_gene_description_field
+
+            @translations[@current_genestart_line] += get_translation(line) if is_gene_translation_field
+
+            @gene_sequence += get_gene_sequence(line) if is_sequence_field
         end
 
-        cut_gene_sequence_into_exons_and_introns(gene_sequence, exon_positions)
-        fix_minus_strand if @is_gene_on_minus_strand
+        cut_gene_sequence_into_exons_and_introns
+        fix_minus_strands
     end
 
     # regular expressions
@@ -101,6 +108,8 @@ class GenebankToGene < ToGene
     # end - regular expression
 
     def update_current_fields(line)
+        @first_gene_info_coding_seq_line = false
+
         if is_line_contains_new_field_entry(line)
             @field = get_field(line)
             @gene_info_field = ""
@@ -118,12 +127,9 @@ class GenebankToGene < ToGene
                 is_line_contains_new_gene_info_coding_seq_entry(line)
             @gene_info_coding_seq_field = get_gene_info_coding_seq_field(line)
         end
-    end
 
-    def set_strand(line)
-        # no update; as long as only one CDS is read, being on the reverse strand is a universal property.
-        if is_gene_positions_field && is_line_contains_complementarty_coding_seq_entry(line)
-            @is_gene_on_minus_strand = true
+        if is_gene_positions_field && is_line_contains_new_coding_seq_exon_positions_entry(line)
+            @first_gene_info_coding_seq_line = true
         end
     end
 
@@ -203,6 +209,10 @@ class GenebankToGene < ToGene
         line[exon_positions_on_minus_strand_identifier]
     end
 
+    def is_line_contains_new_coding_seq_exon_positions_entry(line)
+        line[coding_sequence_exon_position_identifier()]
+    end
+
     def is_sequence_field
         @field == "ORIGIN"
     end
@@ -244,26 +254,47 @@ class GenebankToGene < ToGene
         end
     end
 
-    def cut_gene_sequence_into_exons_and_introns(sequence, exon_positions)
-        last_exon_stop = nil
-        exon_positions.each do |exon_start, exon_stop|
-            # preceeding intron - all but the very first exon have one
-            if last_exon_stop
-                intron_start = last_exon_stop + 1
-                intron_stop = exon_start - 1
-                @introns.push(sequence[intron_start..intron_stop])
+    def cut_gene_sequence_into_exons_and_introns
+        @exon_positions.each do |genestart_line, positions|
+            last_exon_stop = nil
+            positions.each do |exon_start, exon_stop|
+                # preceeding intron - all but the very first exon have one
+                if last_exon_stop
+                    intron_start = last_exon_stop + 1
+                    intron_stop = exon_start - 1
+                    @introns[genestart_line].push(
+                        @gene_sequence[intron_start..intron_stop])
+                end
+                # exon
+                @exons[genestart_line].push(
+                    @gene_sequence[exon_start..exon_stop])
+                last_exon_stop = exon_stop
             end
-            # exon
-            @exons.push(sequence[exon_start..exon_stop])
-            last_exon_stop = exon_stop
         end
     end
 
-    def fix_minus_strand
-        @exons = @exons.reverse
-        @introns = @introns.reverse
+    def fix_minus_strands
+        @are_genes_on_minus_strand.each do |genestart_line, is_on_minus_strand|
+            if is_on_minus_strand
+                @exons[genestart_line] = @exons[genestart_line].reverse
+                @introns[genestart_line] = @introns[genestart_line].reverse
 
-        @exons = @exons.map{ |e| Nucleotide.reverse_complement(e) }
-        @introns = @introns.map{ |i| Nucleotide.reverse_complement(i) }
+                @exons[genestart_line] = @exons[genestart_line].map{ |e| Nucleotide.reverse_complement(e) }
+                @introns[genestart_line] = @introns[genestart_line].map{ |i| Nucleotide.reverse_complement(i) }
+            end
+        end
+    end
+
+    def init_class_variables_for_given_genestart_line(line_number)
+        @current_genestart_line = line_number
+        @genestart_lines.push @current_genestart_line
+
+        @descriptions[@current_genestart_line] = ""
+        @translations[@current_genestart_line] = ""
+        @exons[@current_genestart_line] = []
+        @introns[@current_genestart_line] = []
+
+        @exon_positions[@current_genestart_line] = []
+        @are_genes_on_minus_strand[@current_genestart_line] = false
     end
 end

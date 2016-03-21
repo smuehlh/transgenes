@@ -1,7 +1,7 @@
 require 'optparse'
 
 class CommandlineOptions
-    attr_reader :input, :output
+    attr_reader :input, :output, :input_line
 
     @@mandatory_arguments = ["@input", "@output"]
 
@@ -9,8 +9,12 @@ class CommandlineOptions
         @args = args
 
         # init options
+        # mandatory
         @input = nil
         @output = nil
+
+        # optional
+        @input_line = nil
 
         # call parser for every class instance
         ensure_help_is_printed_if_no_options_given
@@ -39,13 +43,17 @@ class CommandlineOptions
             # optional arguments
             opts.separator ""
             opts.separator "Optional arguments:"
+            opts.on("-l", "--line LINE NUMBER", Integer,
+                "Starting line of gene description to read.") do |line|
+                @input_line = line
+            end
 
             opts.separator ""
-            opts.on_tail("-h", "--help", "Show this message") do 
+            opts.on_tail("-h", "--help", "Show this message") do
                 # delete all hidden params from help
                 puts opts
                 exit
-            end            
+            end
         end
 
         opt_parser.parse(@args)
@@ -54,7 +62,7 @@ class CommandlineOptions
 
         # TODO ensure dependencies are met...
 
-        # use the own format of fatal error messages!               
+        # use the own format of fatal error messages!
         rescue OptionParser::MissingArgument, OptionParser::InvalidArgument, OptionParser::InvalidOption, OptionParser::AmbiguousOption => exception
             abort exception.to_s.capitalize
     end
@@ -66,8 +74,8 @@ class CommandlineOptions
     def ensure_mandatory_arguments_are_set
         @@mandatory_arguments.each do |arg|
             opt_str = arg.sub("@", "--")
-            abort "Missing mandatory option: '#{opt_str}'." if 
-                ! instance_variable_get(arg) 
+            abort "Missing mandatory option: '#{opt_str}'." if
+                ! instance_variable_get(arg)
         end
     end
 end
