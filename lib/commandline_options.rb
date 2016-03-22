@@ -3,26 +3,72 @@ require 'optparse'
 class CommandlineOptions
     attr_reader :input, :output, :input_line
 
-    @@mandatory_arguments = ["@input", "@output"]
-
     def initialize(args)
-        @args = args
+        init_commandline_arguments(args)
+        init_mandatory_arguments
+        init_optional_arguments
 
-        # init options
-        # mandatory
-        @input = nil
-        @output = nil
-
-        # optional
-        @input_line = nil
-
-        # call parser for every class instance
-        ensure_help_is_printed_if_no_options_given
         parse_options
     end
 
+    def init_commandline_arguments(args)
+        @args = args
+        # if no arugments given: ensure help is printed
+        @args.push "-h" if @args.empty?
+    end
+
+    def init_mandatory_arguments
+        mandatory_arguments.each do |arg|
+            instance_variable_set(arg, nil)
+        end
+    end
+
+    def init_optional_arguments
+        optional_arguments.each do |arg|
+            instance_variable_set(arg, nil)
+        end
+    end
+
+    def mandatory_arguments
+        %w(@input @output)
+    end
+
+    def optional_arguments
+        %w(@input_line)
+    end
+
+    def is_argument_set(arg)
+        instance_variable_get(arg)
+    end
+
+    def instance_variable_to_argument(str)
+        case str
+        when "@input" then "--input"
+        when "@output" then "--output"
+        when "@input_line" then "--line"
+        else "Unknown argument. Use --help to view all available options."
+        end
+    end
+
     def parse_options
-        opt_parser = OptionParser.new do |opts|
+        opt_parser = argument_specification
+        opt_parser.parse(@args)
+
+        ensure_mandatory_arguments_are_set
+        # TODO ensure dependencies are met...
+
+        rescue OptionParser::MissingArgument,
+            OptionParser::InvalidArgument,
+            OptionParser::InvalidOption,
+            OptionParser::AmbiguousOption => exception
+
+            exception_str = exception.to_s.capitalize
+            ErrorHandling.abort_with_error_message("argument_error", exception_str
+            )
+    end
+
+    def argument_specification
+        OptionParser.new do |opts|
             opts.banner = "Alter synonymous sites to enhance transgenes."
             opts.separator "Contact: Laurence Hurst (l.d.hurst@bath.ac.uk)"
             opts.separator ""
@@ -54,31 +100,13 @@ class CommandlineOptions
                 exit
             end
         end
-
-        opt_parser.parse(@args)
-
-        ensure_mandatory_arguments_are_set
-
-        # TODO ensure dependencies are met...
-
-        # use the own format of fatal error messages!
-        rescue OptionParser::MissingArgument, OptionParser::InvalidArgument, OptionParser::InvalidOption, OptionParser::AmbiguousOption => exception
-            abort_with_reference_to_help_option(exception.to_s.capitalize)
-    end
-
-    def ensure_help_is_printed_if_no_options_given
-        @args.push "-h" if @args.empty?
     end
 
     def ensure_mandatory_arguments_are_set
-        @@mandatory_arguments.each do |arg|
-            opt_str = arg.sub("@", "--")
-            abort_with_reference_to_help_option("Missing mandatory option: '#{opt_str}'.") if ! instance_variable_get(arg)
+        mandatory_arguments.each do |arg|
+            ErrorHandling.abort_with_error_message(
+                "missing_mandatory_argument",instance_variable_to_argument(arg)
+            ) unless is_argument_set(arg)
         end
-    end
-
-    def abort_with_reference_to_help_option(str)
-        abort "#{str}\n"\
-            "Add --help to program call to view all options and their arguments."
     end
 end
