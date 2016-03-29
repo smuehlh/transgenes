@@ -23,6 +23,10 @@ module ErrorHandling
         "#{type} gene start specified.\nSpecify one of the following genes using argument --line <starting-line>:\n#{str}"
     end
 
+    def error_message_nothing_to_do(file)
+        "Nothing to do: #{file}.\nMust leave all exons unchanged."
+    end
+
     def warning_message(str)
         "Warning: #{str}"
     end
@@ -48,6 +52,8 @@ module ErrorHandling
             error_message_with_reference_to_valid_gene_starts(
                 "No", additional_error_message
             )
+        when "no_exon_to_tweak"
+            error_message_nothing_to_do(additional_error_message)
         end
     end
 

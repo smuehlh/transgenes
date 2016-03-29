@@ -11,7 +11,7 @@ class ToGene
     def parse_file_to_gene_data_or_die(file, use_gene_starting_in_line)
         # NOTE: init variables along the way.
         ensure_file_format_is_valid(file)
-        split_file_into_single_genes(file)
+        split_file_into_single_genes_or_die(file)
         ensure_wanted_gene_is_found(use_gene_starting_in_line)
         warn_if_wanted_gene_is_partial(use_gene_starting_in_line)
         parse_wanted_gene_record(use_gene_starting_in_line)
@@ -26,7 +26,8 @@ class ToGene
         ) unless is_valid_file_extension(file)
     end
 
-    def split_file_into_single_genes(file)
+    def split_file_into_single_genes_or_die(file)
+        @file = file
         @file_to_gene_obj =
             if is_valid_genebank_file_extension
                 GenebankToGene.new(file)
@@ -36,6 +37,10 @@ class ToGene
             end
         @gene_records_by_gene_starts =
             @file_to_gene_obj.split_file_into_single_genes
+
+        ErrorHandling.abort_with_error_message(
+            "invalid_file_format", "#{@file}.\nMissing gene record"
+        ) unless are_gene_starts_found
     end
 
     def ensure_wanted_gene_is_found(use_gene_starting_in_line)
@@ -60,12 +65,34 @@ class ToGene
 
     def parse_wanted_gene_record(use_gene_starting_in_line)
         gene_record = get_wanted_gene_record(use_gene_starting_in_line)
-        @gene_name, @exons, @introns = @file_to_gene_obj.parse_gene_record(gene_record)
+        @file_to_gene_obj.parse_gene_record(gene_record)
+        @gene_name = @file_to_gene_obj.gene_name
+        @exons = @file_to_gene_obj.exons
+        @introns = @file_to_gene_obj.introns
     end
 
     def ensure_gene_is_parsed_successfully
-        # TODO
-        # error handling: gene_name present, exons & introns present & in correct format, ...
+        ensure_gene_name_is_found
+        ensure_exons_and_introns_are_found
+        ensure_minimum_number_of_exons_is_found
+    end
+
+    def ensure_gene_name_is_found
+        ErrorHandling.abort_with_error_message(
+            "invalid_file_format", "#{@file}.\nMissing gene description."
+        ) unless is_gene_description_found
+    end
+
+    def ensure_exons_and_introns_are_found
+        ErrorHandling.abort_with_error_message(
+            "invalid_file_format", "#{@file}.\nMissing or invalid gene record."
+        ) unless are_exons_and_introns_found
+    end
+
+    def ensure_minimum_number_of_exons_is_found
+        ErrorHandling.abort_with_error_message(
+            "no_exon_to_tweak", @file
+        ) unless is_minimum_number_of_exon_found
     end
 
     def is_valid_file_extension(file)
@@ -81,12 +108,34 @@ class ToGene
         FastaToGene.valid_file_extensions.include?(@file_extension)
     end
 
+    def are_gene_starts_found
+        @gene_records_by_gene_starts.keys.any? &&
+            ! @gene_records_by_gene_starts.key?(nil)
+    end
+
     def is_single_gene_record
         @gene_records_by_gene_starts.size == 1
     end
 
     def is_valid_gene_start(gene_start)
         @gene_records_by_gene_starts.key?(gene_start)
+    end
+
+    def is_gene_description_found
+        @gene_name != ""
+    end
+
+    def are_exons_and_introns_found
+        @exons.any? && is_gene_with_exons_and_introns
+    end
+
+    def is_gene_with_exons_and_introns
+        # gene should be of format: exon-intron-[exon-intron]*-exon
+        @exons.size == @introns.size + 1
+    end
+
+    def is_minimum_number_of_exon_found
+        Constants.minimum_number_of_exons < @exons.size
     end
 
     def format_list_with_gene_starts
