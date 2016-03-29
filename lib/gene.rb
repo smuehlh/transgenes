@@ -6,13 +6,15 @@ class Gene
         save_gene_to_class_variables(to_gene_obj)
     end
 
+    def tweak_exons
+
+    end
+
+    private
+
     def save_gene_to_class_variables(to_gene_obj)
         @description = to_gene_obj.gene_name
         @exons = to_gene_obj.exons
         @introns = to_gene_obj.introns
-    end
-
-    def tweak_exons
-
     end
 end
