@@ -92,9 +92,8 @@ class ToGene
         end
 
         def save_gene_sequence(line)
-            line = line.strip
-            @gene_sequence += line.regexp_delete(/(\d|[[:space:]])/) if
-                line != "ORIGIN"
+            line_wo_invalid_chars = Nucleotide.remove_invalid_chars(line)
+            @gene_sequence += line_wo_invalid_chars if line != "ORIGIN"
         end
 
         def update_current_feature(line)

@@ -54,4 +54,8 @@ module Constants
         }
     end
 
+    def valid_nucleotides
+        dna_base_complement.keys
+    end
+
 end
