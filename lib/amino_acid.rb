@@ -11,27 +11,12 @@ module AminoAcid
     end
 
     def split_cdna_into_codons(cdna)
-        codons = cdna.scan(/.{1,3}/)
-        ensure_codons_can_be_translated(codons)
-
-        codons
+        cdna.scan(/.{1,3}/)
     end
 
-    def ensure_codons_can_be_translated(codons)
-        # ensure all codons can be translated into amino acid!
-        if codons.size == 0
-            abort "Cannot translate cDNA: empty sequence."
-        end
-
-        if codons.last.size != 3
-            abort "Cannot translate cDNA: last codon is splitted."
-        end
-
-        invalid_codons = codons - Constants.genetic_code.keys
-        if invalid_codons.any?
-            abort "Cannot translate cDNA: found invalid codons #{invalid_codons.join(", ")}."
-        end
-
+    def is_invalid_codons(cdna)
+        codons = split_cdna_into_codons(cdna)
+        (codons - Constants.valid_codons).any?
     end
 
     def delete_trailing_stopcodon_if_present(codons)

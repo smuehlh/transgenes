@@ -45,6 +45,10 @@ module Constants
 # is X best representation for stopcodon???
     end
 
+    def valid_codons
+        genetic_code.keys
+    end
+
     def dna_base_complement
         {
             "A" => "T",

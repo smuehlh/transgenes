@@ -75,6 +75,7 @@ class ToGene
         ensure_gene_name_is_found
         ensure_exons_and_introns_are_found
         ensure_minimum_number_of_exons_is_found
+        ensure_exons_contain_valid_codons_only
     end
 
     def ensure_gene_name_is_found
@@ -93,6 +94,12 @@ class ToGene
         ErrorHandling.abort_with_error_message(
             "no_exon_to_tweak", @file
         ) unless is_minimum_number_of_exon_found
+    end
+
+    def ensure_exons_contain_valid_codons_only
+        ErrorHandling.abort_with_error_message(
+            "invalid_codons", @file
+        ) unless are_codons_valid
     end
 
     def is_valid_file_extension(file)
@@ -126,7 +133,7 @@ class ToGene
     end
 
     def are_exons_and_introns_found
-        @exons.any? && is_gene_with_exons_and_introns
+        @exons.any? && @exons.join("") != "" && is_gene_with_exons_and_introns
     end
 
     def is_gene_with_exons_and_introns
@@ -136,6 +143,10 @@ class ToGene
 
     def is_minimum_number_of_exon_found
         Constants.minimum_number_of_exons < @exons.size
+    end
+
+    def are_codons_valid
+        ! AminoAcid.is_invalid_codons(@exons.join(""))
     end
 
     def format_list_with_gene_starts

@@ -15,16 +15,8 @@ module ErrorHandling
         str == "" ? help_ref : "#{str}\n#{help_ref}"
     end
 
-    def error_message_with_reference_to_input_file(file)
-        "Unrecognized file format: #{file}.\nInput has to be either a GeneBank record or a FASTA file."
-    end
-
     def error_message_with_reference_to_valid_gene_starts(type, str)
         "#{type} gene start specified.\nSpecify one of the following genes using argument --line <starting-line>:\n#{str}"
-    end
-
-    def error_message_nothing_to_do(file)
-        "Nothing to do: #{file}.\nMust leave all exons unchanged."
     end
 
     def warning_message(str)
@@ -41,9 +33,7 @@ module ErrorHandling
                 "Missing mandatory option: #{additional_error_message}."
             )
         when "invalid_file_format"
-            error_message_with_reference_to_input_file(
-                additional_error_message
-            )
+            "Unrecognized file format: #{additional_error_message}.\nInput has to be either a GeneBank record or a FASTA file."
         when "invalid_gene_start"
             error_message_with_reference_to_valid_gene_starts(
                 "Invalid", additional_error_message
@@ -53,7 +43,11 @@ module ErrorHandling
                 "No", additional_error_message
             )
         when "no_exon_to_tweak"
-            error_message_nothing_to_do(additional_error_message)
+            "Nothing to do: #{additional_error_message}.\nMust leave all exons unchanged."
+        when "invalid_codons"
+            "Invalid codons: #{additional_error_message}"
+        else
+            "An unknown error occured."
         end
     end
 
