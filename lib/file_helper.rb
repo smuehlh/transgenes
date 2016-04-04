@@ -7,9 +7,9 @@ module FileHelper
     end
 
     def file_exist_or_die(path)
-        abort "Failed to open: #{path}" if ! file_exist?(path)
+        abort "Failed to open: #{path}" unless file_exist?(path)
     end
-    
+
 
     def get_file_extension(path)
         split_filename_and_extension(path).last.downcase
