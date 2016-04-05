@@ -42,8 +42,6 @@ module ErrorHandling
             error_message_with_reference_to_valid_gene_starts(
                 "No", additional_error_message
             )
-        when "no_exon_to_tweak"
-            "Nothing to do: #{additional_error_message}.\nMust leave all exons unchanged."
         when "invalid_codons"
             "Invalid codons: #{additional_error_message}"
         else

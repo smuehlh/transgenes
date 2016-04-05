@@ -80,7 +80,6 @@ class ToGene
     def ensure_gene_is_parsed_successfully
         ensure_gene_name_is_found
         ensure_exons_and_introns_are_found
-        ensure_minimum_number_of_exons_is_found
         ensure_exons_contain_valid_codons_only
     end
 
@@ -94,12 +93,6 @@ class ToGene
         ErrorHandling.abort_with_error_message(
             "invalid_file_format", "#{@file}.\nMissing or invalid gene record."
         ) unless are_exons_and_introns_found
-    end
-
-    def ensure_minimum_number_of_exons_is_found
-        ErrorHandling.abort_with_error_message(
-            "no_exon_to_tweak", @file
-        ) unless is_minimum_number_of_exon_found
     end
 
     def ensure_exons_contain_valid_codons_only
@@ -145,10 +138,6 @@ class ToGene
     def is_gene_with_exons_and_introns
         # gene should be of format: exon-intron-[exon-intron]*-exon
         @exons.size == @introns.size + 1
-    end
-
-    def is_minimum_number_of_exon_found
-        Constants.minimum_number_of_exons < @exons.size
     end
 
     def are_codons_valid
