@@ -6,8 +6,17 @@ class Gene
         save_gene_to_class_variables(to_gene_obj)
     end
 
-    def tweak_exons
+    def destroy_ese_sequences
+        # only if minimum number of exons found.
+    end
 
+    def humanize_codon_usage
+
+    end
+
+    def remove_unwanted_introns
+        # only if minimum number of exons found.
+        # remove intron and change corresponding splice site
     end
 
     private
