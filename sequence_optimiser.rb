@@ -14,9 +14,9 @@ options = CommandlineOptions.new(ARGV)
 # read in and parse data
 gene = Gene.new(options.input, options.input_line)
 
+# determine what to do by command line parameters!
 # tweak exons
-gene.tweak_exons
-
-# remove introns (but the first)
+# humanize codons
+# remove introns ...
 
 # output sequence
