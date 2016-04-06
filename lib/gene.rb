@@ -6,6 +6,17 @@ class Gene
         save_gene_to_class_variables(to_gene_obj)
     end
 
+    def tweak_sequence
+        # do stuff.
+
+        # combine sequences
+        @sequence = @exons.zip(@introns).flatten.join("")
+    end
+
+    def formatting_to_fasta
+        GeneToFasta.formatting(@description, @sequence)
+    end
+
     def destroy_ese_sequences
         # only if minimum number of exons found.
     end

@@ -18,5 +18,7 @@ gene = Gene.new(options.input, options.input_line)
 # tweak exons
 # humanize codons
 # remove introns ...
+gene.tweak_sequence
 
 # output sequence
+FileHelper.write_to_file(options.output, gene.formatting_to_fasta)
