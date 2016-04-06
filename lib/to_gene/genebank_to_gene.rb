@@ -56,6 +56,7 @@ class ToGene
 
             cut_gene_sequence_into_exons_and_introns
             fix_minus_strand if @is_gene_on_minus_strand
+            set_exons_to_uppercase_and_introns_to_lowercase
         end
 
         private
@@ -204,23 +205,32 @@ class ToGene
                     intron_start = last_exon_stop + 1
                     intron_stop = exon_start - 1
                     @introns.push(
-                        @gene_sequence[intron_start..intron_stop].downcase
+                        @gene_sequence[intron_start..intron_stop]
                     )
                 end
                 # exon - save in uppercase
                 @exons.push(
-                    @gene_sequence[exon_start..exon_stop].upcase
+                    @gene_sequence[exon_start..exon_stop]
                 )
                 last_exon_stop = exon_stop
             end
+            # adding fail-saveness:
+            # delete nil elements introduced by gene positions that are out of border
+            @exons.compact!
+            @introns.compact!
         end
 
         def fix_minus_strand
             @exons = @exons.reverse
             @introns = @introns.reverse
 
-            @exons = @exons.map{ |e| Nucleotide.reverse_complement(e).upcase }
-            @introns = @introns.map{ |i| Nucleotide.reverse_complement(i).downcase }
+            @exons = @exons.map{ |e| Nucleotide.reverse_complement(e) }
+            @introns = @introns.map{ |i| Nucleotide.reverse_complement(i) }
+        end
+
+        def set_exons_to_uppercase_and_introns_to_lowercase
+            @exons = @exons.map{ |e| e.upcase }
+            @introns = @introns.map{ |i| i.downcase }
         end
 
         def convert_exon_description_to_gene_indices
