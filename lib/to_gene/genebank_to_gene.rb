@@ -146,6 +146,10 @@ class ToGene
             end
         end
 
+        def get_feature_value(line)
+            split_line_into_feature_key_and_values(line).last
+        end
+
         def get_subsubfeature_key(line)
             if line[/^\s+CDS.+\d/]
                 "exonpos"
@@ -191,7 +195,8 @@ class ToGene
 
         def save_exon_positions(line)
             @is_gene_on_minus_strand = true if line[/complement/]
-            @exon_positions += line.regexp_delete(/[^\d\.,]/)
+            exon_positions_str = get_feature_value(line)
+            @exon_positions += exon_positions_str.regexp_delete(/[^\d\.,]/)
         end
 
         def cut_gene_sequence_into_exons_and_introns
