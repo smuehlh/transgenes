@@ -85,13 +85,13 @@ class ToGene
 
     def ensure_gene_name_is_found
         ErrorHandling.abort_with_error_message(
-            "invalid_file_format", "#{@file}.\nMissing gene description."
+            "invalid_file_format", "#{@file}.\nMissing gene description"
         ) unless is_gene_description_found
     end
 
     def ensure_exons_and_introns_are_found
         ErrorHandling.abort_with_error_message(
-            "invalid_file_format", "#{@file}.\nMissing or invalid gene record."
+            "invalid_file_format", "#{@file}.\nMissing or invalid gene record"
         ) unless are_exons_and_introns_found
     end
 
