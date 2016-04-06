@@ -13,6 +13,7 @@ options = CommandlineOptions.new(ARGV)
 
 # read in and parse data
 gene = Gene.new(options.input, options.input_line)
+puts gene.statistics
 
 # determine what to do by command line parameters!
 # tweak exons

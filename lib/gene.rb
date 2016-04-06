@@ -6,11 +6,30 @@ class Gene
         save_gene_to_class_variables(to_gene_obj)
     end
 
+    def statistics
+        str = ""
+        # if @utr_5prime
+            # str += "5' UTR"
+            # str += ", #{@utr_5prime.exons.size} Exons, #{@utr_5prime.introns.size} Introns"
+            # str += "\n"
+        # end
+        str += "#{@exons.size} Exons\n"
+        str += "#{@introns.size} Introns"
+        # if @utr_3prime
+        #     str += "\n"
+        #     str += "3' UTR"
+        #     str += ", #{@utr_3prime.exons.size} Exons, #{@utr_3prime.introns.size} Introns"
+        # end
+        str += "\n"
+        str += "Total sequence length: #{combine_features_into_sequence.size} nucleotides."
+        str
+    end
+
     def tweak_sequence
         # do stuff.
 
         # combine sequences
-        @sequence = @exons.zip(@introns).flatten.join("")
+        @sequence = combine_features_into_sequence
     end
 
     def formatting_to_fasta
@@ -36,5 +55,9 @@ class Gene
         @description = to_gene_obj.gene_name
         @exons = to_gene_obj.exons
         @introns = to_gene_obj.introns
+    end
+
+    def combine_features_into_sequence
+        @exons.zip(@introns).flatten.join("")
     end
 end
