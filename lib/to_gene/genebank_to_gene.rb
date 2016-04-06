@@ -133,7 +133,7 @@ class ToGene
         end
 
         def get_feature_key(line)
-            split_line_into_feature_key_and_values(line)[0]
+            split_line_into_feature_key_and_values(line).first
         end
 
         def get_subfeature_key(line)
