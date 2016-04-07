@@ -1,7 +1,9 @@
 require 'optparse'
 
 class CommandlineOptions
-    attr_reader :input, :output, :input_line
+    attr_reader :input, :output,
+        # optional params
+        :input_line, :utr5prime, :utr3prime
 
     def initialize(args)
         init_commandline_arguments(args)
@@ -34,7 +36,7 @@ class CommandlineOptions
     end
 
     def optional_arguments
-        %w(@input_line)
+        %w(@input_line @utr5prime @utr3prime)
     end
 
     def is_argument_set(arg)
@@ -92,6 +94,16 @@ class CommandlineOptions
             opts.on("-l", "--line LINE NUMBER", Integer,
                 "Starting line of gene description to read.") do |line|
                 @input_line = line
+            end
+            opts.on("-u", "--5'-utr FILE",
+                "Path to 5' UTR file, in FASTA format.") do |path|
+                FileHelper.file_exist_or_die(path)
+                @utr5prime = path
+            end
+            opts.on("-v", "--3'-utr FILE",
+                "Path to 3' UTR file, in FASTA format.") do |path|
+                FileHelper.file_exist_or_die(path)
+                @utr3prime = path
             end
 
             opts.separator ""
