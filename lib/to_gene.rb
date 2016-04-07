@@ -17,7 +17,7 @@ class ToGene
         parse_wanted_gene_record(use_gene_starting_in_line)
         ensure_gene_is_parsed_successfully
 
-    rescue => exp
+    rescue StandardError => exp
         # something went very wrong. most likely the input file is corrupt.
         ErrorHandling.abort_with_error_message(
             "invalid_file_format", file
