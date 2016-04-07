@@ -132,14 +132,12 @@ class CommandlineOptions
     end
 
     def ensure_dependencies_are_met
-        if utr_line_specified_without_file(@utr5prime, @utr5prime_line)
-            ErrorHandling.warn_with_error_message("unused_utr_line")
-            @utr5prime_line = nil
-        end
-        if utr_line_specified_without_file(@utr3prime, @utr3prime_line)
-            ErrorHandling.warn_with_error_message("unused_utr_line")
-            @utr3prime_line = nil
-        end
+        ErrorHandling.warn_with_error_message(
+            "unused_utr_line", "5'UTR"
+        ) if utr_line_specified_without_file(@utr5prime, @utr5prime_line)
+        ErrorHandling.warn_with_error_message(
+            "unused_utr_line", "3'UTR"
+        ) if utr_line_specified_without_file(@utr3prime, @utr3prime_line)
     end
 
     def utr_line_specified_without_file(file, line)
