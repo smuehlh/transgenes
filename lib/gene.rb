@@ -1,9 +1,14 @@
 class Gene
 
     def initialize(file, use_gene_starting_in_line)
-        to_gene_obj = ToGene.new()
-        to_gene_obj.parse_file_to_gene_data_or_die(file,use_gene_starting_in_line)
-        save_gene_to_class_variables(to_gene_obj)
+        init_gene_features
+        parse_gene_file(file, use_gene_starting_in_line)
+        save_gene
+    end
+
+    def add_utr(utr_obj_5prime, utr_obj_3prime)
+        @five_prime_utr = utr_obj_5prime.get_sequence
+        @three_prime_utr = utr_obj_3prime.get_sequence
     end
 
     def statistics
@@ -51,13 +56,30 @@ class Gene
 
     private
 
-    def save_gene_to_class_variables(to_gene_obj)
-        @description = to_gene_obj.gene_name
-        @exons = to_gene_obj.exons
-        @introns = to_gene_obj.introns
+    def init_gene_features
+        @description = ""
+        @exons = []
+        @introns = []
+        @five_prime_utr = ""
+        @three_prime_utr = ""
+    end
+
+    def parse_gene_file(file, use_gene_starting_in_line)
+        @to_gene_obj = ToGene.new()
+        @to_gene_obj.parse_file_to_gene_data_or_die(file, use_gene_starting_in_line)
+    end
+
+    def save_gene
+        @description = @to_gene_obj.gene_name
+        @exons = @to_gene_obj.exons
+        @introns = @to_gene_obj.introns
     end
 
     def combine_features_into_sequence
-        @exons.zip(@introns).flatten.join("")
+        [
+            @five_prime_utr,
+            @exons.zip(@introns),
+            @three_prime_utr
+        ].flatten.join("")
     end
 end

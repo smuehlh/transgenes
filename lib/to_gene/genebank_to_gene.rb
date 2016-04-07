@@ -7,8 +7,9 @@ class ToGene
             [".gb"]
         end
 
-        def initialize(file)
+        def initialize(file, use_subfeature)
             @file = file
+            @use_subfeature = set_subfeature_to_collect(use_subfeature)
         end
 
         def split_file_into_single_genes
@@ -60,6 +61,14 @@ class ToGene
         end
 
         private
+
+        def set_subfeature_to_collect(key)
+            case key
+            when "5'UTR" then "5'UTR"
+            when "5'UTR" then "3'UTR"
+            else "CDS"
+            end
+        end
 
         def is_line_containing_partial_gene_record(line)
             ! is_line_containing_gene_name(line) &&
@@ -151,7 +160,7 @@ class ToGene
         end
 
         def get_subsubfeature_key(line)
-            if line[/^\s+CDS.+\d/]
+            if line[/^\s+#{@use_subfeature}.+\d/]
                 "exonpos"
             elsif match = line[/\/\w+=/]
                 match
@@ -173,7 +182,7 @@ class ToGene
         end
 
         def is_new_cds_subfeature_line(key)
-            key == "CDS"
+            key == @use_subfeature
         end
 
         def is_new_or_continued_exonpos_subsubfeature_line(key)
