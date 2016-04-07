@@ -3,7 +3,8 @@ require 'optparse'
 class CommandlineOptions
     attr_reader :input, :output,
         # optional params
-        :input_line, :utr5prime, :utr3prime
+        :utr5prime, :utr3prime,
+        :input_line, :utr5prime_line, :utr3prime_line
 
     def initialize(args)
         init_commandline_arguments(args)
@@ -36,7 +37,7 @@ class CommandlineOptions
     end
 
     def optional_arguments
-        %w(@input_line @utr5prime @utr3prime)
+        %w(@input_line @utr5prime @utr5prime_line @utr3prime @utr3prime_line)
     end
 
     def is_argument_set(arg)
@@ -57,7 +58,7 @@ class CommandlineOptions
         opt_parser.parse(@args)
 
         ensure_mandatory_arguments_are_set
-        # TODO ensure dependencies are met...
+        ensure_dependencies_are_met
 
         rescue OptionParser::MissingArgument,
             OptionParser::InvalidArgument,
@@ -95,15 +96,23 @@ class CommandlineOptions
                 "Starting line of gene description to read.") do |line|
                 @input_line = line
             end
-            opts.on("-u", "--5'-utr FILE",
+            opts.on("-u", "--utr-5 FILE",
                 "Path to 5' UTR file, in FASTA format.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @utr5prime = path
             end
-            opts.on("-v", "--3'-utr FILE",
+            opts.on("-v", "--utr-3 FILE",
                 "Path to 3' UTR file, in FASTA format.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @utr3prime = path
+            end
+            opts.on("--utr-5-line LINE NUMBER", Integer,
+                "Starting line of 5' UTR description to read.") do |line|
+                @utr5prime_line = line
+            end
+            opts.on("--utr-3-line LINE NUMBER", Integer,
+                "Starting line of 3' UTR description to read.") do |line|
+                @utr3prime_line = line
             end
 
             opts.separator ""
@@ -120,5 +129,20 @@ class CommandlineOptions
                 "missing_mandatory_argument",instance_variable_to_argument(arg)
             ) unless is_argument_set(arg)
         end
+    end
+
+    def ensure_dependencies_are_met
+        if utr_line_specified_without_file(@utr5prime, @utr5prime_line)
+            ErrorHandling.warn_with_error_message("unused_utr_line")
+            @utr5prime_line = nil
+        end
+        if utr_line_specified_without_file(@utr3prime, @utr3prime_line)
+            ErrorHandling.warn_with_error_message("unused_utr_line")
+            @utr3prime_line = nil
+        end
+    end
+
+    def utr_line_specified_without_file(file, line)
+        file.nil? && line
     end
 end

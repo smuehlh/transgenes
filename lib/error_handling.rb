@@ -53,6 +53,8 @@ module ErrorHandling
         case code
         when "partial_gene"
             warning_message("Gene is partial.")
+        when "unused_utr_line"
+            warning_message("Missing UTR file. Will ignore starting line.")
         end
     end
 
