@@ -48,4 +48,5 @@ end
 # Use for bootstrap
 gem 'bootstrap-sass', '~> 3.2.0'
 gem 'autoprefixer-rails'
-
+# Bootstrap helpers
+gem 'bh', '~> 1.2'
