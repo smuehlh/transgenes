@@ -46,7 +46,10 @@ group :development do
 end
 
 # Use for bootstrap
-gem 'bootstrap-sass', '~> 3.2.0'
+gem 'bootstrap-sass', '~> 3.3.6'
 gem 'autoprefixer-rails'
 # Bootstrap helpers
 gem 'bh', '~> 1.2'
+
+# store environment variables in .env files rather than having actual env. vars
+gem 'dotenv-rails'
