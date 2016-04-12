@@ -1,12 +1,15 @@
-<%= form_tag root_path, role: "form", id: "input-sequence-form" do %>
+<%= form_tag root_path, role: "form", id: "input-sequence-form", multipart: true do %>
     <div class="form-group">
         <%= label_tag :sequence, "Enter GeneID, Genebank or FASTA sequence" %>
         <%= button_tag "Reset", type: :reset, class: "btn btn-default btn-xs pull-right" %>
         <%= text_area_tag :sequence, nil, class: "form-control", placeholder: "Enter sequence"%>
-
+        <%= label_tag :sequence_file, "Or, upload file" %>
+        <%= file_field_tag :sequence_file, multiple: false, accept: ".fas,.gb"%>
     </div>
-Or, upload file: button | No file selected.
 <% end %>
 
 <!-- glyphicon-info-sign -->
-<!-- TODO: enable button if text typed into sequence-field -->
+<!-- TOOD
+2) upload-funktionalitaet
+3) get list of accepted file formats from standalone/lib
+ -->
