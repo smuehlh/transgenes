@@ -1,7 +1,7 @@
-<%= form_tag root_path, role: "form" do %>
+<%= form_tag root_path, role: "form", id: "input-sequence-form" do %>
     <div class="form-group">
         <%= label_tag :sequence, "Enter GeneID, Genebank or FASTA sequence" %>
-        <%= button_tag "Reset", type: :reset, class: "btn btn-default btn-xs pull-right", disabled: true %>
+        <%= button_tag "Reset", type: :reset, class: "btn btn-default btn-xs pull-right" %>
         <%= text_area_tag :sequence, nil, class: "form-control", placeholder: "Enter sequence"%>
 
     </div>
