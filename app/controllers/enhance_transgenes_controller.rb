@@ -1,4 +1,6 @@
 class EnhanceTransgenesController < ApplicationController
-  def new
-  end
+    def new
+        puts "+++++++"
+        puts params
+    end
 end
