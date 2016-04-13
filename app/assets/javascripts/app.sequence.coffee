@@ -10,7 +10,7 @@ class App.Sequence
         @el.find(":submit").prop('disabled', true)
 
     enable_controll: =>
-        if @el.find("#sequence").val().length > 0
+        if @el.find("textarea").val().length > 0
             @el.find(":reset").prop('disabled', false)
             @el.find(":submit").prop('disabled', false)
         else
@@ -20,4 +20,6 @@ class App.Sequence
         @el.submit()
 
 $(document).on "page:change", ->
-    seq = new App.Sequence $("#input-sequence-form")
+    cds = new App.Sequence $("#input-cds-form")
+    five = new App.Sequence $("#input-five-form")
+    three = new App.Sequence $("#input-three-form")

@@ -1,0 +1,12 @@
+<%= form_tag input_path, role: "form", id: "#{baseid}-form", multipart: true, authenticity_token: true, remote: true do %>
+    <div class="form-group">
+        <%= label_tag "#{baseid}-text", "Enter GeneID, Genebank or FASTA sequence" %>
+        <div class="pull-right control-group">
+            <%= button_tag "Reset", type: :reset, class: "btn btn-primary btn-xs" %>
+            <%= button_tag "Save", type: :submit, class: "btn btn-primary btn-xs" %>
+        </div>
+        <%= text_area_tag "#{baseid}-text", nil, class: "form-control", placeholder: "Enter sequence"%>
+        <%= label_tag "#{baseid}-file", "Or, upload file" %>
+        <%= file_field_tag "#{baseid}-file", multiple: false, accept: ".fas,.gb"%>
+    </div>
+<% end %>
