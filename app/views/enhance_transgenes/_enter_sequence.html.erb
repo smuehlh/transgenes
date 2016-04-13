@@ -1,11 +1,13 @@
 <%= form_tag input_path, role: "form", id: "input-sequence-form", multipart: true, authenticity_token: true, remote: true do %>
     <div class="form-group">
         <%= label_tag :sequence, "Enter GeneID, Genebank or FASTA sequence" %>
-        <%= button_tag "Reset", type: :reset, class: "btn btn-default btn-xs pull-right" %>
+        <div class="pull-right control-group">
+            <%= button_tag "Reset", type: :reset, class: "btn btn-primary btn-xs" %>
+            <%= button_tag "Save", type: :submit, class: "btn btn-primary btn-xs" %>
+        </div>
         <%= text_area_tag :sequence, nil, class: "form-control", placeholder: "Enter sequence"%>
         <%= label_tag :sequence_file, "Or, upload file" %>
         <%= file_field_tag :sequence_file, multiple: false, accept: ".fas,.gb"%>
-        <%= submit_tag %>
     </div>
 <% end %>
 
@@ -15,7 +17,7 @@
     -> redirect_to :back & render params - parameters!
     sequence_data = params[:sequence]
     text_area_tag sequence_data
-
+OR try using jquery-fileupload
 
 
 3) get list of accepted file formats from standalone/lib

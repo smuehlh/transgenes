@@ -1,15 +1,20 @@
 class App.Sequence
     constructor: (@el) ->
-        @init()
-        @el.bind("input", @enable_reset)
+        @disable_controll()
+        @el.bind("input", @enable_controll)
+        @el.bind("reset", @disable_controll)
         @el.bind("change", @send)
 
-    init: =>
+    disable_controll: =>
         @el.find(":reset").prop('disabled', true)
-        @el.find(":submit").css({"visibility":"hidden"});
+        @el.find(":submit").prop('disabled', true)
 
-    enable_reset: =>
-        @el.find(":reset").prop('disabled', false)
+    enable_controll: =>
+        if @el.find("#sequence").val().length > 0
+            @el.find(":reset").prop('disabled', false)
+            @el.find(":submit").prop('disabled', false)
+        else
+            @disable_controll()
 
     send: =>
         @el.submit()
