@@ -1,9 +1,13 @@
 class App.Sequence
     constructor: (@el) ->
-        @disable_controll()
+        @init()
         @el.bind("input", @enable_controll)
         @el.bind("reset", @disable_controll)
         @el.bind("change", @send)
+
+    init: =>
+        @disable_controll()
+        @el.find("textarea").val('')
 
     disable_controll: =>
         @el.find(":reset").prop('disabled', true)
