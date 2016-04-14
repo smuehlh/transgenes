@@ -1,11 +1,22 @@
-<%= form_tag input_path, role: "form", id: "#{baseid}-form", class: "form-horizontal" do %>
-    <div class="form-group">
-        <%= label_tag "#{baseid}-text", label, class: "control-label  col-sm-2" %>
-        <div class="col-sm-8">
-            <%= text_area_tag "#{baseid}-text", text, class: "form-control", disabled: true, readonly: true, rows: 2 %>
+<dl>
+    <dt>
+        <%= label %>
+    </dt>
+    <dd>
+        <div class="well well-sm clearfix">
+            <%=
+            if text.empty?
+                content_tag(:i, "Not specified.", class: "text-muted")
+            else
+                teaser = truncate(text, length: 80)
+                content_tag(:code, teaser, class: "text-muted")
+            end
+            %>
+            <button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#myModal">
+            <span class="glyphicon glyphicon-search"></span> View
+        </button>
         </div>
-        <div class="col-sm-2">
-            <%= button_tag "Show all", type: :button, class: "btn btn-primary btn-xs", title: "Show complete data" %>
-        </div>
-    </div>
-<% end %>
+    </dd>
+</dl>
+<!-- TODO: truncate text using bootstrap. wrap well in table? -->
+<!-- To display complete text instead. style: "word-wrap: break-word;" -->
