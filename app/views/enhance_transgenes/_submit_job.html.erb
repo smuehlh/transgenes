@@ -1,11 +1,16 @@
+<%
+    cds = get_input_data_from_session("cds") || ""
+    five = get_input_data_from_session("utr-five") || ""
+    three = get_input_data_from_session("utr-three") || ""
+%>
 <div class="container">
     <div class="row">
-        <%= render partial: "enhance_transgenes/submit_job/input", locals: {baseid: "submit-five", label: "5'UTR", text: ""} %>
+        <%= render partial: "enhance_transgenes/submit_job/input", locals: {baseid: "submit-five", label: "5'UTR", text: five} %>
     </div>
     <div class="row">
-        <%= render partial: "enhance_transgenes/submit_job/input", locals: {baseid: "submit-cds", label: "CDS", text: "data cds"} %>
+        <%= render partial: "enhance_transgenes/submit_job/input", locals: {baseid: "submit-cds", label: "CDS", text: cds} %>
     </div>
     <div class="row">
-        <%= render partial: "enhance_transgenes/submit_job/input", locals: {baseid: "submit-three", label: "3'UTR", text: "GCTGCTGGTGGTCTACCCTTGGACCCAGAGGTTCTTTGAGTCCTTTGGGGATCTGTCCACTCCTGATGCTGTTATGGGCAACCCTAAGGTGAAGGCTCATGGCAAGAAAGTGCTCGGTGCCTTTAGTGATGGCCTGGCTCACCTGGACAACCTCAAGGGCACCTTTGCCACACTGAGTGAGCTGCACTGTGACAAGCTGCACGTGGATCCTGAGAACTTCAGGgtgag"} %>
+        <%= render partial: "enhance_transgenes/submit_job/input", locals: {baseid: "submit-three", label: "3'UTR", text: three} %>
     </div>
 </div>
