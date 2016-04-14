@@ -12,7 +12,12 @@
             <%= button_tag "Reset", type: :reset, class: "btn btn-primary btn-xs", title: "Clear data" %>
             <%= button_tag "Save", type: :submit, class: "btn btn-primary btn-xs", title: "Save data" %>
         </div>
-        <%= text_area_tag "#{baseid}-text", nil, class: "form-control", placeholder: "Enter sequence"%>
+        <%= text_area_tag "#{baseid}-text", nil, class: "form-control", placeholder: "Enter sequence", maxlength: 2000%>
+        <div id="<%= "#{baseid}-text-alert" %>" class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+                Reached maximum input size. Consider uploading your data instead.
+        </div>
         <%= label_tag "#{baseid}-file", "Or, upload file" %>
         <%= file_field_tag "#{baseid}-file", multiple: false, accept: valid_file_extensions%>
     </div>

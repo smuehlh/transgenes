@@ -2,11 +2,13 @@ class App.Sequence
     constructor: (@el) ->
         @init()
         @el.bind("input", @enable_controll)
+        @el.bind("input", @show_alert)
         @el.bind("reset", @disable_controll)
         @el.bind("change", @send)
 
     init: =>
         @disable_controll()
+        @hide_alert()
         @el.find("textarea").val('')
 
     disable_controll: =>
@@ -19,6 +21,15 @@ class App.Sequence
             @el.find(":submit").prop('disabled', false)
         else
             @disable_controll()
+
+    hide_alert: =>
+        @el.find(".alert").hide()
+
+    show_alert: =>
+        if @el.find("textarea").val().length == Number(@el.find("textarea").attr('maxlength'))
+            @el.find(".alert").show()
+        else
+            @hide_alert()
 
     send: =>
         @el.submit()
