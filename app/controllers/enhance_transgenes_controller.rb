@@ -18,10 +18,4 @@ class EnhanceTransgenesController < ApplicationController
             data: ""
         }
     end
-
-# 1) session init aufhuebschen
-# 2) use session to display results
-# 3) view results buttons disabled if no results
-# 4) reset button: empty session!
-# 4) file upload
 end
