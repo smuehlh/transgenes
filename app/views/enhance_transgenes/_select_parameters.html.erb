@@ -1,8 +1,9 @@
 <%= form_tag input_path, role: "form", id: "params-form", class: "form-horizontal", multipart: true, authenticity_token: true, remote: true do %>
     <div class="form-group">
-        <%= label_tag "line", "Use gene starting in line", class: "control-label col-sm-3" %>
+        <%= label_tag "line", "Use gene starting with", class: "control-label col-sm-3" %>
         <div class="col-sm-2">
             <%= select_tag("line", options_for_select([5,10]), class: "form-control") %>
+            <!-- TODO: nicht die zeilennummern, sondern die tatsaechlichen line-starts -->
         </div>
     </div>
 <% end %>
