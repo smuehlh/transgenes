@@ -5,9 +5,28 @@
         Removing these motifs alongside with other unwanted functionality will thus improve transgene efficiency.
         <%= link_to("Find out more.", about_path, :target => "_blank") %>
     </p>
+
 <h3>Enter your sequence</h3>
-    <%= render "form" %>
+    <ul class="nav nav-tabs" data-tabs="tabs">
+        <li class="active"><a href="#input-tab-cds" data-toggle="tab">CDS</a></li>
+        <li><a href="#input-tab-five" data-toggle="tab">5'UTR</a></li>
+        <li><a href="#input-tab-three" data-toggle="tab">3'UTR</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane active" id="input-tab-cds">
+            <%= render "form" %>
+        </div>
+        <div class="tab-pane" id="input-tab-five">
+            <%= render "form" %>
+        </div>
+        <div class="tab-pane" id="input-tab-three">
+            <%= render "form" %>
+        </div>
+    </div>
+
 <h3>Select parameters</h3>
+
 <h3>Submit your job</h3>
     <div class="gene-index">
         <%= render "index" %>
