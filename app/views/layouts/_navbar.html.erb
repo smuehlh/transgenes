@@ -1,0 +1,15 @@
+<%= navbar position: :top do %>
+    <%= vertical do %>
+        <%= nav class: 'navbar-left' do %>
+            <%= link_to 'Enhance transgenes', '/' %>
+        <% end %>
+    <% end %>
+    <%= horizontal do %>
+        <%= nav class: 'navbar-right' do %>
+            <%= link_to 'About', about_path %>
+            <%= link_to 'Contact', contact_path %>
+            <%= link_to 'Help', help_path %>
+            <%= link_to 'Privacy', privacy_path %>
+        <% end %>
+    <% end %>
+<% end %>
