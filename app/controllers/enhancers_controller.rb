@@ -3,14 +3,11 @@ class EnhancersController < ApplicationController
 
   def index
     @enhancers = Enhancer.all
+    @enhancer = Enhancer.new
   end
 
   def show
     @enhancer = Enhancer.find(params[:id])
-  end
-
-  def new
-    @enhancer = Enhancer.new
   end
 
   def create
