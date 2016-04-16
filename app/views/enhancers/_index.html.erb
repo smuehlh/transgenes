@@ -1,5 +1,12 @@
 <dl>
     <% @enhancers.each do |enhancer| %>
+        <% id =
+            case enhancer.name
+            when "5'UTR" then "input-view-five"
+            when "CDS" then "input-view-cds"
+            when "3'UTR" then "input-view-three"
+            end
+        %>
         <dt>
             <%= enhancer.name %>
         </dt>
@@ -13,7 +20,7 @@
                     content_tag(:code, teaser, class: "text-muted")
                 end
                 %>
-                <button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#myModal" title="View data">
+                <button type="button" id=<%= id %> class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#myModal" title="View data">
                     <span class="glyphicon glyphicon-search"></span> View
                 </button>
             </div>
