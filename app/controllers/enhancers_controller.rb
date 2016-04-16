@@ -9,13 +9,19 @@ class EnhancersController < ApplicationController
 
     def create
         @enhancers = Enhancer.all
+        # INFO: do not change the order of resources
         @enhancer = Enhancer.where(name: enhancer_params[:name]).first
-        @enhancer.update_attributes(enhancer_params)
+        if params[:commit] == "Reset"
+            @enhancer.update_attributes(data: "")
+        else
+            @enhancer.update_attributes(enhancer_params)
+        end
     end
 
     private
 
     def init_gene_enhancers
+        # order does matter!
         Enhancer.create(name: "5'UTR")
         Enhancer.create(name: "CDS")
         Enhancer.create(name: "3'UTR")
