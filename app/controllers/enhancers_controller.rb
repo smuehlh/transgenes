@@ -1,5 +1,4 @@
 class EnhancersController < ApplicationController
-  before_action :set_enhancer, only: [:show, :edit, :update, :destroy]
 
   def index
     Enhancer.delete_all
@@ -21,11 +20,6 @@ class EnhancersController < ApplicationController
         Enhancer.create(name: "5'UTR")
         Enhancer.create(name: "CDS")
         Enhancer.create(name: "3'UTR")
-    end
-
-    # Use callbacks to share common setup or constraints between actions.
-    def set_enhancer
-      @enhancer = Enhancer.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
