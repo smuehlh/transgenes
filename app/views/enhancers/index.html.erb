@@ -15,13 +15,13 @@
 
     <div class="tab-content">
         <div class="tab-pane active" id="input-tab-cds">
-            <%= render "form" %>
+            <%= render partial: "form", locals: {resource_name: "CDS"} %>
         </div>
         <div class="tab-pane" id="input-tab-five">
-            <%= render "form" %>
+            <%= render partial: "form", locals: {resource_name: "5'UTR"} %>
         </div>
         <div class="tab-pane" id="input-tab-three">
-            <%= render "form" %>
+            <%= render partial: "form", locals: {resource_name: "3'UTR"} %>
         </div>
     </div>
 
@@ -29,5 +29,5 @@
 
 <h3>Submit your job</h3>
     <div class="gene-index">
-        <%= render "index" %>
+        <%= render partial: "index" %>
     </div>

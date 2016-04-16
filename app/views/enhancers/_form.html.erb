@@ -1,6 +1,6 @@
 <%= form_for @enhancer, remote: true, html: { style: "display:inline;", role: "form" } do |f| %>
     <div class="form-group">
-        <%= f.hidden_field :name, value: "5'UTR" %>
+        <%= f.hidden_field :name, value: resource_name %>
         <%= f.label :data, "Enter GeneID, Genebank or FASTA sequence", class:"control-label" %>
         <div class="pull-right control-group">
             <%= f.submit "Save", class: "btn btn-primary btn-xs" %>
