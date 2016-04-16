@@ -9,13 +9,12 @@ class EnhancersController < ApplicationController
 
     def create
         @enhancers = Enhancer.all
-        # only single object with given name is allowed.
-        enhancer = Enhancer.where(name: enhancer_params[:name]).first
-        enhancer.destroy if enhancer
-        @enhancer = Enhancer.create(enhancer_params)
+        @enhancer = Enhancer.where(name: enhancer_params[:name]).first
+        @enhancer.update_attributes(enhancer_params)
     end
 
     private
+
     def init_gene_enhancers
         Enhancer.create(name: "5'UTR")
         Enhancer.create(name: "CDS")
