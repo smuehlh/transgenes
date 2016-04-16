@@ -1,0 +1,21 @@
+<%= form_for(@enhancer) do |f| %>
+  <% if @enhancer.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@enhancer.errors.count, "error") %> prohibited this enhancer from being saved:</h2>
+
+      <ul>
+      <% @enhancer.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :data %><br>
+    <%= f.text_area :data %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
