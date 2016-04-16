@@ -1,13 +1,14 @@
 <h1>Enhance transgenes</h1>
-<p>
-    Transgenes typically have all, or all but the first, intron removed.
-    Still, splicing at cryptic splice sites occurs. This is linked to remnant exonic splice enhancer motifs.
-    Removing these motifs alongside with other unwanted functionality will thus improve transgene efficiency.
-    <%= link_to("Find out more.", about_path, :target => "_blank") %>
-</p>
-
-<%= render "form" %>
-
-<div class="gene-index">
-    <%= render "index" %>
-</div>
+    <p>
+        Transgenes typically have all, or all but the first, intron removed.
+        Still, splicing at cryptic splice sites occurs. This is linked to remnant exonic splice enhancer motifs.
+        Removing these motifs alongside with other unwanted functionality will thus improve transgene efficiency.
+        <%= link_to("Find out more.", about_path, :target => "_blank") %>
+    </p>
+<h3>Enter your sequence</h3>
+    <%= render "form" %>
+<h3>Select parameters</h3>
+<h3>Submit your job</h3>
+    <div class="gene-index">
+        <%= render "index" %>
+    </div>
