@@ -7,37 +7,12 @@ class EnhancersController < ApplicationController
     @enhancer = Enhancer.new
   end
 
-  def show
-    @enhancer = Enhancer.find(params[:id])
-  end
-
   def create
     @enhancers = Enhancer.all
     # only single object with given name is allowed.
     enhancer = Enhancer.where(name: enhancer_params[:name]).first
     enhancer.destroy if enhancer
     @enhancer = Enhancer.create(enhancer_params)
-  end
-
-  def edit
-    @enhancer = Enhancer.find(params[:id])
-  end
-
-  def update
-    @enhancers = Enhancer.all
-    @enhancer = Enhancer.find(params[:id])
-
-    @enhancer.update_attributes(enhancer_params)
-  end
-
-  def delete
-    @enhancer = Enhancer.find(params[:enhancer_id])
-  end
-
-  def destroy
-    @enhancers = Enhancer.all
-    @enhancer = Enhancer.find(params[:id])
-    @enhancer.destroy
   end
 
   private
