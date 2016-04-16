@@ -6,21 +6,8 @@
     <%= link_to("Find out more.", about_path, :target => "_blank") %>
 </p>
 
-<div class="well">
-    <%= render "form" %>
-</div>
-<div class="new-gene"></div>
+<%= render "form" %>
 
-<table class="table table-bordered table-striped">
-  <thead>
-    <tr>
-      <th>Gene data</th>
-      <td>&nbsp;</td>
-    </tr>
-  </thead>
-  <tbody class="gene-index">
+<div class="gene-index">
     <%= render "index" %>
-  </tbody>
-</table>
-<!-- INFO: class gene-index muss bleiben!!! -->
-<div id="gene-modal" class="modal fade"></div>
+</div>
