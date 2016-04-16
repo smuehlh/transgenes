@@ -1,64 +1,42 @@
 class EnhancersController < ApplicationController
   before_action :set_enhancer, only: [:show, :edit, :update, :destroy]
 
-  # GET /enhancers
-  # GET /enhancers.json
   def index
     @enhancers = Enhancer.all
   end
 
-  # GET /enhancers/1
-  # GET /enhancers/1.json
   def show
+    @enhancer = Enhancer.find(params[:id])
   end
 
-  # GET /enhancers/new
   def new
     @enhancer = Enhancer.new
   end
 
-  # GET /enhancers/1/edit
-  def edit
-  end
-
-  # POST /enhancers
-  # POST /enhancers.json
   def create
-    @enhancer = Enhancer.new(enhancer_params)
-
-    respond_to do |format|
-      if @enhancer.save
-        format.html { redirect_to @enhancer, notice: 'Enhancer was successfully created.' }
-        format.json { render :show, status: :created, location: @enhancer }
-      else
-        format.html { render :new }
-        format.json { render json: @enhancer.errors, status: :unprocessable_entity }
-      end
-    end
+    @enhancers = Enhancer.all
+    @enhancer = Enhancer.create(enhancer_params)
   end
 
-  # PATCH/PUT /enhancers/1
-  # PATCH/PUT /enhancers/1.json
+  def edit
+    @enhancer = Enhancer.find(params[:id])
+  end
+
   def update
-    respond_to do |format|
-      if @enhancer.update(enhancer_params)
-        format.html { redirect_to @enhancer, notice: 'Enhancer was successfully updated.' }
-        format.json { render :show, status: :ok, location: @enhancer }
-      else
-        format.html { render :edit }
-        format.json { render json: @enhancer.errors, status: :unprocessable_entity }
-      end
-    end
+    @enhancers = Enhancer.all
+    @enhancer = Enhancer.find(params[:id])
+
+    @enhancer.update_attributes(enhancer_params)
   end
 
-  # DELETE /enhancers/1
-  # DELETE /enhancers/1.json
+  def delete
+    @enhancer = Enhancer.find(params[:enhancer_id])
+  end
+
   def destroy
+    @enhancers = Enhancer.all
+    @enhancer = Enhancer.find(params[:id])
     @enhancer.destroy
-    respond_to do |format|
-      format.html { redirect_to enhancers_url, notice: 'Enhancer was successfully destroyed.' }
-      format.json { head :no_content }
-    end
   end
 
   private
