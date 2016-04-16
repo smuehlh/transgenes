@@ -1,6 +1,6 @@
 <% @enhancers.each do |enhancer| %>
   <tr>
     <td><%= enhancer.name %></td>
-    <td><%= enhancer.data %></td>
+    <td><%= enhancer.data.blank? ? "Not specified." : enhancer.data %></td>
   </tr>
 <% end %>
