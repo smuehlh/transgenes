@@ -3,6 +3,7 @@ class EnhancersController < ApplicationController
 
   def index
     Enhancer.delete_all
+    init_gene_enhancers
     @enhancers = Enhancer.all
     @enhancer = Enhancer.new
   end
@@ -16,6 +17,12 @@ class EnhancersController < ApplicationController
   end
 
   private
+    def init_gene_enhancers
+        Enhancer.create(name: "5'UTR")
+        Enhancer.create(name: "CDS")
+        Enhancer.create(name: "3'UTR")
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_enhancer
       @enhancer = Enhancer.find(params[:id])
