@@ -1,5 +1,6 @@
 <% @enhancers.each do |enhancer| %>
   <tr>
+    <td><%= enhancer.name %></td>
     <td><%= enhancer.data %></td>
     <td><%= link_to "Edit", edit_enhancer_path(enhancer), remote: true, class: "btn btn-default" %></td>
     <td><%= link_to "Delete", enhancer_delete_path(enhancer), remote: true, class: "btn btn-danger" %></td>
