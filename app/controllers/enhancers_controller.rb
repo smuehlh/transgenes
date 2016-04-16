@@ -2,6 +2,7 @@ class EnhancersController < ApplicationController
   before_action :set_enhancer, only: [:show, :edit, :update, :destroy]
 
   def index
+    Enhancer.delete_all
     @enhancers = Enhancer.all
     @enhancer = Enhancer.new
   end
