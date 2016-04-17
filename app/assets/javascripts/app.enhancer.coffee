@@ -3,11 +3,10 @@ class App.Enhancer
         @setup_form()
         @setup_view()
         @el.find("form").bind("input", @update_form)
-        @el.find("form").bind("submit", @reset_form)
+        @el.find("form").find(":submit[value=Reset]").bind("click", @reset_form)
 
     reset_form: =>
-        # TODO
-        # find out if "reset" button was hit.
+        @el.find("form").find("textarea").val('')
 
     setup_form: =>
         @el.find("form").find(".alert").hide()
