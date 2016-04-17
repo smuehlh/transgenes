@@ -11,7 +11,7 @@
             <%= enhancer.name %>
         </dt>
         <dd>
-            <div class="well well-sm clearfix">
+            <div class="well well-sm clearfix" id="input-view-<%= id %>">
                 <%=
                 if enhancer.data.blank?
                     content_tag(:i, "Not specified.", class: "text-muted")
