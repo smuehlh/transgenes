@@ -4,6 +4,7 @@ class App.Enhancer
         @setup_view()
         @el.find("form").bind("input", @update_form)
         @el.find("form").find(":submit[value=Reset]").bind("click", @reset_form)
+        @el.filter("[id^=input-view]").bind("contentchange", @update_view)
 
     reset_form: =>
         @el.find("form").find("textarea").val('')
@@ -31,8 +32,12 @@ class App.Enhancer
         else
             @el.find("form").find(".alert").show()
 
-    # TODO
-    # update_view
+    update_view: =>
+        textlength = @el.find(".input-view-text").text().length
+        if textlength > 0
+            @el.find("[id^=view-button]").prop('disabled', false)
+        else
+            @el.find("[id^=view-button]").prop('disabled', true)
 
 $(document).on "page:change", ->
     cds = new App.Enhancer $("[id^=input-][id$=-cds]")
