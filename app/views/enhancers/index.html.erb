@@ -28,6 +28,12 @@
 <h3>Select parameters</h3>
 
 <h3>Submit your job</h3>
-    <div class="gene-index">
-        <%= render partial: "index" %>
+    <div id="input-view-five">
+        <%= render partial: "viewer", locals: {enhancer: @five_enhancer} %>
+    </div>
+    <div id="input-view-cds">
+        <%= render partial: "viewer", locals: {enhancer: @cds_enhancer} %>
+    </div>
+    <div id="input-view-three">
+        <%= render partial: "viewer", locals: {enhancer: @three_enhancer} %>
     </div>

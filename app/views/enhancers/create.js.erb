@@ -1,1 +1,3 @@
-$(".gene-index").html("<%= escape_javascript(render 'index') %>")
+$("#input-view-five").html("<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @five_enhancer}) %>");
+$("#input-view-cds").html("<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @cds_enhancer}) %>");
+$("#input-view-three").html("<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @three_enhancer}) %>");
