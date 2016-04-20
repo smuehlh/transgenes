@@ -14,3 +14,10 @@
         Reached maximum input size. Please use file upload instead.
     </div>
 <% end %>
+<%= form_for @enhancer, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
+    <div class="field form-group">
+        <%= f.hidden_field :name, value: resource_name %>
+        <%= f.label :file, "Or, upload file" %>
+        <%= f.file_field :file %>
+    </div>
+<% end %>

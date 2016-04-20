@@ -8,6 +8,9 @@ class EnhancersController < ApplicationController
     end
 
     def create
+        # INFO: attach file content to pass params whitelist
+        params[:enhancer][:data] = params[:enhancer][:file].read if params[:enhancer] && params[:enhancer][:file]
+
         # INFO: do not change the order of resources
         enhancer = Enhancer.where(name: enhancer_params[:name]).first
         if params[:commit] == "Reset"

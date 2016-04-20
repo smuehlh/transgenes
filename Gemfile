@@ -53,3 +53,6 @@ gem 'bh', '~> 1.2'
 
 # store environment variables in .env files rather than having actual env. vars
 gem 'dotenv-rails'
+
+# Use jquery file upload
+gem 'jquery-fileupload-rails'
