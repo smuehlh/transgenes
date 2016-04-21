@@ -1,3 +1,9 @@
+<% valid_extensions = (
+    ToGene::GenebankToGene.valid_file_extensions +
+    ToGene::FastaToGene.valid_file_extensions
+    ).join(",")
+%>
+
 <%= form_for @enhancer, remote: true, html: { style: "display:inline;", role: "form" } do |f| %>
     <div class="form-group">
         <%= f.hidden_field :name, value: resource_name %>
@@ -18,6 +24,6 @@
     <div class="field form-group">
         <%= f.hidden_field :name, value: resource_name %>
         <%= f.label :file, "Or, upload file" %>
-        <%= f.file_field :file %>
+        <%= f.file_field :file, accept: valid_extensions %>
     </div>
 <% end %>
