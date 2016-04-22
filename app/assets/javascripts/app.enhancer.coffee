@@ -16,6 +16,7 @@ class App.Enhancer
         @el.find("form").find(":submit[value=Reset]").prop('disabled', true)
 
     setup_view: =>
+        $("#input-view-alert").hide()
         @el.find("[id^=view-button]").prop('disabled', true)
 
     update_form: =>
@@ -35,9 +36,12 @@ class App.Enhancer
     update_view: =>
         textlength = @el.find(".input-view-text").text().length
         if textlength > 0
+            console.log($("#input-view-alert"))
             @el.find("[id^=view-button]").prop('disabled', false)
+            $("#input-view-alert").toggle() # 'show' not working
         else
             @el.find("[id^=view-button]").prop('disabled', true)
+            $("#input-view-alert").toggle() # 'hide' not working
 
 $(document).on "page:change", ->
     cds = new App.Enhancer $("[id^=input-][id$=-cds]")
