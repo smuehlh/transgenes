@@ -1,7 +1,7 @@
 window.App ||= {}
 
 App.init = ->
-    $("a, span, i, div").tooltip();
+    $('[data-toggle="tooltip"]').tooltip();
     $("input:file").fileupload({
         autoUpload: true
     });

@@ -19,9 +19,11 @@
                     content_tag(:code, teaser, class: "text-muted")
                 end
             %>
-            <button type="button" id="view-button-<%= id %>" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#view-modal-<%= id %>" title="View data">
-                <span class="glyphicon glyphicon-search"></span> View
-            </button>
+            <span data-toggle="modal" data-target="#view-modal-<%= id %>">
+                <button type="button" id="view-button-<%= id %>" class="btn btn-primary btn-xs pull-right" data-toggle="tooltip" title="View data">
+                    <span class="glyphicon glyphicon-search"></span> View
+                </button>
+            </span>
             <div id="view-modal-<%= id %>" class="modal" role="dialog">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">

@@ -9,8 +9,8 @@
         <%= f.hidden_field :name, value: resource_name %>
         <%= f.label :data, "Enter GeneID, Genebank or FASTA sequence", class:"control-label" %>
         <div class="pull-right control-group">
-            <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data" %>
-            <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data" %>
+            <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"} %>
+            <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"} %>
         </div>
         <%= f.text_area :data, class: "form-control", placeholder: "Enter sequence", maxlength: 2000 %>
     </div>
