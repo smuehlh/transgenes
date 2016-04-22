@@ -1,24 +1,26 @@
+<%
+id =
+    case enhancer.name
+    when "5'UTR" then "five"
+    when "CDS" then "cds"
+    when "3'UTR" then "three"
+    end
+if enhancer.data.blank?
+    data = "Not specified."
+    teaser_tag = content_tag(:em, data, class: "text-muted")
+else
+    data = breaking_word_wrap(enhancer.data)
+    firstline = data.split("\n").first
+    teaser_tag = content_tag(:code, firstline, class: "text-muted")
+end
+%>
 <dl>
-    <% id =
-        case enhancer.name
-        when "5'UTR" then "five"
-        when "CDS" then "cds"
-        when "3'UTR" then "three"
-        end
-    %>
     <dt>
         <%= enhancer.name %>
     </dt>
     <dd>
         <div class="well well-sm clearfix">
-            <%=
-                if enhancer.data.blank?
-                    content_tag(:i, "Not specified.", class: "text-muted")
-                else
-                    teaser = truncate(enhancer.data, length: 80)
-                    content_tag(:code, teaser, class: "text-muted")
-                end
-            %>
+            <%= teaser_tag %>
             <span data-toggle="modal" data-target="#view-modal-<%= id %>">
                 <button type="button" id="view-button-<%= id %>" class="btn btn-primary btn-xs pull-right" data-toggle="tooltip" title="View data">
                     <span class="glyphicon glyphicon-search"></span> View
@@ -32,7 +34,7 @@
                             <h4 class="modal-title"> <%= enhancer.name %> </h4>
                         </div>
                         <div class="modal-body">
-                            <pre class="text-muted input-view-text"><%= enhancer.data %></pre>
+                            <pre class="text-muted input-view-text"><%= data %></pre>
                         </div>
                     </div>
                 </div>
