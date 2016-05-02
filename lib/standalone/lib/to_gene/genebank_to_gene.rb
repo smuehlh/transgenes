@@ -65,7 +65,7 @@ class ToGene
         def set_subfeature_to_collect(key)
             case key
             when "5'UTR" then "5'UTR"
-            when "5'UTR" then "3'UTR"
+            when "3'UTR" then "3'UTR"
             else "CDS"
             end
         end
