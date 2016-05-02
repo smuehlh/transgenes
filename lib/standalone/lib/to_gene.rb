@@ -2,23 +2,29 @@ class ToGene
 
     attr_reader :gene_name, :exons, :introns
 
-    def initialize
+    def initialize(use_feature)
         @gene_name = ""
         @exons = []
         @introns = []
+
+        @use_feature = use_feature
     end
 
-    def parse_file_to_gene_data_or_die(file, use_gene_starting_in_line)
-        @file_info = file
+    def parse_file_or_die(file, use_feature_starting_in_line)
+        @file_info = "#{file} (Attempting to parse #{@use_feature})"
 
         # NOTE: init variables along the way.
         ensure_file_format_is_valid(file)
-        init_file_to_gene_obj("CDS")
+        init_file_to_gene_obj
         split_file_into_single_features_or_die
-        ensure_wanted_feature_is_found(use_gene_starting_in_line)
-        warn_if_wanted_gene_is_partial(use_gene_starting_in_line)
-        parse_wanted_feature_record(use_gene_starting_in_line)
-        ensure_gene_is_parsed_successfully
+        ensure_wanted_feature_is_found(use_feature_starting_in_line)
+        parse_wanted_feature_record(use_feature_starting_in_line)
+        ensure_feature_is_parsed_successfully
+
+        if is_cds_feature
+            warn_if_wanted_gene_is_partial(use_feature_starting_in_line)
+            ensure_feature_is_valid_cds
+        end
 
     rescue StandardError => exp
         # something went very wrong. most likely the input file is corrupt.
@@ -27,22 +33,8 @@ class ToGene
         )
     end
 
-    def parse_file_to_utr_data_or_die(file, use_utr_starting_in_line, utr_type)
-        @file_info = "#{file} (Attempting to parse #{utr_type})"
-
-        # NOTE: init variables along the way.
-        ensure_file_format_is_valid(file)
-        init_file_to_gene_obj(utr_type)
-        split_file_into_single_features_or_die
-        ensure_wanted_feature_is_found(use_utr_starting_in_line)
-        parse_wanted_feature_record(use_utr_starting_in_line)
-        ensure_utr_is_parsed_successfully
-
-    rescue StandardError => exp
-        # something went very wrong. most likely the input file is corrupt.
-        ErrorHandling.abort_with_error_message(
-            "invalid_file_format", @file_info
-        )
+    def get_sequence
+        @exons.zip(@introns).flatten.join("")
     end
 
     private
@@ -92,26 +84,23 @@ class ToGene
         save_features
     end
 
-    def ensure_gene_is_parsed_successfully
-        ensure_gene_name_is_found
-        ensure_exons_and_introns_are_found
-        ensure_exons_contain_valid_codons_only
-    end
-
-    def ensure_utr_is_parsed_successfully
-        # NOTE: don't test if exons can be translated, they might not and there's no need for them to be.
-        ensure_gene_name_is_found
-        ensure_exons_and_introns_are_found
-    end
-
-    def init_file_to_gene_obj(use_genebank_feature)
+    def init_file_to_gene_obj
         @file_to_gene_obj =
             if is_valid_genebank_file_extension
-                GenebankToGene.new(@file, use_genebank_feature)
+                GenebankToGene.new(@file, @use_feature)
             else
                 # must be in fasta-format.
                 FastaToGene.new(@file)
             end
+    end
+
+    def ensure_feature_is_parsed_successfully
+        ensure_gene_name_is_found
+        ensure_exons_and_introns_are_found
+    end
+
+    def ensure_feature_is_valid_cds
+        ensure_exons_contain_valid_codons_only
     end
 
     def ensure_gene_name_is_found
@@ -177,6 +166,10 @@ class ToGene
     def is_gene_with_exons_and_introns
         # gene should be of format: exon-intron-[exon-intron]*-exon
         @exons.size == @introns.size + 1
+    end
+
+    def is_cds_feature
+        @use_feature == "CDS"
     end
 
     def are_codons_valid

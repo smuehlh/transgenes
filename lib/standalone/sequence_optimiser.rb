@@ -12,10 +12,10 @@ ErrorHandling.is_commandline_tool = true
 options = CommandlineOptions.new(ARGV)
 
 # read in and parse data
-gene = Gene.new(options.input, options.input_line)
-five_prime_utr = Utr.new(options.utr5prime, options.utr5prime_line, "5'UTR")
-three_prime_utr = Utr.new(options.utr3prime, options.utr3prime_line, "3'UTR")
-gene.add_utr(five_prime_utr, three_prime_utr)
+gene = Gene.new
+gene.add_cds(options.input, options.input_line)
+gene.add_utr(options.utr5prime, options.utr5prime_line, is_5prime=true)
+gene.add_utr(options.utr3prime, options.utr3prime_line, is_5prime=false)
 
 puts gene.statistics
 
