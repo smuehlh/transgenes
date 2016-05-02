@@ -36,7 +36,6 @@ class App.Enhancer
     update_view: =>
         textlength = @el.find(".input-view-text").text().length
         if textlength > 0
-            console.log($("#input-view-alert"))
             @el.find("[id^=view-button]").prop('disabled', false)
             $("#input-view-alert").toggle() # 'show' not working
         else
