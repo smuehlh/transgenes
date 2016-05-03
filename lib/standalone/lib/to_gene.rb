@@ -14,17 +14,8 @@ class ToGene
         @file_info = "#{file} (Attempting to parse #{@use_feature})"
 
         # NOTE: init variables along the way.
-        ensure_file_format_is_valid(file)
-        init_file_to_gene_obj
-        split_file_into_single_features_or_die
-        ensure_wanted_feature_is_found(use_feature_starting_in_line)
-        parse_wanted_feature_record(use_feature_starting_in_line)
-        ensure_feature_is_parsed_successfully
-
-        if is_cds_feature
-            warn_if_wanted_gene_is_partial(use_feature_starting_in_line)
-            ensure_feature_is_valid_cds
-        end
+        ensure_file_format_and_split_file_into_features(file)
+        parse_feature_and_ensure_feature_format(use_feature_starting_in_line)
 
     rescue StandardError => exp
         # something went very wrong. most likely the input file is corrupt.
@@ -37,11 +28,49 @@ class ToGene
         @exons.zip(@introns).flatten.join("")
     end
 
+    def parse_file_for_web_or_die(file)
+        ensure_file_format_and_split_file_into_features(file)
+    rescue StandardError => exp
+        # something went very wrong. most likely the input file is corrupt.
+        ErrorHandling.abort_with_error_message(
+            "invalid_file_format", @file_info
+        )
+    end
+
+    def parse_feature_for_web_or_die(use_feature_starting_in_line)
+        parse_feature_and_ensure_feature_format(use_feature_starting_in_line)
+    rescue StandardError => exp
+        # something went very wrong. most likely the input file is corrupt.
+        ErrorHandling.abort_with_error_message(
+            "invalid_file_format", @file_info
+        )
+    end
+
+    def get_features_with_starting_lines_for_web
+        @feature_records_by_feature_starts || {}
+    end
+
     private
 
     # NOTE:
-    # method defined here indicate if the apply to genes or utrs or both.
-    # methods defined in file_to_gene apply to both, even if termed "gene".
+    # method names indicate if the apply to both genes and utrs or to genes only.
+
+    def ensure_file_format_and_split_file_into_features(file)
+        ensure_file_format_is_valid(file)
+        init_file_to_gene_obj
+        split_file_into_single_features_or_die
+    end
+
+    def parse_feature_and_ensure_feature_format(use_feature_starting_in_line)
+        ensure_wanted_feature_is_found(use_feature_starting_in_line)
+        parse_wanted_feature_record(use_feature_starting_in_line)
+        ensure_feature_is_parsed_successfully
+
+        if is_cds_feature
+            warn_if_wanted_gene_is_partial(use_feature_starting_in_line)
+            ensure_feature_is_valid_cds
+        end
+    end
 
     def ensure_file_format_is_valid(file)
         ErrorHandling.abort_with_error_message(

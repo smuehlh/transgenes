@@ -1,4 +1,5 @@
 class EnhancersController < ApplicationController
+    include ConvertInputToGene
 
     def index
         Enhancer.delete_all
@@ -8,16 +9,17 @@ class EnhancersController < ApplicationController
     end
 
     def create
-        # INFO: attach file content to pass params whitelist
-        params[:enhancer][:data] = params[:enhancer][:file].read if params[:enhancer] && params[:enhancer][:file]
-
-        # INFO: do not change the order of resources
-        enhancer = Enhancer.where(name: enhancer_params[:name]).first
         if params[:commit] == "Reset"
-            enhancer.update_attributes(data: "")
+            data = ""
         else
-            enhancer.update_attributes(enhancer_params)
+            gene_parser = ConvertInputToGene::ParseGene.new(
+                params.require(:enhancer)
+            )
+            flash[:error] = gene_parser.error
+            data = gene_parser.get_sequence
         end
+        enhancer = Enhancer.where(name: enhancer_params[:name]).first
+        enhancer.update_attributes(data: data)
         @five_enhancer, @cds_enhancer, @three_enhancer = get_gene_enhancers
     end
 
