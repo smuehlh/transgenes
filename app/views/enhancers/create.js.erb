@@ -1,4 +1,13 @@
-$("#input-view-five").html("<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @five_enhancer}) %>").trigger("contentchange");
-$("#input-view-cds").html("<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @cds_enhancer}) %>").trigger("contentchange");
-$("#input-view-three").html("<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @three_enhancer}) %>").trigger("contentchange");
+$("#error-container").html(
+    "<%= escape_javascript(render partial: 'error') %>"
+);
+$("#input-view-five").html(
+    "<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @five_enhancer}) %>"
+).trigger("contentchange");
+$("#input-view-cds").html(
+    "<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @cds_enhancer}) %>"
+).trigger("contentchange");
+$("#input-view-three").html(
+    "<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @three_enhancer}) %>"
+).trigger("contentchange");
 $('[data-toggle="tooltip"]').tooltip();

@@ -1,3 +1,6 @@
+class EnhancerError < StandardError
+end
+
 module ErrorHandling
 
     extend self
@@ -21,6 +24,15 @@ module ErrorHandling
 
     def warning_message(str)
         "Warning: #{str}"
+    end
+
+    def error_code_to_webserver_error_message(code)
+        case code
+        when "invalid_file_format"
+            "Unrecognized file format. Input has to be either in GeneBank or in FASTA format."
+        else
+            "Something went wrong."
+        end
     end
 
     def error_code_to_commandline_error_message(code, additional_error_message = "")
@@ -64,8 +76,7 @@ module ErrorHandling
                 code, additional_error_message
             )
         else
-            # TODO
-            # webserver
+            raise EnhancerError, error_code_to_webserver_error_message(code)
         end
     end
 
