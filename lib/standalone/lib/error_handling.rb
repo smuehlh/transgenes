@@ -30,6 +30,8 @@ module ErrorHandling
         case code
         when "invalid_file_format"
             "Unrecognized file format. Input has to be either in GeneBank or in FASTA format."
+        when "invalid_codons"
+            "Found invalid codon(s)"
         else
             "Something went wrong."
         end
