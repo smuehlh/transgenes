@@ -1,0 +1,19 @@
+<% if @is_first_record_of_multiple %>
+    <a href="#" data-toggle="modal" data-target="#multiple-genes-info" style="display: none;">Found multiple genes</a>
+    <div id="multiple-genes-info" class="modal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                        Multiple genes found
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <p>Currently, the first gene record is used. You can change this by selecting a different record from the list.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+<% end %>

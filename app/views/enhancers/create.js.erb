@@ -1,6 +1,13 @@
+// show errors and info messages (all partial show only if there are errors)
 $("#error-container").html(
     "<%= escape_javascript(render partial: 'error') %>"
 );
+$("#multigene-info-container").html(
+    "<%= escape_javascript(render partial: 'info_multiple_records') %>"
+);
+$("#multiple-genes-info").modal('show');
+
+// update gene record preview
 $("#input-view-five").html(
     "<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @five_enhancer}) %>"
 ).trigger("contentchange");
@@ -10,4 +17,6 @@ $("#input-view-cds").html(
 $("#input-view-three").html(
     "<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @three_enhancer}) %>"
 ).trigger("contentchange");
+
+// set up tooltips in the updated preview
 $('[data-toggle="tooltip"]').tooltip();

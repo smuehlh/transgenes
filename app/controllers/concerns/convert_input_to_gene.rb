@@ -18,6 +18,10 @@ module ConvertInputToGene
             @error.nil? ? @to_gene_obj.get_sequence : ""
         end
 
+        def is_multiple_records
+            @to_gene_obj.get_features_with_starting_lines_for_web.size > 1
+        end
+
         private
 
         def is_text_input(params)
