@@ -3,6 +3,7 @@
     ToGene::FastaToGene.valid_file_extensions
     ).join(",")
 %>
+
 <div id="error-container"></div>
 <%= form_for @enhancer, remote: true, html: { style: "display:inline;", role: "form" } do |f| %>
     <div class="form-group">
@@ -27,4 +28,4 @@
         <%= f.file_field :file, accept: valid_extensions %>
     </div>
 <% end %>
-<div id="multigene-info-container"></div>
+<div id="multigene-container"></div>

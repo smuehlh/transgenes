@@ -1,9 +1,9 @@
 // show errors and info messages (all partial show only if there are errors)
 $("#error-container").html(
-    "<%= escape_javascript(render partial: 'error') %>"
+    "<%= escape_javascript(render partial: 'enhancers/create/error') %>"
 );
-$("#multigene-info-container").html(
-    "<%= escape_javascript(render partial: 'info_multiple_records') %>"
+$("#multigene-container").html(
+    "<%= escape_javascript(render partial: 'enhancers/create/multigene') %>"
 );
 $("#multiple-genes-info").modal('show');
 
