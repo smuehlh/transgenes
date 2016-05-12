@@ -6,20 +6,17 @@ module ConvertInputToGene
 
         def initialize(params)
             @error = nil
+            @sequences_with_keys = {}
 
             write_text_input_to_file(params) if is_text_input(params)
             parse_input_file_to_records(params[:file], params[:name])
             delete_text_input_file(params) if is_text_input(params)
 
-            parse_first_record
+            @sequences_with_keys = parse_gene_records
         end
 
-        def get_sequence
-            @error.nil? ? @to_gene_obj.get_sequence : ""
-        end
-
-        def is_multiple_records
-            @to_gene_obj.get_features_with_starting_lines_for_web.size > 1
+        def get_sequences
+            @error.nil? ? @sequences_with_keys : {}
         end
 
         private
@@ -61,15 +58,27 @@ module ConvertInputToGene
             @error = exception.to_s
         end
 
-        def parse_first_record
-            @to_gene_obj.parse_feature_for_web_or_die(get_starting_line_first_record
-            )
+        def parse_gene_records
+            starting_lines_with_gene_records = {}
+            all_starting_lines.each do |line|
+                parse_gene_record_starting_in(line)
+                starting_lines_with_gene_records[line] = get_sequence
+            end
+            starting_lines_with_gene_records
+        end
+
+        def parse_gene_record_starting_in(line)
+            @to_gene_obj.parse_feature_for_web_or_die(line)
         rescue EnhancerError => exception
             @error = exception.to_s
         end
 
-        def get_starting_line_first_record
-            @to_gene_obj.get_features_with_starting_lines_for_web.keys.first
+        def all_starting_lines
+            @to_gene_obj.get_features_with_starting_lines_for_web.keys
+        end
+
+        def get_sequence
+            @error.nil? ? @to_gene_obj.get_sequence : ""
         end
     end
 
