@@ -14,9 +14,7 @@ class EnhancersController < ApplicationController
         if params[:commit] == "Reset"
             data = ""
         else
-            gene_parser = ConvertInputToGene::ParseGene.new(
-                params.require(:enhancer)
-            )
+            gene_parser = ConvertInputToGene::ParseGene.new(enhancer_params)
             gene_parser.get_records.each do |line, sequence|
                 record = Record.new(data: sequence, line: line)
                 enhancer.records.push(record)
@@ -47,6 +45,7 @@ class EnhancersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def enhancer_params
-        params.require(:enhancer).permit(:data, :name)
+        # INFO: file is a temporary parameter only. it's not part of the model!
+        params.require(:enhancer).permit(:data, :name, :file)
     end
 end
