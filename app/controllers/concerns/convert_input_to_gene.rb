@@ -15,7 +15,7 @@ module ConvertInputToGene
             @sequences_with_keys = parse_gene_records
         end
 
-        def get_sequences
+        def get_records
             @error.nil? ? @sequences_with_keys : {}
         end
 

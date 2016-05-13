@@ -9,17 +9,21 @@ class EnhancersController < ApplicationController
     end
 
     def create
+        enhancer = Enhancer.where(name: enhancer_params[:name]).first
+
         if params[:commit] == "Reset"
             data = ""
         else
             gene_parser = ConvertInputToGene::ParseGene.new(
                 params.require(:enhancer)
             )
+            gene_parser.get_records.each do |line, sequence|
+                record = Record.new(data: sequence, line: line)
+                enhancer.records.push(record)
+            end
+            data = enhancer.records.any? ? enhancer.records.first.data : ""
             flash[:error] = gene_parser.error
-            data = gene_parser.get_sequence # parse first record by default
-            @is_first_record_of_multiple = gene_parser.is_multiple_records
         end
-        enhancer = Enhancer.where(name: enhancer_params[:name]).first
         enhancer.update_attributes(data: data)
         @five_enhancer, @cds_enhancer, @three_enhancer = get_gene_enhancers
     end
