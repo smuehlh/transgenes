@@ -1,11 +1,10 @@
-// show errors and info messages (all partial show only if there are errors)
+// show errors and info messages (if there is need to is handled in the partial)
 $("#error-container").html(
     "<%= escape_javascript(render partial: 'enhancers/create/error') %>"
 );
 $("#multigene-container").html(
     "<%= escape_javascript(render partial: 'enhancers/create/multigene') %>"
 );
-$("#multiple-genes-info").modal('show');
 
 // update gene record preview
 var id;

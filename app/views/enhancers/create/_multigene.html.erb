@@ -1,4 +1,8 @@
-<% if @all_gene_records && @all_gene_records.size > 1 %>
+<% if @enhancer.records.size > 1 %>
     <%= render partial: "enhancers/create/multigene_info" %>
     <%= render partial: "enhancers/create/multigene_form" %>
+
+    <%= javascript_tag do %>
+        $("#multiple-genes-info").modal('show');
+    <% end %>
 <% end %>
