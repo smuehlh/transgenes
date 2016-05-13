@@ -8,15 +8,20 @@ $("#multigene-container").html(
 $("#multiple-genes-info").modal('show');
 
 // update gene record preview
-$("#input-view-five").html(
-    "<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @five_enhancer}) %>"
-).trigger("contentchange");
-$("#input-view-cds").html(
-    "<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @cds_enhancer}) %>"
-).trigger("contentchange");
-$("#input-view-three").html(
-    "<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @three_enhancer}) %>"
-).trigger("contentchange");
+var id;
+switch("<%= @enhancer.name %>") {
+    case "5'UTR":
+        id = "#input-view-five";
+        break;
+    case "CDS":
+        id = "#input-view-cds";
+        break;
+    case "3'UTR":
+        id = "#input-view-three";
+        break;
+}
+$(id).html("<%= escape_javascript(render partial: 'viewer') %>");
+$(id).trigger("contentchange");
 
 // set up tooltips in the updated preview
 $('[data-toggle="tooltip"]').tooltip();
