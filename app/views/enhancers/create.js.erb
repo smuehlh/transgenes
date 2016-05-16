@@ -19,7 +19,7 @@ switch("<%= @enhancer.name %>") {
         id = "#input-view-three";
         break;
 }
-$(id).html("<%= escape_javascript(render partial: 'viewer') %>");
+$(id).html("<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @enhancer} ) %>");
 $(id).trigger("contentchange");
 
 // set up tooltips in the updated preview
