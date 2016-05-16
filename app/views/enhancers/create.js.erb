@@ -8,16 +8,14 @@ $("#multigene-container").html(
 
 // update gene record preview
 var id;
-switch("<%= @enhancer.name %>") {
-    case "5'UTR":
-        id = "#input-view-five";
-        break;
-    case "CDS":
-        id = "#input-view-cds";
-        break;
-    case "3'UTR":
-        id = "#input-view-three";
-        break;
+// NOTE: use <%==, as the "'" should not be escaped for string-comparision.
+switch("<%== @enhancer.name %>") {
+    case "5'UTR": id = "#input-view-five";
+    break;
+    case "CDS": id = "#input-view-cds";
+    break;
+    case "3'UTR": id = "#input-view-three";
+    break;
 }
 $(id).html("<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @enhancer} ) %>");
 $(id).trigger("contentchange");
