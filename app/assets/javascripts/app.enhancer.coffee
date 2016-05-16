@@ -22,7 +22,6 @@ class App.Enhancer
 
     upload_file: =>
         @update_form
-        alert("XX")
         @el.find("form").submit()
 
     update_form: =>
