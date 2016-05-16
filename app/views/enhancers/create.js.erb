@@ -8,7 +8,7 @@ $("#multigene-container").html(
 
 // update gene record preview
 var id;
-// NOTE: use <%==, as the "'" should not be escaped for string-comparision.
+// NOTE: use <%== %>, as enhancer.name contains special characters that should not be escaped here.
 switch("<%== @enhancer.name %>") {
     case "5'UTR": id = "#input-view-five";
     break;
