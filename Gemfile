@@ -55,4 +55,5 @@ gem 'bh', '~> 1.2'
 gem 'dotenv-rails'
 
 # Use jquery file upload
-gem 'jquery-fileupload-rails'
+# gem 'jquery-fileupload-rails'
+gem 'remotipart', '~> 1.2'
