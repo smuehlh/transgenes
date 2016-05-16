@@ -2,7 +2,7 @@ class EnhancersController < ApplicationController
     include ConvertInputToGene
 
     def index
-        Enhancer.delete_all
+        delete_old_gene_enhancers
         init_gene_enhancers
         @five_enhancer, @cds_enhancer, @three_enhancer = get_gene_enhancers
         @enhancer = Enhancer.new
@@ -10,6 +10,8 @@ class EnhancersController < ApplicationController
 
     def create
         @enhancer = Enhancer.where(name: enhancer_params[:name]).first
+        # All records associated with previous input (if any) are now invalid.
+        @enhancer.records.delete_all
 
         if params[:commit] == "Reset"
             data = ""
@@ -26,6 +28,11 @@ class EnhancersController < ApplicationController
     end
 
     private
+
+    def delete_old_gene_enhancers
+        Enhancer.delete_all
+        Record.delete_all
+    end
 
     def init_gene_enhancers
         # order does matter!
