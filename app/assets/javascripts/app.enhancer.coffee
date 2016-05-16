@@ -4,6 +4,7 @@ class App.Enhancer
         @setup_view()
         @el.find("form").bind("input", @update_form)
         @el.find("form").find(":submit[value=Reset]").bind("click", @reset_form)
+        @el.find('form').find("input:file").bind("change", @upload_file)
         @el.filter("[id^=input-view]").bind("contentchange", @update_view)
 
     reset_form: =>
@@ -19,10 +20,16 @@ class App.Enhancer
         $("#input-view-alert").hide()
         @el.find("[id^=view-button]").prop('disabled', true)
 
+    upload_file: =>
+        @update_form
+        alert("XX")
+        @el.find("form").submit()
+
     update_form: =>
         textlength = @el.find("textarea").val().length
+        filelength = @el.find("form").find("input:file").val().length
         maxlength = Number(@el.find("textarea").attr('maxlength'))
-        if textlength > 0
+        if textlength > 0 || filelength > 0
             @el.find("form").find(":submit[value=Save]").prop('disabled', false)
             @el.find("form").find(":submit[value=Reset]").prop('disabled', false)
         else
