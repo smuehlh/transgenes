@@ -5,7 +5,7 @@
 %>
 
 <div id="error-container"></div>
-<%= form_for @enhancer, remote: true, html: { style: "display:inline;", role: "form" } do |f| %>
+<%= form_for @enhancer, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
     <div class="form-group">
         <%= f.hidden_field :name, value: resource_name %>
         <%= f.label :data, "Enter GeneID, Genebank or FASTA sequence", class:"control-label" %>
@@ -20,10 +20,7 @@
         <span class="sr-only">Error:</span>
         Reached maximum input size. Please use file upload instead.
     </div>
-<% end %>
-<%= form_for @enhancer, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
-    <div class="field form-group">
-        <%= f.hidden_field :name, value: resource_name %>
+    <div class="form-group">
         <%= f.label :file, "Or, upload file" %>
         <%= f.file_field :file, accept: valid_extensions %>
     </div>
