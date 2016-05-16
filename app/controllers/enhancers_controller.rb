@@ -49,7 +49,8 @@ class EnhancersController < ApplicationController
     end
 
     def update_enhancer_data
-        gene_parser = ConvertInputToGene::ParseGene.new(enhancer_params)
+        gene_parser = ConvertInputToGene::ParseGene.new(
+            enhancer_params, remotipart_submitted?)
         gene_parser.get_records.each do |line, sequence|
             record = Record.new(data: sequence, line: line)
             @enhancer.records.push(record)

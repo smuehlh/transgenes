@@ -4,13 +4,17 @@ module ConvertInputToGene
     class ParseGene
         attr_reader :error
 
-        def initialize(params)
+        def initialize(params, is_fileupload_input)
             @error = nil
             @sequences_with_keys = {}
 
-            write_text_input_to_file(params) if is_text_input(params)
-            parse_input_file_to_records(params[:file], params[:name])
-            delete_text_input_file(params) if is_text_input(params)
+            if is_fileupload_input
+                save_file_input_path(params)
+            else
+                write_text_input_to_file(params)
+            end
+            parse_input_file_to_records(params[:usefile], params[:name])
+            delete_text_input_file(params) unless is_fileupload_input
 
             @sequences_with_keys = parse_gene_records
         end
@@ -21,8 +25,8 @@ module ConvertInputToGene
 
         private
 
-        def is_text_input(params)
-            params[:data]
+        def save_file_input_path(params)
+            params[:usefile] = params[:file].path
         end
 
         def write_text_input_to_file(params)
@@ -30,12 +34,12 @@ module ConvertInputToGene
             file = Tempfile.new(['gene', ext])
             file.write(params[:data])
             file.close
-            params[:file] = file
+            params[:usefile] = file
         end
 
         def delete_text_input_file(params)
             # remove tempfile (was created only in case of textinput)
-            params[:file].delete if params[:file].respond_to?(:delete)
+            params[:usefile].delete if params[:usefile].respond_to?(:delete)
         end
 
         def get_file_extension_matching_input_type(data)
