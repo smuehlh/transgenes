@@ -9,6 +9,7 @@ class App.Enhancer
 
     reset_form: =>
         @el.find("form").find("textarea").val('')
+        @el.find("form").find("input:file").val('')
 
     setup_form: =>
         @el.find("form").find(".alert").hide()
