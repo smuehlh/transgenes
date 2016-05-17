@@ -1,10 +1,5 @@
 <%
-id =
-    case enhancer.name
-    when "5'UTR" then "five"
-    when "CDS" then "cds"
-    when "3'UTR" then "three"
-    end
+id = html_compatible_enhancer_name(enhancer.name)
 if enhancer.data.blank?
     data = "Not specified."
     teaser_tag = content_tag(:em, data, class: "text-muted")

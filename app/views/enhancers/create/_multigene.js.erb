@@ -1,14 +1,15 @@
+<% id = html_compatible_enhancer_name(@enhancer.name) %>
 <% if @enhancer.records.size > 1 %>
     <% unless params[:line] %>
         <!-- display modal only first time multiple records are submitted. everything else is too much.  -->
-        $("#multigene-info-container").html(
+        $("#multigene-info-container-<%= id %>").html(
             "<%= escape_javascript(render 'enhancers/create/multigene_info') %>"
         );
-        $("#multiple-genes-info").modal('show');
-        $("#multigene-info-container > a").hide();
+        $("#multigene-modal-<%= id %>").modal('show');
     <% end %>
+    $("#multigene-info-container-<%= id %> > a").hide();
 
-    $("#multigene-options").html(
+    $("#multigene-options-<%= id %>").html(
         "<%= escape_javascript(render 'enhancers/create/multigene_formelements') %>"
     );
 <% end %>

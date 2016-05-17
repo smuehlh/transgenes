@@ -1,5 +1,6 @@
+<% id = html_compatible_enhancer_name(@enhancer.name) %>
 <a href="#" data-toggle="modal" data-target="#multiple-genes-info">Found multiple genes</a>
-<div id="multiple-genes-info" class="modal" role="dialog">
+<div id="multigene-modal-<%= id %>" class="modal" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">

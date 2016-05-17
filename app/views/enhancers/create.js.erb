@@ -1,20 +1,12 @@
+<% id = html_compatible_enhancer_name(@enhancer.name) %>
 // show errors and info messages (if there is need to is handled in the partial)
-$("#error-container").html(
+$("#error-container-<%= id %>").html(
     "<%= escape_javascript(render partial: 'enhancers/create/error') %>"
 );
 <%= render partial: 'enhancers/create/multigene' %>
 
 // update gene record preview
-var id;
-// NOTE: use <%== %>, as enhancer.name contains special characters that should not be escaped here.
-switch("<%== @enhancer.name %>") {
-    case "5'UTR": id = "#input-view-five";
-    break;
-    case "CDS": id = "#input-view-cds";
-    break;
-    case "3'UTR": id = "#input-view-three";
-    break;
-}
+var id = "#input-view-<%= id %>";
 $(id).html("<%= escape_javascript(render partial: 'viewer', locals: {enhancer: @enhancer} ) %>");
 $(id).trigger("contentchange");
 

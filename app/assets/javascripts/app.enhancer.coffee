@@ -10,8 +10,8 @@ class App.Enhancer
     reset_form: =>
         @el.find("form").find("textarea").val('')
         @el.find("form").find("input:file").val('')
-        @el.find("form").find("#multigene-options").empty()
-        @el.find("form").find("#multigene-info-container").empty()
+        @el.find("form").find("[id^=multigene-options]").empty()
+        @el.find("form").find("[id^=multigene-info-container]").empty()
 
     setup_form: =>
         @el.find("form").find(".alert").hide()

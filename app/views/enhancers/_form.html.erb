@@ -2,9 +2,11 @@
     ToGene::GenebankToGene.valid_file_extensions +
     ToGene::FastaToGene.valid_file_extensions
     ).join(",")
+
+    id = html_compatible_enhancer_name(resource_name)
 %>
 
-<div id="error-container"></div>
+<div id="error-container-<%= id %>"></div>
 <%= form_for @enhancer, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
     <div class="form-group">
         <%= f.hidden_field :name, value: resource_name %>
@@ -15,7 +17,7 @@
         </div>
         <%= f.text_area :data, class: "form-control", placeholder: "Enter sequence", maxlength: 2000 %>
     </div>
-    <div id="<%= "text-alert" %>" class="alert alert-danger" role="alert">
+    <div id="text-alert-<%= id %>" class="alert alert-danger" role="alert">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
         <span class="sr-only">Error:</span>
         Reached maximum input size. Please use file upload instead.
@@ -24,6 +26,6 @@
         <%= f.label :file, "Or, upload file" %>
         <%= f.file_field :file, accept: valid_extensions %>
     </div>
-    <div id="multigene-info-container"></div>
-    <div class="form-group" id="multigene-options"></div>
+    <div id="multigene-info-container-<%= id %>"></div>
+    <div class="form-group" id="multigene-options-<%= id %>"></div>
 <% end %>
