@@ -1,2 +1,2 @@
-<%= label_tag :line, "Select a gene record" %>
-<%= select_tag :line, options_from_collection_for_select(@enhancer.records, 'line', 'line') %>
+<%= label_tag :line, "Select gene record to use" %>
+<%= select_tag :line, options_from_collection_for_select(@enhancer.records, 'line', 'line'), class: 'form-control' %>
