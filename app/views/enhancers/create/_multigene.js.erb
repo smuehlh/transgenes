@@ -2,7 +2,10 @@
     $("#multigene-info-container").html(
         "<%= escape_javascript(render 'enhancers/create/multigene_info') %>"
     );
-    $("#multiple-genes-info").modal('show');
+    <% unless params[:line] %>
+        <% # multiple gene records were found for the first time and this user did not have the chance to select a record: display the info. if this param is set, the user has already seedn the info-modal and selected a record. %>
+        $("#multiple-genes-info").modal('show');
+    <% end %>
 
     $("#multigene-options").html(
         "<%= escape_javascript(render 'enhancers/create/multigene_formelements') %>"
