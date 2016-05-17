@@ -56,8 +56,14 @@ class EnhancersController < ApplicationController
             @enhancer.records.push(record)
         end
         flash[:error] = gene_parser.error
-
-        data = @enhancer.records.any? ? @enhancer.records.first.data : ""
-        @enhancer.update_attributes(data: data)
+        if @enhancer.records.any?
+            data =
+                if params[:line]
+                    @enhancer.records.where(line: params[:line]).first.data
+                else
+                    @enhancer.records.first.data
+                end
+            @enhancer.update_attributes(data: data)
+        end
     end
 end
