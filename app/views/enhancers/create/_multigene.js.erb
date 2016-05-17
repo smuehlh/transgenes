@@ -1,0 +1,10 @@
+<% if @enhancer.records.size > 1 %>
+    $("#multigene-info-container").html(
+        "<%= escape_javascript(render 'enhancers/create/multigene_info') %>"
+    );
+    $("#multiple-genes-info").modal('show');
+
+    $("#multigene-options").html(
+        "<%= escape_javascript(render 'enhancers/create/multigene_formelements') %>"
+    );
+<% end %>

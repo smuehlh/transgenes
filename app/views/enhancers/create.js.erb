@@ -2,9 +2,7 @@
 $("#error-container").html(
     "<%= escape_javascript(render partial: 'enhancers/create/error') %>"
 );
-$("#multigene-container").html(
-    "<%= escape_javascript(render partial: 'enhancers/create/multigene') %>"
-);
+<%= render partial: 'enhancers/create/multigene' %>
 
 // update gene record preview
 var id;
