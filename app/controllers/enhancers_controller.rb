@@ -25,6 +25,11 @@ class EnhancersController < ApplicationController
         params.require(:enhancer).permit(:data, :name, :file)
     end
 
+    def record_params
+        # INFO: records might not be initialized: use fetch instead of require.
+        params.fetch(:records, {}).permit(:line)
+    end
+
     def delete_old_init_new_gene_enhancers
         Enhancer.delete_all
         Record.delete_all
@@ -58,8 +63,8 @@ class EnhancersController < ApplicationController
         flash[:error] = gene_parser.error
         if @enhancer.records.any?
             data =
-                if params[:line]
-                    @enhancer.records.where(line: params[:line]).first.data
+                if line = record_params[:line]
+                    @enhancer.records.where(line: line).first.data
                 else
                     @enhancer.records.first.data
                 end
