@@ -1,4 +1,4 @@
 <%= fields_for :records do |f_record| %>
    <%= f_record.label :line, "Select gene record to use", class: "control-label" %>
-   <%= f_record.select :line, options_from_collection_for_select(@enhancer.records, 'line', 'line', @using_line), class: 'form-control' %>
+   <%= f_record.select :line, options_from_collection_for_select(@enhancer.records, 'line', 'line', @using_line), {}, {class: 'form-control'} %>
 <% end %>
