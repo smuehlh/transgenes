@@ -4,8 +4,8 @@ if enhancer.data.blank?
     data = "Not specified."
     teaser_tag = content_tag(:em, data, class: "text-muted")
 else
-    data = breaking_word_wrap(enhancer.data)
-    firstline = data.split("\n").first
+    data = word_wrap_breaking_single_word(enhancer.data, 80)
+    firstline = teaser_wrapped_single_word_with_ellipsis(data)
     teaser_tag = content_tag(:code, firstline, class: "text-muted")
 end
 %>
