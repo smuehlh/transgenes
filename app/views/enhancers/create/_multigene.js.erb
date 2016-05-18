@@ -1,6 +1,6 @@
 <% id = html_compatible_enhancer_name(@enhancer.name) %>
 <% if @enhancer.records.size > 1 %>
-    <% unless params[:line] %>
+    <% unless @using_line %>
         <!-- display modal only first time multiple records are submitted. everything else is too much.  -->
         $("#multigene-info-container-<%= id %>").html(
             "<%= escape_javascript(render 'enhancers/create/multigene_info') %>"
