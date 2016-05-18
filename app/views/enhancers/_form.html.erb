@@ -10,7 +10,7 @@
 <%= form_for @enhancer, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
     <div class="form-group">
         <%= f.hidden_field :name, value: resource_name %>
-        <%= f.label :data, "Enter GeneID, Genebank or FASTA sequence", class:"control-label" %>
+        <%= f.label :data, "Enter GeneID or FASTA sequence", class:"control-label" %>
         <div class="pull-right control-group">
             <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"} %>
             <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"} %>
@@ -23,7 +23,7 @@
         Reached maximum input size. Please use file upload instead.
     </div>
     <div class="form-group">
-        <%= f.label :file, "Or, upload file", class: "control-label" %>
+        <%= f.label :file, "Or, upload Genebank or FASTA file", class: "control-label" %>
         <%= f.file_field :file, accept: valid_extensions %>
     </div>
     <div id="multigene-info-container-<%= id %>"></div>
