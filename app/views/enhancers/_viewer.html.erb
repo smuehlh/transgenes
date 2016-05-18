@@ -6,7 +6,7 @@ if enhancer.data.blank?
 else
     data = word_wrap_breaking_single_word(enhancer.data, 80)
     firstline = teaser_wrapped_single_word_with_ellipsis(data)
-    teaser_tag = content_tag(:code, firstline, class: "text-muted")
+    teaser_tag = content_tag(:span, firstline, class: "text-muted monospaced")
 end
 %>
 <dl>
