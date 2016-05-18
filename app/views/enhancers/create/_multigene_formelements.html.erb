@@ -4,8 +4,8 @@
    record_options = @enhancer.records.map do |record|
         wrapped_data = word_wrap_breaking_single_word(record.data, 80)
         teaser = teaser_wrapped_single_word_with_ellipsis(wrapped_data)
-        [teaser, record.line]
+        [teaser, record.line, {:class => 'monospaced'}]
    end
    %>
-   <%= f_record.select :line, options_for_select(record_options, @using_line), {}, {class: 'form-control'} %>
+   <%= f_record.select :line, options_for_select(record_options, @using_line), {}, {class: 'form-control monospaced'} %>
 <% end %>

@@ -15,7 +15,7 @@
             <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"} %>
             <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"} %>
         </div>
-        <%= f.text_area :data, class: "form-control", placeholder: "Enter sequence", maxlength: 2000 %>
+        <%= f.text_area :data, class: "form-control monospaced", placeholder: "Enter sequence", maxlength: 2000 %>
     </div>
     <div id="text-alert-<%= id %>" class="alert alert-danger" role="alert">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
