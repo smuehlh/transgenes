@@ -23,7 +23,7 @@
         Reached maximum input size. Please use file upload instead.
     </div>
     <div class="form-group">
-        <%= f.label :file, "Or, upload file" %>
+        <%= f.label :file, "Or, upload file", class: "control-label" %>
         <%= f.file_field :file, accept: valid_extensions %>
     </div>
     <div id="multigene-info-container-<%= id %>"></div>
