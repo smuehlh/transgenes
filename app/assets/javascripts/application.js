@@ -15,4 +15,5 @@
 //= require jquery.remotipart
 //= require turbolinks
 //= require bootstrap-sprockets
+//= require enhancers
 //= require enhancers/input
