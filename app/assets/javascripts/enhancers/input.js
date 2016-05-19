@@ -28,9 +28,18 @@ function bind_to_input_textarea() {
         thisform.find(":submit").prop('disabled', false);
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("input:file").val('');
+
         thisinput_size = $(this).val().length;
+        thisinput_maxsize = $(this).attr('maxlength');
         if (thisinput_size === 0) {
             thisform.find(":submit").prop('disabled', true);
+        }
+        if (thisinput_size >= thisinput_maxsize) {
+            thisform.find("[id^=text-alert]").show();
+            thisform.find("textarea").val('');
+            thisform.find(":submit").prop('disabled', true);
+        } else {
+            thisform.find("[id^=text-alert]").hide();
         }
     });
 };
