@@ -20,6 +20,7 @@ function init_preview_partial() {
 
 function bind_eventhandlers_to_input_elements() {
     bind_to_input_textarea();
+    bind_to_input_file();
 };
 
 function bind_to_input_textarea() {
@@ -41,5 +42,14 @@ function bind_to_input_textarea() {
         } else {
             thisform.find("[id^=text-alert]").hide();
         }
+    });
+};
+
+function bind_to_input_file() {
+    forms.find("input:file").on('change', function() {
+        var thisform = $(this).closest("form");
+        thisform.find(":submit").prop('disabled', false);
+        thisform.find("[id^=multigene-options]").empty();
+        thisform.find("textarea").val('');
     });
 };
