@@ -13,5 +13,6 @@ function init_input_partial() {
 };
 
 function init_preview_partial() {
-
+    $("#input-view-alert").hide();
+    $(".well").find(":button").prop('disabled', true);
 };
