@@ -28,5 +28,9 @@ function bind_to_input_textarea() {
         thisform.find(":submit").prop('disabled', false);
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("input:file").val('');
+        thisinput_size = $(this).val().length;
+        if (thisinput_size === 0) {
+            thisform.find(":submit").prop('disabled', true);
+        }
     });
 };
