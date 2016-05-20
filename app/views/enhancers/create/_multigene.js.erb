@@ -12,4 +12,6 @@
     $("#multigene-options-<%= id %>").html(
         "<%= escape_javascript(render 'enhancers/create/multigene_formelements') %>"
     );
+    // bind event handlers to selection list
+    bind_to_select_list();
 <% end %>

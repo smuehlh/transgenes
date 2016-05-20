@@ -22,6 +22,7 @@ function bind_eventhandlers_to_input_elements() {
     bind_to_input_textarea();
     bind_to_input_file();
     bind_to_reset_button();
+    // NOTE: do not bind to_select_list here, since the element will be created later
 };
 
 function bind_to_input_textarea() {
@@ -64,3 +65,10 @@ function bind_to_reset_button() {
         thisform.find(":submit").prop('disabled', true);
     });
 }
+
+function bind_to_select_list() {
+    forms.find("#records_line").on('change', function() {
+        var thisform = $(this).closest("form");
+        thisform.find(":submit[value=Save]").click();
+    });
+};
