@@ -21,6 +21,7 @@ function init_preview_partial() {
 function bind_eventhandlers_to_input_elements() {
     bind_to_input_textarea();
     bind_to_input_file();
+    bind_to_reset_button();
 };
 
 function bind_to_input_textarea() {
@@ -53,3 +54,13 @@ function bind_to_input_file() {
         thisform.find("textarea").val('');
     });
 };
+
+function bind_to_reset_button() {
+    forms.find(":submit[value=Reset]").on('click', function() {
+        var thisform = $(this).closest("form");
+        thisform.find("[id^=multigene-options]").empty();
+        thisform.find("input:file").val('');
+        thisform.find("textarea").val('');
+        thisform.find(":submit").prop('disabled', true);
+    });
+}
