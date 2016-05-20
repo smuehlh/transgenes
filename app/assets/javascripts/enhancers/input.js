@@ -2,8 +2,10 @@ $(document).ready(function() {
     forms = $("form");
     previews = $("[id^=input-view]");
     init_input_partial();
-    bind_eventhandlers_to_input_elements();
     init_preview_partial();
+
+    bind_eventhandlers_to_input_elements();
+    bind_eventhandlers_to_preview_elements();
 });
 
 function init_input_partial() {
@@ -24,6 +26,10 @@ function bind_eventhandlers_to_input_elements() {
     bind_to_input_file();
     bind_to_reset_button();
     // NOTE: do not bind to_select_list here, since the element will be created later
+};
+
+function bind_eventhandlers_to_preview_elements() {
+    bind_to_content_change();
 };
 
 function bind_to_input_textarea() {
@@ -71,5 +77,15 @@ function bind_to_select_list() {
     forms.find("#records_line").on('change', function() {
         var thisform = $(this).closest("form");
         thisform.find(":submit[value=Save]").click();
+    });
+};
+
+function bind_to_content_change() {
+    previews.on('contentchange', function() {
+        var thiscontent = $(this).find(".modal-body").text();
+        if (thiscontent.match("Not specified")) {
+            $(this).find(":button").prop('disabled', true);
+            $(this).previews.filter(".alert").hide();
+        }
     });
 };
