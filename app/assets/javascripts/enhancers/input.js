@@ -1,5 +1,6 @@
 $(document).ready(function() {
     forms = $("form");
+    previews = $("[id^=input-view]");
     init_input_partial();
     bind_eventhandlers_to_input_elements();
     init_preview_partial();
@@ -14,8 +15,8 @@ function init_input_partial() {
 };
 
 function init_preview_partial() {
-    $("#input-view-alert").hide();
-    $(".well").find(":button").prop('disabled', true);
+    previews.filter(".alert").hide();
+    previews.find(":button").prop('disabled', true);
 };
 
 function bind_eventhandlers_to_input_elements() {
