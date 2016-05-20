@@ -51,6 +51,7 @@ class EnhancersController < ApplicationController
         # records associated with previous input (if any) are invalid.
         @enhancer.records.delete_all
         @enhancer.update_attributes(data: "")
+        flash.delete(:error)
     end
 
     def update_enhancer_data
