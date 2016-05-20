@@ -39,8 +39,8 @@ function bind_to_input_textarea() {
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("input:file").val('');
 
-        thisinput_size = $(this).val().length;
-        thisinput_maxsize = $(this).attr('maxlength');
+        var thisinput_size = $(this).val().length;
+        var thisinput_maxsize = $(this).attr('maxlength');
         if (thisinput_size === 0) {
             thisform.find(":submit").prop('disabled', true);
         }
