@@ -70,6 +70,7 @@ function bind_to_reset_button() {
         thisform.find("input:file").val('');
         thisform.find("textarea").val('');
         thisform.find(":submit").prop('disabled', true);
+        thisform.submit();
     });
 }
 
