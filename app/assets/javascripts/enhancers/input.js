@@ -86,7 +86,10 @@ function bind_to_content_change() {
         var thiscontent = $(this).find(".modal-body").text();
         if (thiscontent.match("Not specified")) {
             $(this).find(":button").prop('disabled', true);
-            $(this).previews.filter(".alert").hide();
+            previews.filter(".alert").hide();
+        } else {
+            // NOTE button is enabled by default.
+            previews.filter(".alert").show();
         }
     });
 };
