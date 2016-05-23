@@ -15,6 +15,10 @@ class EnhancersController < ApplicationController
         # else: nothing to do. enhancer was just resetted.
     end
 
+    def submit
+
+    end
+
     private
 
     # Never trust parameters from the scary internet, only allow the white list through.
