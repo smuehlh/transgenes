@@ -1,2 +1,6 @@
-<%= f.label :keep_first_intron, "Keep first intron", class:"control-label" %>
-<%= f.check_box :keep_first_intron, false, class: "checkbox" %>
+<div class="field form-group">
+    <div class="checkbox-inline">
+        <%= f.check_box :keep_first_intron %>
+        <%= f.label :keep_first_intron, "Keep first intron" %><br>
+    </div>
+</div>
