@@ -1,24 +1,32 @@
 $(document).ready(function() {
-    forms = $("form");
+    inputs = $("[id^=input-tab]>form");
     previews = $("[id^=input-view]");
+    params = $("#new_submit");
     init_input_partial();
     init_preview_partial();
+    init_params_parital();
 
     bind_eventhandlers_to_input_elements();
     bind_eventhandlers_to_preview_elements();
 });
 
 function init_input_partial() {
-    forms.find("[id^=text-alert]").hide();
-    forms.find(":submit").prop('disabled', true);
-    forms.find("textarea").val('');
-    forms.find("input:file").val('');
-    forms.find("[id^=multigene-options]").empty();
+    inputs.find("[id^=text-alert]").hide();
+    inputs.find(":submit").prop('disabled', true);
+    inputs.find("textarea").val('');
+    inputs.find("input:file").val('');
+    inputs.find("[id^=multigene-options]").empty();
 };
 
 function init_preview_partial() {
     previews.filter(".alert").hide();
     previews.find(":button").prop('disabled', true);
+};
+
+function init_params_parital() {
+    params.find(":input").removeAttr('checked');
+    params.find(":input").prop("disabled", true);
+    params.find(":submit").prop("disabled", true);
 };
 
 function bind_eventhandlers_to_input_elements() {
@@ -33,7 +41,7 @@ function bind_eventhandlers_to_preview_elements() {
 };
 
 function bind_to_input_textarea() {
-    forms.find("textarea").on('input', function() {
+    inputs.find("textarea").on('input', function() {
         var thisform = $(this).closest("form");
         thisform.find(":submit").prop('disabled', false);
         thisform.find("[id^=multigene-options]").empty();
@@ -55,7 +63,7 @@ function bind_to_input_textarea() {
 };
 
 function bind_to_input_file() {
-    forms.find("input:file").on('change', function() {
+    inputs.find("input:file").on('change', function() {
         var thisform = $(this).closest("form");
         thisform.find(":submit").prop('disabled', false);
         thisform.find("[id^=multigene-options]").empty();
@@ -64,7 +72,7 @@ function bind_to_input_file() {
 };
 
 function bind_to_reset_button() {
-    forms.find(":submit[value=Reset]").on('click', function() {
+    inputs.find(":submit[value=Reset]").on('click', function() {
         var thisform = $(this).closest("form");
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("input:file").val('');
@@ -75,7 +83,7 @@ function bind_to_reset_button() {
 }
 
 function bind_to_select_list() {
-    forms.find("#records_line").on('change', function() {
+    inputs.find("#records_line").on('change', function() {
         var thisform = $(this).closest("form");
         thisform.find(":submit[value=Save]").click();
     });
@@ -87,9 +95,16 @@ function bind_to_content_change() {
         if (thiscontent.match("Not specified")) {
             $(this).find(":button").prop('disabled', true);
             previews.filter(".alert").hide();
+            init_params_parital();
         } else {
             // NOTE button is enabled by default.
             previews.filter(".alert").show();
+            enable_params_partial();
         }
     });
+};
+
+function enable_params_partial() {
+    params.find(":input").prop("disabled", false);
+    params.find(":submit").prop("disabled", false);
 };
