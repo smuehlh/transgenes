@@ -64,14 +64,15 @@ class EnhancersController < ApplicationController
             @enhancer.records.push(record)
         end
         flash[:error] = gene_parser.error
-        if @enhancer.records.any?
-            data =
-                if @using_line = record_params[:line]
-                    @enhancer.records.where(line: @using_line).first.data
-                else
-                    @enhancer.records.first.data
-                end
-            @enhancer.update_attributes(data: data)
+        @enhancer.update_attributes(data: records_data)
+    end
+
+    def records_data
+        return "" unless @enhancer.records.any?
+        if @using_line = record_params[:line]
+             @enhancer.records.where(line: @using_line).first.data
+        else
+            @enhancer.records.first.data
         end
     end
 end
