@@ -11,7 +11,7 @@ class EnhancersController < ApplicationController
     def create
         @enhancer = Enhancer.where(name: enhancer_params[:name]).first
         reset_enhancer_data_and_records
-        update_enhancer_data if params[:commit] == "Save"
+        update_enhancer_data if enhancer_params[:commit] == "Save"
         # else: nothing to do. enhancer was just resetted.
     end
 
@@ -23,8 +23,9 @@ class EnhancersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def enhancer_params
-        # INFO: file is a temporary parameter only. it's not part of the model!
-        params.require(:enhancer).permit(:data, :name, :file)
+        # INFO: parameters not part of the model:
+        # file, commit
+        params.require(:enhancer).permit(:data, :name, :file, :commit)
     end
 
     def record_params

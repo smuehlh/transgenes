@@ -32,6 +32,7 @@ function init_params_parital() {
 function bind_eventhandlers_to_input_elements() {
     bind_to_input_textarea();
     bind_to_input_file();
+    bind_to_save_button();
     bind_to_reset_button();
     // NOTE: do not bind to_select_list here, since the element will be created later
 };
@@ -68,6 +69,15 @@ function bind_to_input_file() {
         thisform.find(":submit").prop('disabled', false);
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("textarea").val('');
+        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        thisform.submit();
+    });
+};
+
+function bind_to_save_button() {
+    inputs.find(":submit[value=Save]").on('click', function() {
+        var thisform = $(this).closest("form");
+        thisform.find("input[type=hidden][name*=commit]").val("Save");
     });
 };
 
@@ -78,6 +88,7 @@ function bind_to_reset_button() {
         thisform.find("input:file").val('');
         thisform.find("textarea").val('');
         thisform.find(":submit").prop('disabled', true);
+        thisform.find("input[type=hidden][name*=commit]").val("Reset");
         thisform.submit();
     });
 }
@@ -85,7 +96,8 @@ function bind_to_reset_button() {
 function bind_to_select_list() {
     inputs.find("#records_line").on('change', function() {
         var thisform = $(this).closest("form");
-        thisform.find(":submit[value=Save]").click();
+        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        thisform.submit();
     });
 };
 

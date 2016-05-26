@@ -10,6 +10,7 @@
 <%= form_for @enhancer, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
     <div class="form-group">
         <%= f.hidden_field :name, value: resource_name %>
+        <%= f.hidden_field :commit, value: "" %>
         <%= f.label :data, "Enter GeneID or FASTA sequence", class:"control-label" %>
         <div class="pull-right control-group">
             <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"} %>
