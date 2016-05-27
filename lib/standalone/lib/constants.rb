@@ -2,14 +2,6 @@ module Constants
 
     extend self
 
-    def keep_first_intron?
-        true
-    end
-
-    def minimum_number_of_exons
-        self.keep_first_intron? ? 2 : 1
-    end
-
     def number_of_nucleotides_to_tweak
         70
     end

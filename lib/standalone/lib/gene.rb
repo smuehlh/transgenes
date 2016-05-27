@@ -1,21 +1,25 @@
 class Gene
     attr_reader :exons, :introns, :five_prime_utr, :three_prime_utr
 
-    def initialize
+    def initialize(seq_tweaks)
         @description = ""
         @exons = []
         @introns = []
         @five_prime_utr = "" # exons and introns merged
         @three_prime_utr = "" # exons and introns merged
+
+        @remove_first_intron = seq_tweaks[:remove_first_intron]
     end
 
     def add_cds(file, use_gene_starting_in_line)
         parse_gene_file(file, use_gene_starting_in_line, "CDS")
         save_gene_as_cds
+        remove_unwanted_introns
     end
 
     def add_utr(file, use_gene_starting_in_line, is_5prime_utr)
         # INFO: file might not exist.
+        # introns are UTRs are left untouched.
         if file
             use_feature = is_5prime_utr ? "5'UTR" : "3'UTR"
             parse_gene_file(file, use_gene_starting_in_line, use_feature)
@@ -40,6 +44,7 @@ class Gene
 
     def tweak_sequence
         # do stuff.
+        # remove splice sites flanking now removed introns.
 
         # combine sequences
         @sequence = combine_features_into_sequence
@@ -58,8 +63,7 @@ class Gene
     end
 
     def remove_unwanted_introns
-        # only if minimum number of exons found.
-        # remove intron and change corresponding splice site
+        @remove_first_intron ? @introns = [] : @introns = [@introns.shift]
     end
 
     private

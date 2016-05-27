@@ -4,7 +4,8 @@ class CommandlineOptions
     attr_reader :input, :output,
         # optional params
         :utr5prime, :utr3prime,
-        :input_line, :utr5prime_line, :utr3prime_line
+        :input_line, :utr5prime_line, :utr3prime_line,
+        :remove_first_intron
 
     def initialize(args)
         init_commandline_arguments(args)
@@ -37,7 +38,17 @@ class CommandlineOptions
     end
 
     def optional_arguments
-        %w(@input_line @utr5prime @utr5prime_line @utr3prime @utr3prime_line)
+        %w(
+            @input_line
+            @utr5prime @utr5prime_line @utr3prime @utr3prime_line
+            @remove_first_intron
+        )
+    end
+
+    def tweak_sequence_options
+        {
+            remove_first_intron: @remove_first_intron
+        }
     end
 
     def is_argument_set(arg)
@@ -114,7 +125,10 @@ class CommandlineOptions
                 "Starting line of 3' UTR description to read.") do |line|
                 @utr3prime_line = line
             end
-
+            opts.on("-r", "--remove-first-intron",
+                "Remove all introns from CDS including the first. If not specified, the first intron is kept.") do |opt|
+                @remove_first_intron = true
+            end
             opts.separator ""
             opts.on_tail("-h", "--help", "Show this message") do
                 puts opts
