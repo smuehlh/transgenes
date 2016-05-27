@@ -1,32 +1,35 @@
 $(document).ready(function() {
     inputs = $("[id^=input-tab]>form");
     previews = $("[id^=input-view]");
-    params = $("#new_submit");
-    init_input_partial();
-    init_preview_partial();
-    init_params_parital();
+    params = $("#new_submit .params-form");
+
+    clear_forms();
 
     bind_eventhandlers_to_input_elements();
     bind_eventhandlers_to_preview_elements();
 });
 
-function init_input_partial() {
-    inputs.find("[id^=text-alert]").hide();
-    inputs.find(":submit").prop('disabled', true);
+$(document).on('page:load', function() {
+    clear_forms();
+    hide_textboxes();
+    disable_form_elements();
+});
+
+function clear_forms() {
     inputs.find("textarea").val('');
     inputs.find("input:file").val('');
     inputs.find("[id^=multigene-options]").empty();
 };
 
-function init_preview_partial() {
+function hide_textboxes() {
+    inputs.find("[id^=text-alert]").hide();
     previews.filter(".alert").hide();
-    previews.find(":button").prop('disabled', true);
 };
 
-function init_params_parital() {
-    params.find(":input").removeAttr('checked');
-    params.find(":input").prop("disabled", true);
-    params.find(":submit").prop("disabled", true);
+function disable_form_elements() {
+    inputs.find(":submit").prop('disabled', true);
+    previews.find(":button").prop('disabled', true);
+    init_params_partial();
 };
 
 function bind_eventhandlers_to_input_elements() {
@@ -105,18 +108,21 @@ function bind_to_content_change() {
     previews.on('contentchange', function() {
         var thiscontent = $(this).find(".modal-body").text();
         if (thiscontent.match("Not specified")) {
-            $(this).find(":button").prop('disabled', true);
             previews.filter(".alert").hide();
-            init_params_parital();
+            init_params_partial();
         } else {
-            // NOTE button is enabled by default.
             previews.filter(".alert").show();
+            $(this).find(":button").prop('disabled', false);
             enable_params_partial();
         }
     });
 };
 
+function init_params_partial() {
+    params.filter(":input[type=checkbox]").removeAttr('checked');
+    params.filter(":input").prop("disabled", true);
+};
+
 function enable_params_partial() {
-    params.find(":input").prop("disabled", false);
-    params.find(":submit").prop("disabled", false);
+    params.filter(":input").prop("disabled", false);
 };
