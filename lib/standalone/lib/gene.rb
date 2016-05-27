@@ -1,4 +1,5 @@
 class Gene
+    attr_reader :exons, :introns, :five_prime_utr, :three_prime_utr
 
     def initialize
         @description = ""
@@ -25,22 +26,16 @@ class Gene
     end
 
     def statistics
-        str = ""
-        # if @utr_5prime
-            # str += "5' UTR"
-            # str += ", #{@utr_5prime.exons.size} Exons, #{@utr_5prime.introns.size} Introns"
-            # str += "\n"
-        # end
-        str += "#{@exons.size} Exons\n"
-        str += "#{@introns.size} Introns"
-        # if @utr_3prime
-        #     str += "\n"
-        #     str += "3' UTR"
-        #     str += ", #{@utr_3prime.exons.size} Exons, #{@utr_3prime.introns.size} Introns"
-        # end
-        str += "\n"
-        str += "Total sequence length: #{combine_features_into_sequence.size} nucleotides."
-        str
+        stats = GeneStatistics.new(self)
+        stats.print
+    end
+
+    def combine_features_into_sequence
+        [
+            @five_prime_utr,
+            @exons.zip(@introns),
+            @three_prime_utr
+        ].flatten.compact.join("")
     end
 
     def tweak_sequence
@@ -86,13 +81,5 @@ class Gene
         else
             @three_prime_utr = @to_gene_obj.get_sequence
         end
-    end
-
-    def combine_features_into_sequence
-        [
-            @five_prime_utr,
-            @exons.zip(@introns),
-            @three_prime_utr
-        ].flatten.join("")
     end
 end
