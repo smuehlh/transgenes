@@ -52,8 +52,7 @@ class EnhancersController < ApplicationController
 
     def reset_enhancer_data_and_records
         # records associated with previous input (if any) are invalid.
-        @enhancer.records.delete_all
-        @enhancer.update_attributes(data: "")
+        @enhancer.reset_all_sequence_data
         flash.delete(:error)
     end
 
@@ -61,19 +60,23 @@ class EnhancersController < ApplicationController
         gene_parser = ConvertInputToGene::ParseGene.new(
             enhancer_params, remotipart_submitted?)
         gene_parser.get_records.each do |line, sequence|
-            record = Record.new(data: sequence, line: line)
-            @enhancer.records.push(record)
+            # TODO
+            # save exons and introns
+            debugger
+            @enhancer.records.push( Record.new(data: sequence, line: line) )
+        end
+        if @enhancer.records.any?
+            using_record = wanted_record_or_first_record
+            @enhancer.set_all_sequence_data(using_record)
         end
         flash[:error] = gene_parser.error
-        @enhancer.update_attributes(data: records_data)
     end
 
-    def records_data
-        return "" unless @enhancer.records.any?
+    def wanted_record_or_first_record
         if @using_line = record_params[:line]
-             @enhancer.records.where(line: @using_line).first.data
+            @enhancer.records.where(line: @using_line).first
         else
-            @enhancer.records.first.data
+            @enhancer.records.first
         end
     end
 end
