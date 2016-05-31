@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160513093248) do
+ActiveRecord::Schema.define(version: 20160531093735) do
 
   create_table "enhancers", force: :cascade do |t|
     t.text     "data"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20160513093248) do
 
   create_table "records", force: :cascade do |t|
     t.integer  "line"
-    t.string   "data"
+    t.text     "data"
     t.integer  "enhancer_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
