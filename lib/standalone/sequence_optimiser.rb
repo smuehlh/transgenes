@@ -13,7 +13,6 @@ options = CommandlineOptions.new(ARGV)
 
 # read in and parse data
 gene = Gene.new
-gene.set_options(options.tweak_sequence_options)
 gene.add_cds(*ToGene.init_and_parse("CDS", options.input, options.input_line))
 if options.utr5prime
     gene.add_five_prime_utr(
@@ -26,12 +25,14 @@ if options.utr3prime
     )
 end
 
+# remove unwanted introns
+gene.remove_introns(options.remove_first_intron)
 puts gene.statistics
 
 # determine what to do by command line parameters!
 # tweak exons
 # humanize codons
-gene.tweak_sequence
+gene.tweak_sequence(options)
 
 # output sequence
 FileHelper.write_to_file(options.output, gene.formatting_to_fasta)

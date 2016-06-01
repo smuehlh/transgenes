@@ -45,12 +45,6 @@ class CommandlineOptions
         )
     end
 
-    def tweak_sequence_options
-        {
-            remove_first_intron: @remove_first_intron
-        }
-    end
-
     def is_argument_set(arg)
         instance_variable_get(arg)
     end

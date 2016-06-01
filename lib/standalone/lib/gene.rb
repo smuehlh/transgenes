@@ -23,11 +23,6 @@ class Gene
         @three_prime_utr = combine_exons_and_introns(exons, introns)
     end
 
-    def set_options(options)
-        @keep_first_intron = ! options[:remove_first_intron]
-        # tweak sequence options.
-    end
-
     def statistics
         stats = GeneStatistics.new(self)
         stats.print
@@ -45,7 +40,7 @@ class Gene
         exons.zip(introns).flatten.compact.join("")
     end
 
-    def tweak_sequence
+    def tweak_sequence(options)
         # do stuff.
         # remove splice sites flanking now removed introns.
 
@@ -65,8 +60,10 @@ class Gene
 
     end
 
-    def remove_unwanted_introns
-        @introns = @keep_first_intron ? [@introns.shift] : []
+    def remove_introns(is_remove_first_intron)
+        # NOTE: save first intron, as this method might be called multiple times with different parameters.
+        @first_intron = @introns.first
+        @introns = is_remove_first_intron ? [] : [@first_intron]
     end
 
 end
