@@ -2,7 +2,13 @@ class ToGene
 
     attr_reader :gene_name, :exons, :introns
 
-    def initialize(use_feature)
+    def self.init_and_parse(use_feature, file, use_feature_starting_in_line)
+        obj = ToGene.new(use_feature, file, use_feature_starting_in_line)
+        obj.parse_file_or_die(file, use_feature_starting_in_line)
+        [obj.exons, obj.introns, obj.gene_name]
+    end
+
+    def initialize(use_feature, file, use_feature_starting_in_line)
         @gene_name = ""
         @exons = []
         @introns = []
@@ -22,38 +28,6 @@ class ToGene
         ErrorHandling.abort_with_error_message(
             "invalid_file_format", @file_info
         )
-    end
-
-    def get_sequence
-        @exons.zip(@introns).flatten.join("")
-    end
-
-    def parse_file_for_web_or_die(file)
-        ensure_file_format_and_split_file_into_features(file)
-    rescue EnhancerError
-        # re-raise error. handle in web-interface
-        raise
-    rescue StandardError => exp
-        # something went very wrong. most likely the input file is corrupt.
-        ErrorHandling.abort_with_error_message(
-            "invalid_file_format", @file_info
-        )
-    end
-
-    def parse_feature_for_web_or_die(use_feature_starting_in_line)
-        parse_feature_and_ensure_feature_format(use_feature_starting_in_line)
-    rescue EnhancerError
-        # re-raise error. handle in web-interface
-        raise
-    rescue StandardError => exp
-        # something went very wrong. most likely the input file is corrupt.
-        ErrorHandling.abort_with_error_message(
-            "invalid_file_format", @file_info
-        )
-    end
-
-    def get_features_with_starting_lines_for_web
-        @feature_records_by_feature_starts || {}
     end
 
     private

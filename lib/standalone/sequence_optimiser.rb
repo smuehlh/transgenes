@@ -14,10 +14,17 @@ options = CommandlineOptions.new(ARGV)
 # read in and parse data
 gene = Gene.new
 gene.set_options(options.tweak_sequence_options)
-
-gene.add_cds(options.input, options.input_line)
-gene.add_utr(options.utr5prime, options.utr5prime_line, is_5prime=true)
-gene.add_utr(options.utr3prime, options.utr3prime_line, is_5prime=false)
+gene.add_cds(*ToGene.init_and_parse("CDS", options.input, options.input_line))
+if options.utr5prime
+    gene.add_five_prime_utr(
+        *ToGene.init_and_parse("5'UTR", options.utr5prime, options.utr5prime_line)
+    )
+end
+if options.utr3prime
+    gene.add_three_prime_utr(
+        *ToGene.init_and_parse("3'UTR", options.utr3prime, options.utr3prime_line)
+    )
+end
 
 puts gene.statistics
 
