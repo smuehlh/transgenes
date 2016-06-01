@@ -27,7 +27,7 @@ end
 
 # remove unwanted introns
 gene.remove_introns(options.remove_first_intron)
-puts gene.statistics
+puts gene.print_statistics
 
 # determine what to do by command line parameters!
 # tweak exons
