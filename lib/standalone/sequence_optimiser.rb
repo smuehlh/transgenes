@@ -35,4 +35,4 @@ puts gene.print_statistics
 gene.tweak_sequence(options)
 
 # output sequence
-FileHelper.write_to_file(options.output, gene.formatting_to_fasta)
+GeneToFasta.write(options.output, gene)

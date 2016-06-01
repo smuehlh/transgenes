@@ -1,5 +1,5 @@
 class Gene
-    attr_reader :exons, :introns, :five_prime_utr, :three_prime_utr, :sequence
+    attr_reader :exons, :introns, :five_prime_utr, :three_prime_utr, :sequence, :description
 
     def initialize
         @description = ""
@@ -50,10 +50,6 @@ class Gene
 
         # combine sequences
         @sequence = combine_features_to_sequence
-    end
-
-    def formatting_to_fasta
-        GeneToFasta.formatting(@description, @sequence)
     end
 
     private
