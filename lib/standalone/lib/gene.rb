@@ -1,14 +1,12 @@
 class Gene
     attr_reader :exons, :introns, :five_prime_utr, :three_prime_utr
 
-    def initialize(seq_tweaks)
+    def initialize
         @description = ""
         @exons = []
         @introns = []
         @five_prime_utr = "" # exons and introns merged
         @three_prime_utr = "" # exons and introns merged
-
-        @remove_first_intron = seq_tweaks[:remove_first_intron]
     end
 
     def add_cds(file, use_gene_starting_in_line)
@@ -27,6 +25,11 @@ class Gene
         else
             # file does not exist. nothing to do: work with empty utr-sequences
         end
+    end
+
+    def set_options(options)
+        @keep_first_intron = ! options[:remove_first_intron]
+        # tweak sequence options.
     end
 
     def statistics
@@ -63,7 +66,7 @@ class Gene
     end
 
     def remove_unwanted_introns
-        @remove_first_intron ? @introns = [] : @introns = [@introns.shift]
+        @introns = @keep_first_intron ? [@introns.shift] : []
     end
 
     private
