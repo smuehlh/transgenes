@@ -3,12 +3,12 @@ class ToGene
     attr_reader :gene_name, :exons, :introns
 
     def self.init_and_parse(use_feature, file, use_feature_starting_in_line)
-        obj = ToGene.new(use_feature, file, use_feature_starting_in_line)
+        obj = ToGene.new(use_feature)
         obj.parse_file_or_die(file, use_feature_starting_in_line)
         [obj.exons, obj.introns, obj.gene_name]
     end
 
-    def initialize(use_feature, file, use_feature_starting_in_line)
+    def initialize(use_feature)
         @gene_name = ""
         @exons = []
         @introns = []
