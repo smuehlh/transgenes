@@ -37,7 +37,7 @@ class Gene
     end
 
     def print_statistics
-        str = "Number of exons: #{@exons}"
+        str = "Number of exons: #{@exons.size}"
         first_intron_kept = @introns.size == 1
         str += "\nAll introns " + (first_intron_kept ? "but" : "including") + " the first removed."
         str += "\nTotal mRNA size: #{@sequence.size}"
