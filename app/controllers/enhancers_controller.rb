@@ -62,7 +62,8 @@ class EnhancersController < ApplicationController
                 data: gene_record[:sequence],
                 line: line,
                 exons: gene_record[:exons],
-                introns: gene_record[:introns]
+                introns: gene_record[:introns],
+                gene_name: gene_record[:description]
                 )
             @enhancer.records.push(record)
 
