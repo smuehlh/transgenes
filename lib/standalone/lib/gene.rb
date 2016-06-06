@@ -30,9 +30,7 @@ class Gene
     end
 
     def remove_introns(is_remove_first_intron)
-        # NOTE: save first intron, as this method might be called multiple times with different parameters.
-        @first_intron = @introns.first
-        @introns = is_remove_first_intron ? [] : [@first_intron]
+        @introns = is_remove_first_intron ? [] : [@introns.first]
         @sequence = combine_features_to_sequence
     end
 
