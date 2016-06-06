@@ -9,7 +9,7 @@ class EnhancersController < ApplicationController
 
     def create
         @enhancer = Enhancer.where(name: enhancer_params[:name]).first
-        reset_enhancer_data_and_records
+        reset_active_enhancer_and_associated_records
         update_enhancer_data if enhancer_params[:commit] == "Save"
         # else: nothing to do. enhancer was just resetted.
     end
@@ -49,13 +49,14 @@ class EnhancersController < ApplicationController
         ]
     end
 
-    def reset_enhancer_data_and_records
+    def reset_active_enhancer_and_associated_records
         # records associated with previous input (if any) are invalid.
-        @enhancer.reset_all_sequence_data
+        @enhancer.reset
+        @enhancer.records.delete_all
         flash.delete(:error)
     end
 
-    def update_enhancer_data
+    def update_active_enhancer
         gene_parser = WebinputToGene.new(enhancer_params,remotipart_submitted?)
         gene_parser.get_records.each do |line, gene_record|
             record = Record.new(
@@ -65,10 +66,8 @@ class EnhancersController < ApplicationController
                 introns: gene_record[:introns]
                 )
             @enhancer.records.push(record)
-            if is_wanted_record(record)
-                @enhancer.set_all_sequence_data(record)
-                update_gene
-            end
+
+            @enhancer.update_with_record_data(record) if is_wanted_record(record)
         end
         flash[:error] = gene_parser.error
     end
