@@ -57,21 +57,29 @@ class EnhancersController < ApplicationController
 
     def update_enhancer_data
         gene_parser = WebinputToGene.new(enhancer_params,remotipart_submitted?)
-        gene_parser.get_records.each do |line, sequence|
-            @enhancer.records.push( Record.new(data: sequence, line: line) )
-        end
-        if @enhancer.records.any?
-            using_record = wanted_record_or_first_record
-            @enhancer.set_all_sequence_data(using_record)
+        gene_parser.get_records.each do |line, gene_record|
+            record = Record.new(
+                data: gene_record[:sequence],
+                line: line,
+                exons: gene_record[:exons],
+                introns: gene_record[:introns]
+                )
+            @enhancer.records.push(record)
+            if is_wanted_record(record)
+                @enhancer.set_all_sequence_data(record)
+                update_gene
+            end
         end
         flash[:error] = gene_parser.error
     end
 
-    def wanted_record_or_first_record
-        if @using_line = record_params[:line]
-            @enhancer.records.where(line: @using_line).first
-        else
-            @enhancer.records.first
-        end
+    def is_wanted_record(record)
+        # use selected record (if any). default to first record.
+        selected_line = record_params[:line] || @enhancer.records.first.line
+        record.line == selected_line
+    end
+
+    def update_gene
+
     end
 end
