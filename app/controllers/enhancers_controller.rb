@@ -1,5 +1,4 @@
 class EnhancersController < ApplicationController
-    include ConvertInputToGene
 
     def index
         flash.clear
@@ -57,8 +56,7 @@ class EnhancersController < ApplicationController
     end
 
     def update_enhancer_data
-        gene_parser = ConvertInputToGene::ParseGene.new(
-            enhancer_params, remotipart_submitted?)
+        gene_parser = WebinputToGene.new(enhancer_params,remotipart_submitted?)
         gene_parser.get_records.each do |line, sequence|
             @enhancer.records.push( Record.new(data: sequence, line: line) )
         end
