@@ -10,7 +10,7 @@ class EnhancersController < ApplicationController
     def create
         @enhancer = Enhancer.where(name: enhancer_params[:name]).first
         reset_active_enhancer_and_associated_records
-        update_enhancer_data if enhancer_params[:commit] == "Save"
+        update_active_enhancer if enhancer_params[:commit] == "Save"
         # else: nothing to do. enhancer was just resetted.
     end
 
