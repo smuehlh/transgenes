@@ -7,7 +7,7 @@
 %>
 
 <div id="error-container-<%= id %>"></div>
-<%= form_for @enhancer, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
+<%= form_for Enhancer.new, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
     <div class="form-group">
         <%= f.hidden_field :name, value: resource_name %>
         <%= f.hidden_field :commit, value: "" %>

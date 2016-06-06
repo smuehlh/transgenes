@@ -4,7 +4,6 @@ class EnhancersController < ApplicationController
         flash.clear
         delete_old_init_new_gene_enhancers
         @five_enhancer, @cds_enhancer, @three_enhancer = get_gene_enhancers
-        @enhancer = Enhancer.new
     end
 
     def create
