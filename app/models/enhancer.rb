@@ -22,4 +22,8 @@ class Enhancer < ActiveRecord::Base
             gene_name: record.gene_name
         )
     end
+
+    def to_gene
+        [self.exons, self.introns, self.gene_name]
+    end
 end

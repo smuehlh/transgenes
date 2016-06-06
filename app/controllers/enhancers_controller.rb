@@ -9,7 +9,10 @@ class EnhancersController < ApplicationController
     def create
         @enhancer = Enhancer.where(name: enhancer_params[:name]).first
         reset_active_enhancer_and_associated_records
-        update_active_enhancer if enhancer_params[:commit] == "Save"
+        if enhancer_params[:commit] == "Save"
+            update_active_enhancer
+            generate_gene_statistics
+        end
         # else: nothing to do. enhancer was just resetted.
     end
 
@@ -78,7 +81,20 @@ class EnhancersController < ApplicationController
         record.line == selected_line
     end
 
-    def update_gene
+    def generate_gene_statistics
+        five_enhancer, cds_enhancer, three_enhancer = get_gene_enhancers
+        gene = Gene.new
+        if cds_enhancer.data
+            gene.add_cds(*cds_enhancer.to_gene)
+            # todo: get from params?
+            gene.remove_introns(false)
+        end
+        gene.add_five_prime_utr(*five_enhancer.to_gene) if five_enhancer.data
+        gene.add_three_prime_utr(*three_enhancer.to_gene) if three_enhancer.data
 
+        @statistics = {
+            n_exons: gene.exons.size,
+            sequence_length: gene.sequence.size
+        }
     end
 end
