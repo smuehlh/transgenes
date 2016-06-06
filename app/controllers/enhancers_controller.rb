@@ -60,9 +60,6 @@ class EnhancersController < ApplicationController
         gene_parser = ConvertInputToGene::ParseGene.new(
             enhancer_params, remotipart_submitted?)
         gene_parser.get_records.each do |line, sequence|
-            # TODO
-            # save exons and introns
-            debugger
             @enhancer.records.push( Record.new(data: sequence, line: line) )
         end
         if @enhancer.records.any?
