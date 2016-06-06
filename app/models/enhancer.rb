@@ -6,16 +6,20 @@ class Enhancer < ActiveRecord::Base
     serialize :introns
 
     def reset
-        self.update_attributes(data: "")
-        self.update_attributes(exons: [])
-        self.update_attributes(introns: [])
-        self.update_attributes(gene_name: "")
+        self.update_attributes(
+            data: "",
+            exons: [],
+            introns: [],
+            gene_name: ""
+        )
     end
 
     def update_with_record_data(record)
-        self.update_attributes(data: record.data)
-        self.update_attributes(exons: record.exons)
-        self.update_attributes(introns: record.introns)
-        self.update_attributes(gene_name: "")
+        self.update_attributes(
+            data: record.data,
+            exons: record.exons,
+            introns: record.introns,
+            gene_name: record.gene_name
+        )
     end
 end
