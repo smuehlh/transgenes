@@ -4,6 +4,8 @@ $(document).ready(function() {
     params = $("#new_submit .params-form");
 
     clear_forms();
+    hide_textboxes();
+    disable_form_elements();
 
     bind_eventhandlers_to_input_elements();
     bind_eventhandlers_to_preview_elements();
