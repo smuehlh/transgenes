@@ -5,9 +5,9 @@
             <div class="well well-sm">
                 <dl class="dl-horizontal nav-tabs">
                     <dt>Number of exons</dt>
-                    <dd> <% @statistics.exons %></dd>
+                    <dd> <%= @statistics[:n_exons] %></dd>
                     <dt>Total mRNA size</dt>
-                    <dd><% @statistics.length %></dd>
+                    <dd><%= @statistics[:sequence_length] %></dd>
                 </dl>
             </div>
         </dd>
