@@ -77,8 +77,8 @@ class EnhancersController < ApplicationController
 
     def is_wanted_record(record)
         # use selected record (if any). default to first record.
-        selected_line = record_params[:line] || @enhancer.records.first.line
-        record.line == selected_line
+        @selected_line = record_params[:line] # class variable needed for view
+        record.line == @selected_line || @enhancer.records.first.line
     end
 
     def generate_gene_statistics

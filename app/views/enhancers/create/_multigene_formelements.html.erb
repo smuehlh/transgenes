@@ -7,5 +7,5 @@
         ["l.#{record.line}: #{teaser}", record.line, {:class => 'monospaced'}]
    end
    %>
-   <%= f_record.select :line, options_for_select(record_options, @using_line), {}, {class: 'form-control monospaced'} %>
+   <%= f_record.select :line, options_for_select(record_options, @selected_line), {}, {class: 'form-control monospaced'} %>
 <% end %>
