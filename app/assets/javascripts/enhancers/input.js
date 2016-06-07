@@ -7,6 +7,7 @@ $(document).ready(function() {
 
     bind_eventhandlers_to_input_elements();
     bind_eventhandlers_to_preview_elements();
+    bind_eventhandlers_to_params_elements();
 });
 
 $(document).on('page:load', function() {
@@ -43,6 +44,10 @@ function bind_eventhandlers_to_input_elements() {
 function bind_eventhandlers_to_preview_elements() {
     bind_to_content_change();
 };
+
+function bind_eventhandlers_to_params_elements() {
+    bind_to_checkbox_change();
+}
 
 function bind_to_input_textarea() {
     inputs.find("textarea").on('input', function() {
@@ -117,6 +122,18 @@ function bind_to_content_change() {
         }
     });
 };
+
+function bind_to_checkbox_change() {
+    params.filter("#submit_keep_first_intron").on('click', function() {
+        if ($(this).prop('checked')) {
+            $("#stats-with-first-intron").show();
+            $("#stats-without-first-intron").hide();
+        } else {
+            $("#stats-with-first-intron").hide();
+            $("#stats-without-first-intron").show();
+        }
+    });
+}
 
 function init_params_partial() {
     params.filter(":input[type=checkbox]").removeAttr('checked');

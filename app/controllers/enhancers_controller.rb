@@ -83,18 +83,22 @@ class EnhancersController < ApplicationController
 
     def generate_gene_statistics
         five_enhancer, cds_enhancer, three_enhancer = get_gene_enhancers
+        is_remove_first_intron = false
         gene = Gene.new
         if cds_enhancer.data
             gene.add_cds(*cds_enhancer.to_gene)
-            # todo: get from params?
-            gene.remove_introns(false)
+            gene.remove_introns(is_remove_first_intron)
         end
         gene.add_five_prime_utr(*five_enhancer.to_gene) if five_enhancer.data
         gene.add_three_prime_utr(*three_enhancer.to_gene) if three_enhancer.data
 
         @statistics = {
             n_exons: gene.exons.size,
-            sequence_length: gene.sequence.size
+            sequence_length_with_first_intron: gene.sequence.size
         }
+
+        # remove first intron to generate statistics for that as well
+        gene.remove_introns(! is_remove_first_intron)
+        @statistics[:sequence_length_without_first_intron] = gene.sequence.size
     end
 end

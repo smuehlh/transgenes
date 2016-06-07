@@ -3,12 +3,28 @@
         <dt>General statistics</dt>
         <dd>
             <div class="well well-sm">
-                <dl class="dl-horizontal nav-tabs">
-                    <dt>Number of exons</dt>
-                    <dd> <%= @statistics[:n_exons] %></dd>
-                    <dt>Total mRNA size</dt>
-                    <dd><%= @statistics[:sequence_length] %></dd>
-                </dl>
+                <table class="custom-table">
+                    <tbody>
+                        <tr>
+                            <td>Original number of exons</td>
+                            <td>
+                                <%= @statistics[:n_exons]%>
+                            </td>
+                        </tr>
+                        <tr id="stats-without-first-intron">
+                            <td>Total mRNA size</td>
+                            <td>
+                                <%= @statistics[:sequence_length_without_first_intron]%>
+                            </td>
+                        </tr>
+                        <tr id="stats-with-first-intron" style="display: none;">
+                            <td>Total mRNA size</td>
+                            <td>
+                                <%= @statistics[:sequence_length_with_first_intron]%>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </dd>
     </dl>

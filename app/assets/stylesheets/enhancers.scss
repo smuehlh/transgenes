@@ -21,3 +21,8 @@ textarea {
 .monospaced {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+// display statistics in non-bootstrap, but nevertheless styled table
+.custom-table td {
+    padding-right: 15px;
+}
