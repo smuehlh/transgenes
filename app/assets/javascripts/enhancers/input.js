@@ -4,7 +4,7 @@ $(document).ready(function() {
     params = $("#new_submit .params-form");
 
     clear_forms();
-    hide_textboxes();
+    hide_alerts();
     disable_form_elements();
 
     bind_eventhandlers_to_input_elements();
@@ -14,7 +14,7 @@ $(document).ready(function() {
 
 $(document).on('page:load', function() {
     clear_forms();
-    hide_textboxes();
+    hide_alerts();
     disable_form_elements();
 });
 
@@ -24,8 +24,9 @@ function clear_forms() {
     inputs.find("[id^=multigene-options]").empty();
 };
 
-function hide_textboxes() {
+function hide_alerts() {
     inputs.find("[id^=text-alert]").hide();
+    inputs.find(".alert").hide();
     previews.filter(".alert").hide();
 };
 

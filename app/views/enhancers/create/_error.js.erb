@@ -1,0 +1,7 @@
+<% if text = flash.now[:error] || flash.now[:warning] %>
+    $("#error-alert-<%= id %>").show();
+    // display warning only if no error occurred!
+    $("#error-alert-text-<%= id %>").text("<%= escape_javascript(text) %>")
+<% else %>
+    $("#error-alert-<%= id %>").hide();
+<% end %>

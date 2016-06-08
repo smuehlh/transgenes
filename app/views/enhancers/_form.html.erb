@@ -6,8 +6,13 @@
     id = html_compatible_enhancer_name(resource_name)
 %>
 
-<div id="error-container-<%= id %>"></div>
 <%= form_for Enhancer.new, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
+    <div id="error-alert-<%= id %>" class="alert alert-danger" role="alert" style="display: none;">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        <span id="error-alert-text-<%= id %>"></span>
+    </div>
+
     <div class="form-group">
         <%= f.hidden_field :name, value: resource_name %>
         <%= f.hidden_field :commit, value: "" %>
