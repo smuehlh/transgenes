@@ -23,11 +23,6 @@
         </div>
         <%= f.text_area :data, class: "form-control monospaced", placeholder: "Enter sequence", maxlength: 2000 %>
     </div>
-    <div id="text-alert-<%= id %>" class="alert alert-danger" role="alert" style="display: none;">
-        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span class="sr-only">Error:</span>
-        Reached maximum input size. Please use file upload instead.
-    </div>
     <div class="form-group">
         <%= f.label :file, "Or, upload Genebank or FASTA file", class: "control-label" %>
         <%= f.file_field :file, accept: valid_extensions %>

@@ -25,7 +25,6 @@ function clear_forms() {
 };
 
 function hide_alerts() {
-    inputs.find("[id^=text-alert]").hide();
     inputs.find(".alert").hide();
     previews.filter(".alert").hide();
 };
@@ -65,11 +64,12 @@ function bind_to_input_textarea() {
             thisform.find(":submit").prop('disabled', true);
         }
         if (thisinput_size >= thisinput_maxsize) {
-            thisform.find("[id^=text-alert]").show();
+            thisform.find(".alert").show();
+            thisform.find("[id^=error-alert-text]").text("Reached maximum input size. Please use file upload instead.");
             thisform.find("textarea").val('');
             thisform.find(":submit").prop('disabled', true);
         } else {
-            thisform.find("[id^=text-alert]").hide();
+            thisform.find(".alert").hide();
         }
     });
 };
