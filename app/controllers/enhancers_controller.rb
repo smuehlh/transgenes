@@ -55,7 +55,6 @@ class EnhancersController < ApplicationController
         # records associated with previous input (if any) are invalid.
         @enhancer.reset
         @enhancer.records.delete_all
-        flash.delete(:error)
     end
 
     def update_active_enhancer
@@ -72,7 +71,7 @@ class EnhancersController < ApplicationController
 
             @enhancer.update_with_record_data(record) if is_wanted_record(record)
         end
-        flash[:error] = gene_parser.error
+        flash.now[:error] = gene_parser.error
     end
 
     def is_wanted_record(record)
