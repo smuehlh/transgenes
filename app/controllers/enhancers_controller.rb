@@ -72,6 +72,7 @@ class EnhancersController < ApplicationController
             @enhancer.update_with_record_data(record) if is_wanted_record(record)
         end
         flash.now[:error] = gene_parser.error
+        flash.now[:warning] = gene_parser.warning
     end
 
     def is_wanted_record(record)

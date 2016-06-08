@@ -1,7 +1,13 @@
-<% if flash.now[:error] %>
+<% if flash.now[:error] || flash.now[:warning] %>
     <div class="alert alert-danger" role="alert">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span class="sr-only">Error:</span>
-        <%= flash.now[:error] %>
+        <% # display warning only, if no error occurred! %>
+        <% if flash.now[:error] %>
+            <span class="sr-only">Error:</span>
+            <%= flash.now[:error] %>
+        <% else %>
+            <span class="sr-only">Warning:</span>
+            <%= flash.now[:warning] %>
+        <% end %>
     </div>
 <% end %>
