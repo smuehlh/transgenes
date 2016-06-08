@@ -8,12 +8,15 @@ class EnhancersController < ApplicationController
 
     def create
         @enhancer = Enhancer.where(name: enhancer_params[:name]).first
-        reset_active_enhancer_and_associated_records
         if enhancer_params[:commit] == "Save"
-            update_active_enhancer
-            generate_gene_statistics
+            reset_active_enhancer_and_associated_records
+            update_records_associated_with_active_enhancer
+            update_active_enhancer_and_generate_gene_statistics
+        elsif enhancer_params[:commit] == "Line"
+            update_active_enhancer_and_generate_gene_statistics
+        else
+            reset_active_enhancer_and_associated_records
         end
-        # else: nothing to do. enhancer was just resetted.
     end
 
     def submit
@@ -57,7 +60,7 @@ class EnhancersController < ApplicationController
         @enhancer.records.delete_all
     end
 
-    def update_active_enhancer
+    def update_records_associated_with_active_enhancer
         gene_parser = WebinputToGene.new(enhancer_params,remotipart_submitted?)
         gene_parser.get_records.each do |line, gene_record|
             record = Record.new(
@@ -68,17 +71,27 @@ class EnhancersController < ApplicationController
                 gene_name: gene_record[:description]
                 )
             @enhancer.records.push(record)
-
-            @enhancer.update_with_record_data(record) if is_wanted_record(record)
         end
         flash.now[:error] = gene_parser.error
         flash.now[:warning] = gene_parser.warning
     end
 
-    def is_wanted_record(record)
+    def update_active_enhancer_and_generate_gene_statistics
+        unless flash.now[:error]
+            record = get_wanted_record
+            @enhancer.update_with_record_data(record)
+            generate_gene_statistics
+        end
+    end
+
+    def get_wanted_record
         # use selected record (if any). default to first record.
-        @selected_line = record_params[:line] # class variable needed for view
-        record.line == @selected_line || @enhancer.records.first.line
+        if @selected_line = record_params[:line]
+            # class variable needed for view
+            Record.where(line: @selected_line).first
+        else
+            @enhancer.records.first
+        end
     end
 
     def generate_gene_statistics

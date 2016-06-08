@@ -106,7 +106,7 @@ function bind_to_reset_button() {
 function bind_to_select_list() {
     inputs.find("#records_line").on('change', function() {
         var thisform = $(this).closest("form");
-        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        thisform.find("input[type=hidden][name*=commit]").val("Line");
         thisform.submit();
     });
 };
