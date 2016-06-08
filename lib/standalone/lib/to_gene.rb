@@ -63,7 +63,7 @@ class ToGene
             @file_to_gene_obj.split_file_into_single_genes
 
         ErrorHandling.abort_with_error_message(
-            "invalid_file_format", "#{@file_info}.\nMissing gene record"
+            "invalid_file_format", @file_info
         ) unless are_feature_starts_found
     end
 
