@@ -1,26 +1,31 @@
 <%= content_tag(:h4, "General considerations") %>
 <div class="checkbox">
-  <label><input class="params-form" name="submit[keep_first_intron]" disabled="disabled" type="checkbox" value="">Keep first intron</label>
+    <input id="submit_keep_first_intron" class="params-form" name="submit[keep_first_intron]" disabled="disabled" type="checkbox" value="">
+    <label for="submit_keep_first_intron">Keep first intron</label>
 </div>
 <div class="checkbox">
-  <label><input class="params-form" name="submit[avoid_CpG]" disabled="disabled" type="checkbox" value="">Avoid CpG sites</label>
+    <input id="submit_avoid_CpG" class="params-form" name="submit[avoid_CpG]" disabled="disabled" type="checkbox" value="">
+    <label for="submit_avoid_CpG">Avoid CpG sites</label>
 </div>
 <div class="checkbox">
-  <label><input class="params-form" name="submit[adjust_nt_usage_along_cds]" disabled="disabled" type="checkbox" value="">Follow general trends of nucleotide usage along the CDS</label>
+    <input id="submit_adjust_nt_usage_along_cds" class="params-form" name="submit[adjust_nt_usage_along_cds]" disabled="disabled" type="checkbox" value="">
+    <label for="submit_adjust_nt_usage_along_cds">Follow general trends of nucleotide usage along the CDS</label>
 </div>
 
 <%= content_tag(:h4, "Strategy") %>
-<div class="field form-group">
-    <div class="radio">
-    <label><input class="params-form" type="radio" name="submit[strategy]" value="random" disabled="disabled" checked="checked">Any synonymous codon</label>
-    </div>
-    <div class="radio">
-    <label><input class="params-form" type="radio" name="submit[strategy]" value="at_up" disabled="disabled">Increase A/T content</label>
-    </div>
-    <div class="radio">
-    <label><input class="params-form" type="radio" name="submit[strategy]" value="at_down" disabled="disabled">Decrease A/T content (destroy ESEs)</label>
-    </div>
-    <div class="radio">
-    <label><input class="params-form" type="radio" name="submit[strategy]" value="selected_ese" disabled="disabled">Decrease A/T content (keep selected ESEs) </label>
-    </div>
+<div class="radio">
+    <input id="submit_strategy_random" class="params-form" type="radio" name="submit[strategy]" value="random" disabled="disabled" checked="checked">
+    <label for="submit_strategy_random">Any synonymous codon</label>
+</div>
+<div class="radio">
+    <input id="submit_strategy_atup" class="params-form" type="radio" name="submit[strategy]" value="at_up" disabled="disabled">
+    <label for="submit_strategy_atup">Increase A/T content</label>
+</div>
+<div class="radio">
+    <input id="submit_strategy_atdown" class="params-form" type="radio" name="submit[strategy]" value="at_down" disabled="disabled">
+    <label for="submit_strategy_atdown">Decrease A/T content (destroy ESEs)</label>
+</div>
+<div class="radio">
+    <input id="submit_strategy_selectedese" class="params-form" type="radio" name="submit[strategy]" value="selected_ese" disabled="disabled">
+    <label for="submit_strategy_selectedese">Decrease A/T content (keep selected ESEs)</label>
 </div>

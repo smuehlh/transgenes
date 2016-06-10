@@ -50,6 +50,8 @@ gem 'bootstrap-sass', '~> 3.3.6'
 gem 'autoprefixer-rails'
 # Bootstrap helpers
 gem 'bh', '~> 1.2'
+# Use for awesome checkbox
+gem "font-awesome-rails"
 
 # store environment variables in .env files rather than having actual env. vars
 gem 'dotenv-rails'
