@@ -103,7 +103,7 @@ class ToGene
 
         def save_gene_sequence(line)
             line = line.strip
-            line_wo_invalid_chars = Nucleotide.remove_invalid_chars(line)
+            line_wo_invalid_chars = Dna.remove_invalid_chars(line)
             @gene_sequence += line_wo_invalid_chars unless line == "ORIGIN"
         end
 
@@ -238,8 +238,8 @@ class ToGene
             @exons = @exons.reverse
             @introns = @introns.reverse
 
-            @exons = @exons.map{ |e| Nucleotide.reverse_complement(e) }
-            @introns = @introns.map{ |i| Nucleotide.reverse_complement(i) }
+            @exons = @exons.map{ |e| Dna.reverse_complement(e) }
+            @introns = @introns.map{ |i| Dna.reverse_complement(i) }
         end
 
         def set_exons_to_uppercase_and_introns_to_lowercase

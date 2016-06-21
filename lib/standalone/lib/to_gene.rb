@@ -182,7 +182,7 @@ class ToGene
     end
 
     def are_codons_valid
-        ! AminoAcid.is_invalid_codons(@exons.join(""))
+        GeneticCode.are_only_valid_codons(@exons.join(""))
     end
 
     def format_list_with_feature_starts

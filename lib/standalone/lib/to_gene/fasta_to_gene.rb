@@ -81,7 +81,7 @@ class ToGene
         end
 
         def save_exons_and_introns(line)
-            line_wo_invalid_chars = Nucleotide.remove_invalid_chars(line)
+            line_wo_invalid_chars = Dna.remove_invalid_chars(line)
             exon_intron_sniplets = split_line_into_exons_and_introns(
                 line_wo_invalid_chars
             )
