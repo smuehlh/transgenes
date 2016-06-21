@@ -27,7 +27,33 @@ module GeneticCode
             "CGT" => "R", "CGC" => "R", "CGA" => "R", "CGG" => "R",
                 "AGA" => "R", "AGG" => "R",
             "GGT" => "G", "GGC" => "G", "GGA" => "G", "GGG" => "G",
-            "TAA" => "", "TAG" => "X", "TGA" => "X"
+            "TAA" => "*", "TAG" => "*", "TGA" => "*"
+        }
+    end
+
+    def reverse_table
+        {
+            "F" => ["TTT", "TTC"],
+            "L" => ["TTA", "TTG", "CTT", "CTC", "CTA", "CTG"],
+            "I" => ["ATT", "ATC", "ATA"],
+            "M" => ["ATG"],
+            "V" => ["GTT", "GTC", "GTA", "GTG"],
+            "S" => ["TCT", "TCC", "TCA", "TCG", "AGT", "AGC"],
+            "P" => ["CCT", "CCC", "CCA", "CCG"],
+            "T" => ["ACT", "ACC", "ACA", "ACG"],
+            "Y" => ["TAT", "TAC"],
+            "A" => ["GCT", "GCC", "GCA", "GCG"],
+            "H" => ["CAT", "CAC"],
+            "Q" => ["CAA", "CAG"],
+            "N" => ["AAT", "AAC"],
+            "K" => ["AAA", "AAG"],
+            "D" => ["GAT", "GAC"],
+            "E" => ["GAA", "GAG"],
+            "C" => ["TGT", "TGC"],
+            "W" => ["TGG"],
+            "R" => ["CGT", "CGC", "CGA", "CGG", "AGA", "AGG"],
+            "G" => ["GGT", "GGC", "GGA", "GGG"],
+            "*" => ["TAA", "TAG", "TGA"]
         }
     end
 
@@ -60,5 +86,10 @@ module GeneticCode
         if is_stopcodon(codons.last)
             codons.pop
         end
+    end
+
+    def get_synonymous_codon(codon)
+        transl = table.fetch(codon)
+        reverse_table.fetch(transl, [])
     end
 end
