@@ -43,8 +43,9 @@ class Gene
     end
 
     def tweak_sequence(options)
-        # do stuff.
-        # remove splice sites flanking now removed introns.
+        synonymous_sites.each do |pos|
+            codon = get_codon_in_exon(pos)
+        end
 
         # combine sequences
         @sequence = combine_features_to_sequence
@@ -64,11 +65,20 @@ class Gene
         exons.zip(introns).flatten.compact.join("")
     end
 
-    def destroy_ese_sequences
-        # only if minimum number of exons found.
+    def synonymous_sites
+        # synonymous sites (= 3. codon positions)
+        first_synonymous_site = 2
+        last_synonymous_site = @exons.join("").size - 1
+        (first_synonymous_site..last_synonymous_site).step(3)
     end
 
-    def humanize_codon_usage
-
+    def get_codon_in_exon(pos)
+        @exons.each do |exon|
+            if pos >= exon.size
+                pos -= exon.size
+            else
+                return exon[pos-2..pos]
+            end
+        end
     end
 end
