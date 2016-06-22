@@ -45,6 +45,10 @@ class Gene
     def tweak_sequence(options)
         synonymous_sites.each do |pos|
             codon = get_codon_in_exon(pos)
+            synonymous_codons = GeneticCode.get_synonymous_codon(codon)
+            next if synonymous_codons.size == 1 # nothing to do.
+
+            windows = get_sequence_snippets_containing_pos(pos)
         end
 
         # combine sequences
@@ -73,12 +77,20 @@ class Gene
     end
 
     def get_codon_in_exon(pos)
-        @exons.each do |exon|
-            if pos >= exon.size
-                pos -= exon.size
+        @exons.join("")[pos-2..pos]
+    end
+
+    def get_sequence_snippets_containing_pos(pos)
+        max_distance_to_pos = 5
+        # TODO: windows across two exons?
+        seq = @exons.join("")
+        ((pos-max_distance_to_pos)..pos).collect do |startpos|
+            stoppos = startpos + max_distance_to_pos
+            if startpos < 0 || stoppos >= seq.size
+                nil
             else
-                return exon[pos-2..pos]
+                seq[startpos..stoppos]
             end
-        end
+        end.compact
     end
 end
