@@ -5,7 +5,8 @@ class CommandlineOptions
         # optional params
         :utr5prime, :utr3prime,
         :input_line, :utr5prime_line, :utr3prime_line,
-        :remove_first_intron
+        :remove_first_intron,
+        :ese
 
     def initialize(args)
         init_commandline_arguments(args)
@@ -42,6 +43,7 @@ class CommandlineOptions
             @input_line
             @utr5prime @utr5prime_line @utr3prime @utr3prime_line
             @remove_first_intron
+            @ese
         )
     end
 
@@ -122,6 +124,12 @@ class CommandlineOptions
             opts.on("-r", "--remove-first-intron",
                 "Remove all introns from CDS including the first. If not specified, the first intron is kept.") do |opt|
                 @remove_first_intron = true
+            end
+            opts.on("-e", "--ese FILE",
+                "Path to ESE file, one motif per line.",
+                "ESEs near introns that will be removed will be destroyed.") do |path|
+                FileHelper.file_exist_or_die(path)
+                @ese = path
             end
             opts.separator ""
             opts.on_tail("-h", "--help", "Show this message") do
