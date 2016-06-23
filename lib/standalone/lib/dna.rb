@@ -15,6 +15,11 @@ module Dna
         base_complement.keys
     end
 
+    def are_only_valid_nucleotides(str)
+        nucleotides = str.chars
+        (nucleotides - valid_nucleotides).empty?
+    end
+
     def reverse(str)
         str.reverse
     end

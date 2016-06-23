@@ -9,6 +9,8 @@ class Gene
         @three_prime_utr = "" # exons and introns merged
 
         @sequence = "" # UTRs, exons and introns merged together
+
+        @ese_motifs = []
     end
 
     def add_cds(exons, introns, gene_name)
@@ -27,6 +29,10 @@ class Gene
     def add_three_prime_utr(exons, introns, dummy)
         @three_prime_utr = combine_exons_and_introns(exons, introns)
         @sequence = combine_features_to_sequence
+    end
+
+    def add_ese_list(ese_motifs)
+        @ese_motifs = ese_motifs
     end
 
     def remove_introns(is_remove_first_intron)

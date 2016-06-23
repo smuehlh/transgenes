@@ -29,9 +29,8 @@ end
 gene.remove_introns(options.remove_first_intron)
 puts gene.print_statistics
 
-# determine what to do by command line parameters!
-# tweak exons
-# humanize codons
+# tweak sequence
+gene.add_ese_list(*EseToGene.init_and_parse(options.ese))
 gene.tweak_sequence(options)
 
 # output sequence

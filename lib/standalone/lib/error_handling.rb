@@ -32,6 +32,8 @@ module ErrorHandling
             "Unrecognized format. Input has to be either a GeneBank record or a FASTA file. Also, it has to specify the requested gene record."
         when "invalid_codons"
             "Found invalid codon(s)"
+        when "invalid_ese_format"
+            "Unrecognized format. Input has to contain ESE motifs only, one per line."
         else
             "Something went wrong."
         end
@@ -58,6 +60,8 @@ module ErrorHandling
             )
         when "invalid_codons"
             "Invalid codons: #{additional_error_message}"
+        when "invalid_ese_format"
+            "Unrecognized file format: #{additional_error_message}.\nInput has to contain ESE motifs only, one per line."
         else
             "An unknown error occured."
         end
