@@ -54,7 +54,8 @@ class Gene
             synonymous_codons = get_synonymous_codons(codon)
             next if synonymous_codons.size == 1 # nothing to do.
 
-            windows = get_sequence_snippets_containing_pos(pos)
+            best_scoring_codon = score_synonymous_codons(synonymous_codons, pos)
+            # windows = get_sequence_snippets_containing_pos(pos)
         end
 
         # combine sequences
@@ -90,6 +91,44 @@ class Gene
         # original codon is always the first in list
         synonymous_codons = GeneticCode.get_synonymous_codon(codon)
         synonymous_codons.unshift(codon).uniq
+    end
+
+    def score_synonymous_codons(synonymous_codons, pos)
+        scores = synonymous_codons.collect do |codon|
+            strategy_score = score_synonymous_codons_by_strategy
+            ese_score = score_synonymous_codons_by_ese_resemblance
+            weight_scores(strategy_score, ese_score)
+        end
+        select_synonymous_codon_with_highest_score(scores, synonymous_codons)
+    end
+
+    def score_synonymous_codons_by_strategy
+        1
+    end
+
+    def max_score_by_strategy
+        1
+    end
+
+    def score_synonymous_codons_by_ese_resemblance
+        1
+    end
+
+    def max_score_by_ese_resemblance
+        # NOTE: this depends on the number of sequence snippets containing a given position
+        6
+    end
+
+    def weight_scores(strategy_score, ese_score)
+        strategy_score/max_score_by_strategy.to_f +
+            ese_score/max_score_by_ese_resemblance.to_f
+    end
+
+    def select_synonymous_codon_with_highest_score(scores, codons)
+        # obtain the first index
+        # this will favor the original codon, as it is first in list
+        ind_of_lowest_score = scores.index(scores.min)
+        codons[ind_of_lowest_score]
     end
 
     def get_sequence_snippets_containing_pos(pos)
