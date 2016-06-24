@@ -55,7 +55,6 @@ class Gene
             next if synonymous_codons.size == 1 # nothing to do.
 
             best_scoring_codon = score_synonymous_codons(synonymous_codons, pos)
-            # windows = get_sequence_snippets_containing_pos(pos)
         end
 
         # combine sequences
@@ -95,14 +94,23 @@ class Gene
 
     def score_synonymous_codons(synonymous_codons, pos)
         scores = synonymous_codons.collect do |codon|
-            strategy_score = score_synonymous_codons_by_strategy
-            ese_score = score_synonymous_codons_by_ese_resemblance
+            if codon == synonymous_codons.first
+                # assume the original codon is the first in list
+                is_original_codon = true
+                windows = get_sequence_snippets_containing_pos(pos)
+            else
+                is_original_codon = false
+                windows = mutate_sequence_snippets(pos, codon)
+            end
+
+            strategy_score = score_codon_by_strategy(codon, is_original_codon)
+            ese_score = score_codon_by_ese_resemblance(windows)
             weight_scores(strategy_score, ese_score)
         end
         select_synonymous_codon_with_highest_score(scores, synonymous_codons)
     end
 
-    def score_synonymous_codons_by_strategy
+    def score_codon_by_strategy(codon, is_original_codon)
         1
     end
 
@@ -110,7 +118,7 @@ class Gene
         1
     end
 
-    def score_synonymous_codons_by_ese_resemblance
+    def score_codon_by_ese_resemblance(windows)
         1
     end
 
@@ -142,5 +150,9 @@ class Gene
                 seq[startpos..stoppos]
             end
         end.compact
+    end
+
+    def mutate_sequence_snippets(pos, potential_codon)
+
     end
 end
