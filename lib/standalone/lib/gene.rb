@@ -93,14 +93,16 @@ class Gene
     end
 
     def score_synonymous_codons(synonymous_codons, pos)
+        snippets = get_sequence_snippets_containing_pos(pos)
+
         scores = synonymous_codons.collect do |codon|
             if codon == synonymous_codons.first
                 # assume the original codon is the first in list
                 is_original_codon = true
-                windows = get_sequence_snippets_containing_pos(pos)
+                windows = snippets
             else
                 is_original_codon = false
-                windows = mutate_sequence_snippets(pos, codon)
+                windows = mutate_sequence_snippets(snippets, codon)
             end
 
             strategy_score = score_codon_by_strategy(codon, is_original_codon)
@@ -152,7 +154,12 @@ class Gene
         end.compact
     end
 
-    def mutate_sequence_snippets(pos, potential_codon)
-
+    def mutate_sequence_snippets(windows, new_codon)
+        pos = 5 # NOTE: this depends on the value of 'max_distance_to_pos'
+        windows.collect do |window|
+            window[pos] = new_codon.chars.last
+            pos -= 1
+            window
+        end
     end
 end
