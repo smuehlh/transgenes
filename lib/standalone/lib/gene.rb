@@ -57,6 +57,7 @@ class Gene
             scores = score_synonymous_codons(synonymous_codons, pos)
             best_scoring_codon = select_synonymous_codon_with_highest_score(scores, synonymous_codons)
 
+            replace_codon_at_pos(pos, best_scoring_codon) unless best_scoring_codon == codon
         end
 
         # combine sequences
@@ -159,9 +160,25 @@ class Gene
     def mutate_sequence_snippets(windows, new_codon)
         pos = 5 # NOTE: this depends on the value of 'max_distance_to_pos'
         windows.collect do |window|
-            window[pos] = new_codon.chars.last
+            window[pos] = mutated_nucleotide(new_codon)
             pos -= 1
             window
         end
+    end
+
+    def replace_codon_at_pos(pos, new_codon)
+        @exons.each do |exon|
+            if pos >= exon.size
+                pos -= exon.size
+            else
+                exon[pos] = mutated_nucleotide(new_codon)
+                break
+            end
+            exon
+        end
+    end
+
+    def mutated_nucleotide(codon)
+        codon.chars.last
     end
 end
