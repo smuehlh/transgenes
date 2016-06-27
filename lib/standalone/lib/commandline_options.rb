@@ -52,10 +52,10 @@ class CommandlineOptions
     end
 
     def instance_variable_to_argument(str)
+        # for mandatory arguments only
         case str
         when "@input" then "--input"
         when "@output" then "--output"
-        when "@input_line" then "--line"
         else "Unknown argument. Use --help to view all available options."
         end
     end
