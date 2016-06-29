@@ -73,6 +73,8 @@ module ErrorHandling
             warning_message("Gene is partial.")
         when "unused_utr_line"
             warning_message("#{additional_warning_message}: A starting line but no file was provided. Will ignore starting line.")
+        when "no_codons_replaced"
+            warning_message("Sequence has not been altered.")
         end
     end
 

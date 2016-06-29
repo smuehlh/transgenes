@@ -49,6 +49,8 @@ class Gene
     end
 
     def tweak_sequence(options)
+        is_replaced_any_codons = false
+
         syn_sites = SynonymousSites.new(@exons, @introns)
         syn_sites.get_synonymous_sites_in_exons.each do |pos|
             codon = get_codon_in_exon(pos)
@@ -58,8 +60,14 @@ class Gene
             scores = score_synonymous_codons(synonymous_codons, pos)
             best_scoring_codon = select_synonymous_codon_with_highest_score(scores, synonymous_codons)
 
-            replace_codon_at_pos(pos, best_scoring_codon) unless best_scoring_codon == codon
+            if best_scoring_codon != codon
+                replace_codon_at_pos(pos, best_scoring_codon)
+                is_replaced_any_codons = true
+            end
         end
+
+        ErrorHandling.warn_with_error_message(
+            "no_codons_replaced") unless is_replaced_any_codons
 
         # combine sequences
         @sequence = combine_features_to_sequence
