@@ -49,7 +49,8 @@ class Gene
     end
 
     def tweak_sequence(options)
-        synonymous_sites.each do |pos|
+        syn_sites = SynonymousSites.new(@exons, @introns)
+        syn_sites.get_synonymous_sites_in_exons.each do |pos|
             codon = get_codon_in_exon(pos)
             synonymous_codons = get_synonymous_codons(codon)
             next if synonymous_codons.size == 1 # nothing to do.
@@ -76,13 +77,6 @@ class Gene
 
     def combine_exons_and_introns(exons, introns)
         exons.zip(introns).flatten.compact.join("")
-    end
-
-    def synonymous_sites
-        # synonymous sites (= 3. codon positions)
-        first_synonymous_site = 2
-        last_synonymous_site = @exons.join("").size - 1
-        (first_synonymous_site..last_synonymous_site).step(3)
     end
 
     def get_codon_in_exon(pos)
