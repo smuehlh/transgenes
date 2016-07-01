@@ -1,20 +1,20 @@
 class RawSequenceScores
 
-    def initialize(original_codon, ese_motifs)
-        @original_codon = original_codon
+    def initialize(ese_motifs)
         @ese_motifs = ese_motifs
     end
 
-    def score_synonymous_codon(windows, codon, is_original_codon)
-        strategy_score = score_codon_by_strategy(codon)
+    def score_synonymous_codon(windows, synonymous_codon, original_codon)
+        strategy_score = score_codon_by_strategy(
+            synonymous_codon, original_codon)
         ese_score = score_codon_by_ese_resemblance(windows)
         weight_scores(strategy_score, ese_score, windows)
     end
 
     private
 
-    def score_codon_by_strategy(is_original_codon)
-        is_original_codon ? 1 : 0
+    def score_codon_by_strategy(synonymous_codon, original_codon)
+        synonymous_codon == original_codon ? 1 : 0
     end
 
     def max_score_by_strategy

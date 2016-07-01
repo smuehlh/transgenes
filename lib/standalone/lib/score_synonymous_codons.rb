@@ -17,6 +17,10 @@ class ScoreSynonymousCodons
 
     private
 
+    def init_scoring_obj(ese_motifs)
+        @score_obj = RawSequenceScores.new(ese_motifs)
+    end
+
     def init_vars_describing_codon_and_position(pos)
         @pos = pos
         @original_codon = get_codon_at_pos
@@ -27,8 +31,7 @@ class ScoreSynonymousCodons
     def score_synonymous_codons
         @scores = @synonymous_codons.collect do |codon|
             windows = get_sequence_snippets(codon)
-            is_original_codon = ! is_codon_not_the_original(codon)
-            @score_obj.score_synonymous_codon(windows, codon, is_original_codon)
+            @score_obj.score_synonymous_codon(windows, codon, @original_codon)
         end
     end
 
@@ -37,10 +40,6 @@ class ScoreSynonymousCodons
         sorted_scores.each_with_index.collect do |score, ind|
             @synonymous_codons[ind]
         end
-    end
-
-    def init_scoring_obj(ese_motifs)
-        @score_obj = RawSequenceScores.new(@original_codon, ese_motifs)
     end
 
     def get_codon_at_pos
