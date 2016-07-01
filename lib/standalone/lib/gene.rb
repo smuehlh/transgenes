@@ -11,6 +11,7 @@ class Gene
         @sequence = "" # UTRs, exons and introns merged together
 
         @ese_motifs = []
+        @number_of_changed_sites = 0
     end
 
     def add_cds(exons, introns, gene_name)
@@ -49,7 +50,6 @@ class Gene
     end
 
     def tweak_sequence(options)
-        is_replaced_any_codons = false
         scorer = ScoreSynonymousCodons.new(@exons, @ese_motifs)
         syn_sites = SynonymousSites.new(@exons, @introns)
 
@@ -59,15 +59,17 @@ class Gene
 
             if scorer.is_codon_not_the_original(best_scoring_codon)
                 replace_codon_at_pos(pos, best_scoring_codon)
-                is_replaced_any_codons = true
+                @number_of_changed_sites += 1
             end
         end
-
         ErrorHandling.warn_with_error_message(
-            "no_codons_replaced") unless is_replaced_any_codons
-
+            "no_codons_replaced") if @number_of_changed_sites == 0
         # combine sequences
         @sequence = combine_features_to_sequence
+    end
+
+    def print_tweak_statistics
+        "Changed #{@number_of_changed_sites} synonymous sites."
     end
 
     private

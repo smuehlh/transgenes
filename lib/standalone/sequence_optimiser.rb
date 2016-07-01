@@ -32,6 +32,7 @@ puts gene.print_statistics
 # tweak sequence
 gene.add_ese_list(*EseToGene.init_and_parse(options.ese)) if options.ese
 gene.tweak_sequence(options)
+puts gene.print_tweak_statistics
 
 # output sequence
 GeneToFasta.write(options.output, gene)
