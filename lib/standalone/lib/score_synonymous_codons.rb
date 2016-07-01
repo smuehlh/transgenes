@@ -36,8 +36,10 @@ class ScoreSynonymousCodons
     end
 
     def sort_synonymous_codons_by_score
-        sorted_scores = @scores.sort.reverse
-        sorted_scores.each_with_index.collect do |score, ind|
+        indices = (0..@scores.size-1)
+        negative_scores_with_indices = @scores.map{ |x| -x }.zip(indices)
+        sorted_scores_with_original_index = negative_scores_with_indices.sort
+        sorted_scores_with_original_index.collect do |dummy, ind|
             @synonymous_codons[ind]
         end
     end
