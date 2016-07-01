@@ -34,8 +34,7 @@ class ScoreSynonymousCodons
 
     def sort_synonymous_codons_by_score
         sorted_scores = @scores.sort.reverse
-        sorted_scores.collect do |score|
-            ind = @scores.index(score)
+        sorted_scores.each_with_index.collect do |score, ind|
             @synonymous_codons[ind]
         end
     end
