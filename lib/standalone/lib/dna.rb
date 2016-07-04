@@ -28,11 +28,6 @@ module Dna
         complement(reverse(str))
     end
 
-    def remove_invalid_chars(str)
-        valid_char_regexp = valid_nucleotides.join("")
-        str.regexp_delete(/[^#{valid_char_regexp}]/i)
-    end
-
     def complement(str)
         str.upcase.each_char.map do |char|
             base_complement.fetch(char)

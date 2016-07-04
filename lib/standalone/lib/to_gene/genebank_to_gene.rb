@@ -102,9 +102,9 @@ class ToGene
         end
 
         def save_gene_sequence(line)
-            line = line.strip
-            line_wo_invalid_chars = Dna.remove_invalid_chars(line)
-            @gene_sequence += line_wo_invalid_chars unless line == "ORIGIN"
+            line.strip!
+            sequence = extract_sequence(line)
+            @gene_sequence += sequence unless line == "ORIGIN"
         end
 
         def update_current_feature(line)
@@ -251,6 +251,11 @@ class ToGene
             @exon_positions.split(",").map do |range|
                 range.split("..").map{|pos| Counting.human_to_ruby(pos.to_i)}
             end
+        end
+
+        def extract_sequence(line)
+            # line will contain numbers and blanks, and the dna sequence.
+            line.regexp_delete(/[\d ]/)
         end
     end
 end
