@@ -49,8 +49,8 @@ class Gene
         str
     end
 
-    def tweak_sequence(options)
-        scorer = ScoreSynonymousCodons.new(@exons, @ese_motifs)
+    def tweak_sequence(strategy)
+        scorer = ScoreSynonymousCodons.new(strategy, @exons, @ese_motifs)
         syn_sites = SynonymousSites.new(@exons, @introns)
 
         syn_sites.get_synonymous_sites_in_exons.each do |pos|

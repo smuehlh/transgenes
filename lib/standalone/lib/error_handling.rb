@@ -66,6 +66,10 @@ module ErrorHandling
             "Invalid codons: #{additional_error_message}"
         when "invalid_ese_format"
             "Unrecognized file format: #{additional_error_message}.\nInput has to contain ESE motifs only, one per line."
+        when "unknown_strategy"
+            error_message_with_reference_to_commandline_option_help(
+                "Unknown strategy for altering the sequence."
+            )
         else
             "An unknown error occured."
         end

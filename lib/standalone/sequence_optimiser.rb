@@ -31,7 +31,7 @@ puts gene.print_statistics
 
 # tweak sequence
 gene.add_ese_list(*EseToGene.init_and_parse(options.ese)) if options.ese
-gene.tweak_sequence(options)
+gene.tweak_sequence(options.strategy)
 puts gene.print_tweak_statistics
 
 # output sequence

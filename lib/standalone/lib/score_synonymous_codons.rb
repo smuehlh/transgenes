@@ -1,8 +1,8 @@
 class ScoreSynonymousCodons
 
-    def initialize(exons, ese_motifs)
+    def initialize(strategy, exons, ese_motifs)
         @sequence = exons.join("")
-        init_scoring_obj(ese_motifs)
+        init_scoring_obj(strategy, ese_motifs)
     end
 
     def score_synonymous_codons_at(pos)
@@ -17,8 +17,16 @@ class ScoreSynonymousCodons
 
     private
 
-    def init_scoring_obj(ese_motifs)
-        @score_obj = RawSequenceScores.new(ese_motifs)
+    def init_scoring_obj(strategy, ese_motifs)
+        @score_obj =
+            case strategy
+            when "raw" then RawSequenceScores.new(ese_motifs)
+            when "humanize"
+            when "gc"
+            else
+                # hopefully this will be never executed.
+                ErrorHandling.abort_with_error_message("unknown_strategy")
+            end
     end
 
     def init_vars_describing_codon_and_position(pos)
