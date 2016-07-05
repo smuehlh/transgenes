@@ -158,6 +158,10 @@ class CommandlineOptions
     end
 
     def ensure_dependencies_are_met
+        ErrorHandling.abort_with_error_message(
+            "invalid_argument_combination",
+            "Nothing to do for the combination: 'raw'-strategy/ no ESEs"
+        ) if strategy_raw_specified_without_ese_list
         ErrorHandling.warn_with_error_message(
             "unused_utr_line", "5'UTR"
         ) if utr_line_specified_without_file(@utr5prime, @utr5prime_line)
@@ -168,5 +172,9 @@ class CommandlineOptions
 
     def utr_line_specified_without_file(file, line)
         file.nil? && line
+    end
+
+    def strategy_raw_specified_without_ese_list
+        @strategy == "raw" && @ese.nil?
     end
 end

@@ -48,6 +48,10 @@ module ErrorHandling
             error_message_with_reference_to_commandline_option_help(
                 "Missing mandatory option: #{additional_error_message}."
             )
+        when "invalid_argument_combination"
+            error_message_with_reference_to_commandline_option_help(
+                "Invalid option combination: #{additional_error_message}."
+            )
         when "invalid_file_format"
             "Unrecognized file format or feature: #{additional_error_message}.\nInput has to be either a GeneBank record or a FASTA file. Also, it has to specify the requested gene record."
         when "invalid_gene_start"
