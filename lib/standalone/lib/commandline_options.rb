@@ -97,11 +97,11 @@ class CommandlineOptions
                 "Path to output file, in FASTA format.") do |path|
                 @output = path
             end
-            opts.on("-s", "--strategy STRATEGY", ["raw", "humanized", "gc"],
+            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc"],
                 "Strategy for altering the sequence.",
                 "Select one of: 'raw', 'humanized' or 'gc'.",
                 "raw - Leave the sequence as is.", "May be specified only in combination with an ESE list (--ese).",
-                "humanized - Match human codon usage.", "May be specified with/ without an ESE list.",
+                "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
                 "gc - Match GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.") do |opt|
                 @strategy = opt
             end
