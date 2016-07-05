@@ -1,7 +1,7 @@
 require 'optparse'
 
 class CommandlineOptions
-    attr_reader :input, :output,
+    attr_reader :input, :output, :strategy,
         # optional params
         :utr5prime, :utr3prime,
         :input_line, :utr5prime_line, :utr3prime_line,
@@ -35,7 +35,7 @@ class CommandlineOptions
     end
 
     def mandatory_arguments
-        %w(@input @output)
+        %w(@input @output @strategy)
     end
 
     def optional_arguments
@@ -56,6 +56,7 @@ class CommandlineOptions
         case str
         when "@input" then "--input"
         when "@output" then "--output"
+        when "@strategy" then "--strategy"
         else "Unknown argument. Use --help to view all available options."
         end
     end
@@ -94,6 +95,14 @@ class CommandlineOptions
             opts.on("-o", "--output FILE",
                 "Path to output file, in FASTA format.") do |path|
                 @output = path
+            end
+            opts.on("-s", "--strategy STRATEGY", ["raw", "humanized", "gc"],
+                "Strategy for altering the sequence.",
+                "Select one of: 'raw', 'humanized' or 'gc'.",
+                "raw - Leave the sequence as is.", "May be specified only in combination with an ESE list (--ese).",
+                "humanized - Match human codon usage.", "May be specified with/ without an ESE list.",
+                "gc - Match GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.") do |opt|
+                @strategy = opt
             end
 
             # optional arguments
