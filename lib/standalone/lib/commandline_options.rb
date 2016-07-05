@@ -73,7 +73,8 @@ class CommandlineOptions
             OptionParser::InvalidOption,
             OptionParser::AmbiguousOption => exception
 
-            exception_str = exception.to_s.capitalize
+            exception_str = exception.to_s
+            exception_str[0] = exception_str[0].capitalize
             ErrorHandling.abort_with_error_message("argument_error", exception_str
             )
     end
