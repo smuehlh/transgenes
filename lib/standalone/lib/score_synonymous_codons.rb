@@ -2,7 +2,7 @@ class ScoreSynonymousCodons
 
     def initialize(strategy, exons, ese_motifs)
         @sequence = exons.join("")
-        init_scoring_obj(strategy, ese_motifs)
+        init_scoring_objects(strategy, ese_motifs)
     end
 
     def score_synonymous_codons_at(pos)
@@ -17,16 +17,17 @@ class ScoreSynonymousCodons
 
     private
 
-    def init_scoring_obj(strategy, ese_motifs)
-        @score_obj =
+    def init_scoring_objects(strategy, ese_motifs)
+        @strategy_scoring_obj =
             case strategy
-            when "raw" then RawSequenceScores.new(ese_motifs)
+            when "raw" then RawSequenceScores.new
             when "humanize"
             when "gc"
             else
                 # hopefully this will be never executed.
                 ErrorHandling.abort_with_error_message("unknown_strategy")
             end
+        @ese_scoring_obj = EseScores.new(ese_motifs)
     end
 
     def init_vars_describing_codon_and_position(pos)
@@ -39,7 +40,7 @@ class ScoreSynonymousCodons
     def score_synonymous_codons
         @scores = @synonymous_codons.collect do |codon|
             windows = get_sequence_snippets(codon)
-            @score_obj.score_synonymous_codon(windows, codon, @original_codon)
+            score_synonymous_codon(windows, codon)
         end
     end
 
@@ -84,7 +85,6 @@ class ScoreSynonymousCodons
         [head, mutation, tail].join("")
     end
 
-
     def mutate_sequence_snippets(new_codon)
         pos = max_distance_in_sequence_snippets_to_pos
         @original_sequence_snippets.collect do |window|
@@ -98,4 +98,19 @@ class ScoreSynonymousCodons
         Constants.window_size - 1
     end
 
+    def score_synonymous_codon(windows, synonymous_codon)
+        strategy_score =
+            @strategy_scoring_obj.score_synonymous_codon_by_strategy(
+                synonymous_codon, @original_codon
+            )
+        ese_score =
+            @ese_scoring_obj.score_synonymous_codon_by_ese_resemblance(windows)
+
+        combine_scores(strategy_score, ese_score)
+    end
+
+    def combine_scores(strategy_score, ese_score)
+        # assume the scores are already weighted and just need to be combined!
+        strategy_score + ese_score
+    end
 end
