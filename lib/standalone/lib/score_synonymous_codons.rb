@@ -21,7 +21,7 @@ class ScoreSynonymousCodons
         @strategy_scoring_obj =
             case strategy
             when "raw" then RawSequenceScores.new
-            when "humanize"
+            when "humanize" then HumanMatchedSequenceScores.new
             when "gc"
             else
                 # hopefully this will be never executed.
