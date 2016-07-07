@@ -15,6 +15,10 @@ class ScoreSynonymousCodons
         @original_codon != codon
     end
 
+    def log_changes
+        "#{@pos}: #{@original_codon}->#{@sorted_synonymous_codons.first}"
+    end
+
     private
 
     def init_scoring_objects(strategy, ese_motifs)
@@ -48,9 +52,10 @@ class ScoreSynonymousCodons
         indices = (0..@scores.size-1)
         negative_scores_with_indices = @scores.map{ |x| -x }.zip(indices)
         sorted_scores_with_original_index = negative_scores_with_indices.sort
-        sorted_scores_with_original_index.collect do |dummy, ind|
-            @synonymous_codons[ind]
-        end
+        @sorted_synonymous_codons =
+            sorted_scores_with_original_index.collect do |dummy, ind|
+                @synonymous_codons[ind]
+            end
     end
 
     def get_codon_at_pos

@@ -52,6 +52,7 @@ class Gene
     def tweak_sequence(strategy)
         scorer = ScoreSynonymousCodons.new(strategy, @exons, @ese_motifs)
         syn_sites = SynonymousSites.new(@exons, @introns)
+        logger = Logger.new
 
         syn_sites.get_synonymous_sites_in_exons.each do |pos|
             ranked_synonymous_codons = scorer.score_synonymous_codons_at(pos)
@@ -60,10 +61,13 @@ class Gene
             if scorer.is_codon_not_the_original(best_scoring_codon)
                 replace_codon_at_pos(pos, best_scoring_codon)
                 @number_of_changed_sites += 1
+                logger.write(scorer.log_changes)
             end
         end
         ErrorHandling.warn_with_error_message(
             "no_codons_replaced") if @number_of_changed_sites == 0
+        logger.close
+
         # combine sequences
         @sequence = combine_features_to_sequence
     end
