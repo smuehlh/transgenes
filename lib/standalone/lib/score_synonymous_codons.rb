@@ -16,7 +16,12 @@ class ScoreSynonymousCodons
     end
 
     def log_changes
-        "#{@pos}: #{@original_codon}->#{@sorted_synonymous_codons.first}"
+        codons_with_scores =
+            @sorted_synonymous_codons.collect.each_with_index do |codon, ind|
+                score = -@sorted_scores[ind].round(2)
+                "#{codon}: #{score}"
+            end.join(", ")
+        "#{@pos}: #{@original_codon} -> #{@sorted_synonymous_codons.first}\n\t#{codons_with_scores}\n"
     end
 
     private
@@ -52,10 +57,12 @@ class ScoreSynonymousCodons
         indices = (0..@scores.size-1)
         negative_scores_with_indices = @scores.map{ |x| -x }.zip(indices)
         sorted_scores_with_original_index = negative_scores_with_indices.sort
-        @sorted_synonymous_codons =
-            sorted_scores_with_original_index.collect do |dummy, ind|
-                @synonymous_codons[ind]
-            end
+        @sorted_synonymous_codons, @sorted_scores = [], []
+        sorted_scores_with_original_index.collect do |score, ind|
+            @sorted_synonymous_codons.push(@synonymous_codons[ind])
+            @sorted_scores.push(score)
+        end
+        @sorted_synonymous_codons
     end
 
     def get_codon_at_pos
