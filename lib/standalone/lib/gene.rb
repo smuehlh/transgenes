@@ -42,10 +42,12 @@ class Gene
     end
 
     def print_statistics
-        str = "Number of exons: #{@exons.size}"
+        str = "Number of exons: #{@exons.size}\n"
         first_intron_kept = @introns.size == 1
-        str += "\nAll introns " + (first_intron_kept ? "but" : "including") + " the first removed."
-        str += "\nTotal mRNA size: #{@sequence.size}"
+        str += "All introns " + (first_intron_kept ? "but" : "including") + " the first removed.\n"
+        n_aa = @exons.join("").size / 3
+        str += "Number of amino acids: #{n_aa}\n"
+        str += "Total mRNA size: #{@sequence.size}\n"
         str
     end
 
@@ -53,6 +55,7 @@ class Gene
         scorer = ScoreSynonymousCodons.new(strategy, @exons, @ese_motifs)
         syn_sites = SynonymousSites.new(@exons, @introns)
         logger = Logger.new
+        logger.write(print_statistics + "\n")
 
         syn_sites.get_synonymous_sites_in_exons.each do |pos|
             ranked_synonymous_codons = scorer.score_synonymous_codons_at(pos)
@@ -66,6 +69,8 @@ class Gene
         end
         ErrorHandling.warn_with_error_message(
             "no_codons_replaced") if @number_of_changed_sites == 0
+
+        logger.write("\n" + print_tweak_statistics)
         logger.close
 
         # combine sequences
