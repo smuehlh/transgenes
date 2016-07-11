@@ -80,7 +80,7 @@ class SynonymousSites
     end
 
     def cds_length_upto_exon(exon_index)
-        @exons[0..exon_index-1].join("").size
+        exon_index == 0 ? 0 : @exons[0..exon_index-1].join("").size
     end
 
     def cds_length_including_exon(exon_index)
