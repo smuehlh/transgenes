@@ -4,8 +4,14 @@ module Logging
 
     extend self
 
-    def setup
-        logger = initialize_logger
+    def default_setup_commandline_tool
+        file_logger = setup("optimiser.log", Logger::INFO)
+        stderr_logger = setup(STDERR, Logger::WARN)
+        [file_logger, stderr_logger]
+    end
+
+    def setup(output, level)
+        logger = initialize_logger(output, level)
         customize_output_format_of_multiline_messages(logger)
         setup_graceful_exit(logger)
 
@@ -14,9 +20,9 @@ module Logging
 
     private
 
-    def initialize_logger
-        this_logger = Logger.new(STDOUT)
-        this_logger.level = Logger::INFO
+    def initialize_logger(output, level)
+        this_logger = Logger.new(output)
+        this_logger.level = level
         this_logger.progname = "SequenceOptimizer"
         this_logger.datetime_format = "%Y-%m-%d %H:%M:%S"
 

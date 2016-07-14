@@ -8,7 +8,7 @@ Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
     require File.absolute_path(file)
 end
 ErrorHandling.is_commandline_tool = true
-$logger = Logging.setup
+$logger = MultiLogger.new(*Logging.default_setup_commandline_tool)
 
 options = CommandlineOptions.new(ARGV)
 
