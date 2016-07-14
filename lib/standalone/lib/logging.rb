@@ -21,22 +21,24 @@ module Logging
     private
 
     def initialize_logger(output, level)
+        progname = "SequenceOptimizer"
         this_logger =
             if output.instance_of?(IO)
                 Logger.new(output)
             else
                 file = File.open(output, File::WRONLY | File::TRUNC | File::CREAT)
+                file.puts "Created logfile on #{Time.now.to_s} by #{progname}."
                 Logger.new(file)
             end
         this_logger.level = level
-        this_logger.progname = "SequenceOptimizer"
+        this_logger.progname = progname
         this_logger.datetime_format = "%Y-%m-%d %H:%M:%S"
 
         this_logger
     end
 
     def customize_output_format_of_multiline_messages(this_logger)
-        original_formatter = Logger::Formatter.new
+        # original_formatter = Logger::Formatter.new
         this_logger.formatter = proc do |severity, datetime, progname, msg|
             msg = msg.to_s
             patched_msg =
@@ -46,8 +48,8 @@ module Logging
                 else
                     msg
                 end
-            original_formatter.call(severity, datetime, progname, patched_msg)
-            # "#{severity} -- #{progname}: #{patched_msg}\n"
+            # original_formatter.call(severity, datetime, progname, patched_msg)
+            "#{severity} -- #{progname}: #{patched_msg}\n"
         end
     end
 
