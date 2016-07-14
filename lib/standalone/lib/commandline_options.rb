@@ -13,11 +13,14 @@ class CommandlineOptions
         init_mandatory_arguments
         init_optional_arguments
 
+        log_options
         parse_options
     end
 
     def init_commandline_arguments(args)
         @args = args
+        @program_call = "#{$PROGRAM_NAME} #{args.join(" ")}"
+
         # if no arugments given: ensure help is printed
         @args.push "-h" if @args.empty?
     end
@@ -59,6 +62,10 @@ class CommandlineOptions
         when "@strategy" then "--strategy"
         else "Unknown argument. Use --help to view all available options."
         end
+    end
+
+    def log_options
+        $logger.info("Programm call: #{@program_call}")
     end
 
     def parse_options

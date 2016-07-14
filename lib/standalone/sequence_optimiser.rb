@@ -28,12 +28,12 @@ end
 
 # remove unwanted introns
 gene.remove_introns(options.remove_first_intron)
-puts gene.print_statistics
+$logger.info(gene.print_statistics)
 
 # tweak sequence
 gene.add_ese_list(*EseToGene.init_and_parse(options.ese)) if options.ese
 gene.tweak_sequence(options.strategy)
-puts gene.print_tweak_statistics
+$logger.info(gene.print_tweak_statistics)
 
 # output sequence
 GeneToFasta.write(options.output, gene)
