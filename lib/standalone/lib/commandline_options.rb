@@ -150,7 +150,7 @@ class CommandlineOptions
             end
             opts.separator ""
             opts.on_tail("-h", "--help", "Show this message") do
-                $logger.unknown("OptionParser") {opts}
+                puts opts
                 exit
             end
         end
