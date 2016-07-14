@@ -40,7 +40,7 @@ module Logging
                 else
                     msg
                 end
-            "#{severity} -- #{progname}: #{patched_msg}"
+            original_formatter.call(severity, datetime, progname, patched_msg)
         end
     end
 
