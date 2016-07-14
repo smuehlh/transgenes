@@ -88,9 +88,10 @@ module ErrorHandling
 
     def abort_with_error_message(code, additional_error_message = "")
         if is_commandline_tool
-            abort error_code_to_commandline_error_message(
+            $logger.fatal error_code_to_commandline_error_message(
                 code, additional_error_message
             )
+            abort
         else
             raise EnhancerError, error_code_to_webserver_error_message(code)
         end
@@ -98,7 +99,7 @@ module ErrorHandling
 
     def warn_with_error_message(code, additional_warning_message = "")
         if is_commandline_tool
-            warn error_code_to_commandline_warning_message(
+            $logger.warn error_code_to_commandline_warning_message(
                 code, additional_warning_message
             )
         else
