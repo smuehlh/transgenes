@@ -21,7 +21,7 @@ class ScoreSynonymousCodons
                 score = -@sorted_scores[ind].round(2)
                 "#{codon}: #{score}"
             end.join(", ")
-        "#{@pos}: #{@original_codon} -> #{@sorted_synonymous_codons.first}\n\t#{codons_with_scores}\n"
+        "Pos #{@pos}: #{@original_codon} -> #{@sorted_synonymous_codons.first} (#{codons_with_scores})"
     end
 
     private
