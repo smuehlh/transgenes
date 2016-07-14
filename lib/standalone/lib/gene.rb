@@ -41,14 +41,14 @@ class Gene
         @sequence = combine_features_to_sequence
     end
 
-    def print_statistics
+    def log_statistics
         str = "Number of exons: #{@exons.size}\n"
         first_intron_kept = @introns.size == 1
         str += "All introns " + (first_intron_kept ? "but" : "including") + " the first removed.\n"
         n_aa = @exons.join("").size / 3
         str += "Number of amino acids: #{n_aa}\n"
-        str += "Total mRNA size: #{@sequence.size}\n"
-        str
+        str += "Total mRNA size: #{@sequence.size}"
+        $logger.info(str)
     end
 
     def tweak_sequence(strategy)
@@ -65,15 +65,16 @@ class Gene
                 $logger.info(scorer.log_changes)
             end
         end
-        ErrorHandling.warn_with_error_message(
-            "no_codons_replaced") if @number_of_changed_sites == 0
 
         # combine sequences
         @sequence = combine_features_to_sequence
     end
 
-    def print_tweak_statistics
-        "Changed #{@number_of_changed_sites} synonymous sites."
+    def log_tweak_statistics
+        $logger.info("Changed #{@number_of_changed_sites} synonymous sites.")
+        ErrorHandling.warn_with_error_message(
+            "no_codons_replaced", "Gene"
+        ) if @number_of_changed_sites == 0
     end
 
     private

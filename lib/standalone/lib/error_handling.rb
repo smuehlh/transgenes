@@ -22,10 +22,6 @@ module ErrorHandling
         "#{type} gene start specified.\nSpecify one of the following genes using argument --line <starting-line>:\n#{str}"
     end
 
-    def warning_message(str)
-        "Warning: #{str}"
-    end
-
     def error_code_to_webserver_error_message(code)
         case code
         when "invalid_file_format"
@@ -78,30 +74,34 @@ module ErrorHandling
     def error_code_to_commandline_warning_message(code, additional_warning_message = "")
         case code
         when "partial_gene"
-            warning_message("Gene is partial.")
+            "Gene is partial."
         when "unused_utr_line"
-            warning_message("#{additional_warning_message}: A starting line but no file was provided. Will ignore starting line.")
+            "#{additional_warning_message}: A starting line but no file was provided. Will ignore starting line."
         when "no_codons_replaced"
-            warning_message("Sequence has not been altered.")
+            "Sequence has not been altered."
         end
     end
 
-    def abort_with_error_message(code, additional_error_message = "")
+    def abort_with_error_message(code, progname, additional_error_message = "")
         if is_commandline_tool
-            $logger.fatal error_code_to_commandline_error_message(
-                code, additional_error_message
-            )
+            $logger.fatal(progname) {
+                error_code_to_commandline_error_message(
+                    code, additional_error_message
+                )
+            }
             abort
         else
             raise EnhancerError, error_code_to_webserver_error_message(code)
         end
     end
 
-    def warn_with_error_message(code, additional_warning_message = "")
+    def warn_with_error_message(code, progname, additional_warning_message = "")
         if is_commandline_tool
-            $logger.warn error_code_to_commandline_warning_message(
-                code, additional_warning_message
-            )
+            $logger.warn(progname) {
+                error_code_to_commandline_warning_message(
+                    code, additional_warning_message
+                )
+            }
         else
             # TODO
             # webserver

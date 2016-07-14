@@ -19,7 +19,7 @@ class EseToGene
     rescue StandardError => exp
         # something went very wrong. most likely the input file is corrupt.
         ErrorHandling.abort_with_error_message(
-            "invalid_ese_format", @file_info
+            "invalid_ese_format", "EseToGene", @file_info
         )
     end
 
@@ -40,7 +40,7 @@ class EseToGene
     def ensure_eses_are_parsed_successfully
         @motifs.each do |motif|
             ErrorHandling.abort_with_error_message(
-                "invalid_ese_format", @file_info
+                "invalid_ese_format", "EseToGene", @file_info
             ) unless is_valid_motif(motif)
         end
     end

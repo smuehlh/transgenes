@@ -34,7 +34,9 @@ class ScoreSynonymousCodons
             when "gc"
             else
                 # hopefully this will be never executed.
-                ErrorHandling.abort_with_error_message("unknown_strategy")
+                ErrorHandling.abort_with_error_message(
+                    "unknown_strategy", "ScoreSynonymousCodons"
+                )
             end
         @ese_scoring_obj = EseScores.new(ese_motifs)
     end

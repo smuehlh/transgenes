@@ -82,7 +82,8 @@ class CommandlineOptions
 
             exception_str = exception.to_s
             exception_str[0] = exception_str[0].capitalize
-            ErrorHandling.abort_with_error_message("argument_error", exception_str
+            ErrorHandling.abort_with_error_message(
+                "argument_error", "CommandlineOptions", exception_str
             )
     end
 
@@ -159,21 +160,21 @@ class CommandlineOptions
     def ensure_mandatory_arguments_are_set
         mandatory_arguments.each do |arg|
             ErrorHandling.abort_with_error_message(
-                "missing_mandatory_argument",instance_variable_to_argument(arg)
+                "missing_mandatory_argument", "CommandlineOptions", instance_variable_to_argument(arg)
             ) unless is_argument_set(arg)
         end
     end
 
     def ensure_dependencies_are_met
         ErrorHandling.abort_with_error_message(
-            "invalid_argument_combination",
+            "invalid_argument_combination", "CommandlineOptions",
             "Nothing to do for the combination: 'raw'-strategy/ no ESEs"
         ) if strategy_raw_specified_without_ese_list
         ErrorHandling.warn_with_error_message(
-            "unused_utr_line", "5'UTR"
+            "unused_utr_line", "CommandlineOptions", "5'UTR"
         ) if utr_line_specified_without_file(@utr5prime, @utr5prime_line)
         ErrorHandling.warn_with_error_message(
-            "unused_utr_line", "3'UTR"
+            "unused_utr_line", "CommandlineOptions", "3'UTR"
         ) if utr_line_specified_without_file(@utr3prime, @utr3prime_line)
     end
 
