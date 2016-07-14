@@ -65,7 +65,7 @@ class CommandlineOptions
     end
 
     def log_options
-        $logger.info("Programm call: #{@program_call}")
+        $logger.info("Programm call") {@program_call}
     end
 
     def parse_options
@@ -150,7 +150,7 @@ class CommandlineOptions
             end
             opts.separator ""
             opts.on_tail("-h", "--help", "Show this message") do
-                $logger.error(opts)
+                $logger.unknown("OptionParser") {opts}
                 exit
             end
         end

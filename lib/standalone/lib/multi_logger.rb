@@ -5,8 +5,8 @@ class MultiLogger
     end
 
     %w(log debug info warn error fatal unknown).each do |m|
-        define_method(m) do |*args|
-            @targets.map { |t| t.send(m, *args) }
+        define_method(m) do |*args, &block|
+            @targets.map { |t| t.send(m, *args, &block) }
         end
     end
 end
