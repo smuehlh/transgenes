@@ -1,7 +1,7 @@
 require 'optparse'
 
 class CommandlineOptions
-    attr_reader :input, :output,
+    attr_reader :input, :output, :strategy,
         # optional params
         :utr5prime, :utr3prime,
         :input_line, :utr5prime_line, :utr3prime_line,
@@ -13,11 +13,14 @@ class CommandlineOptions
         init_mandatory_arguments
         init_optional_arguments
 
+        log_options
         parse_options
     end
 
     def init_commandline_arguments(args)
         @args = args
+        @program_call = "#{$PROGRAM_NAME} #{args.join(" ")}"
+
         # if no arugments given: ensure help is printed
         @args.push "-h" if @args.empty?
     end
@@ -35,7 +38,7 @@ class CommandlineOptions
     end
 
     def mandatory_arguments
-        %w(@input @output)
+        %w(@input @output @strategy)
     end
 
     def optional_arguments
@@ -56,8 +59,13 @@ class CommandlineOptions
         case str
         when "@input" then "--input"
         when "@output" then "--output"
+        when "@strategy" then "--strategy"
         else "Unknown argument. Use --help to view all available options."
         end
+    end
+
+    def log_options
+        $logger.info("Programm call") {@program_call}
     end
 
     def parse_options
@@ -72,8 +80,10 @@ class CommandlineOptions
             OptionParser::InvalidOption,
             OptionParser::AmbiguousOption => exception
 
-            exception_str = exception.to_s.capitalize
-            ErrorHandling.abort_with_error_message("argument_error", exception_str
+            exception_str = exception.to_s
+            exception_str[0] = exception_str[0].capitalize
+            ErrorHandling.abort_with_error_message(
+                "argument_error", "CommandlineOptions", exception_str
             )
     end
 
@@ -94,6 +104,14 @@ class CommandlineOptions
             opts.on("-o", "--output FILE",
                 "Path to output file, in FASTA format.") do |path|
                 @output = path
+            end
+            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc"],
+                "Strategy for altering the sequence.",
+                "Select one of: 'raw', 'humanized' or 'gc'.",
+                "raw - Leave the sequence as is.", "May be specified only in combination with an ESE list (--ese).",
+                "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
+                "gc - Match GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.") do |opt|
+                @strategy = opt
             end
 
             # optional arguments
@@ -142,21 +160,29 @@ class CommandlineOptions
     def ensure_mandatory_arguments_are_set
         mandatory_arguments.each do |arg|
             ErrorHandling.abort_with_error_message(
-                "missing_mandatory_argument",instance_variable_to_argument(arg)
+                "missing_mandatory_argument", "CommandlineOptions", instance_variable_to_argument(arg)
             ) unless is_argument_set(arg)
         end
     end
 
     def ensure_dependencies_are_met
+        ErrorHandling.abort_with_error_message(
+            "invalid_argument_combination", "CommandlineOptions",
+            "Nothing to do for the combination: 'raw'-strategy/ no ESEs"
+        ) if strategy_raw_specified_without_ese_list
         ErrorHandling.warn_with_error_message(
-            "unused_utr_line", "5'UTR"
+            "unused_utr_line", "CommandlineOptions", "5'UTR"
         ) if utr_line_specified_without_file(@utr5prime, @utr5prime_line)
         ErrorHandling.warn_with_error_message(
-            "unused_utr_line", "3'UTR"
+            "unused_utr_line", "CommandlineOptions", "3'UTR"
         ) if utr_line_specified_without_file(@utr3prime, @utr3prime_line)
     end
 
     def utr_line_specified_without_file(file, line)
         file.nil? && line
+    end
+
+    def strategy_raw_specified_without_ese_list
+        @strategy == "raw" && @ese.nil?
     end
 end

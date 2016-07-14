@@ -22,10 +22,6 @@ module ErrorHandling
         "#{type} gene start specified.\nSpecify one of the following genes using argument --line <starting-line>:\n#{str}"
     end
 
-    def warning_message(str)
-        "Warning: #{str}"
-    end
-
     def error_code_to_webserver_error_message(code)
         case code
         when "invalid_file_format"
@@ -48,6 +44,10 @@ module ErrorHandling
             error_message_with_reference_to_commandline_option_help(
                 "Missing mandatory option: #{additional_error_message}."
             )
+        when "invalid_argument_combination"
+            error_message_with_reference_to_commandline_option_help(
+                "Invalid option combination: #{additional_error_message}."
+            )
         when "invalid_file_format"
             "Unrecognized file format or feature: #{additional_error_message}.\nInput has to be either a GeneBank record or a FASTA file. Also, it has to specify the requested gene record."
         when "invalid_gene_start"
@@ -62,6 +62,10 @@ module ErrorHandling
             "Invalid codons: #{additional_error_message}"
         when "invalid_ese_format"
             "Unrecognized file format: #{additional_error_message}.\nInput has to contain ESE motifs only, one per line."
+        when "unknown_strategy"
+            error_message_with_reference_to_commandline_option_help(
+                "Unknown strategy for altering the sequence."
+            )
         else
             "An unknown error occured."
         end
@@ -70,29 +74,34 @@ module ErrorHandling
     def error_code_to_commandline_warning_message(code, additional_warning_message = "")
         case code
         when "partial_gene"
-            warning_message("Gene is partial.")
+            "Gene is partial."
         when "unused_utr_line"
-            warning_message("#{additional_warning_message}: A starting line but no file was provided. Will ignore starting line.")
+            "#{additional_warning_message}: A starting line but no file was provided. Will ignore starting line."
         when "no_codons_replaced"
-            warning_message("Sequence has not been altered.")
+            "Sequence has not been altered."
         end
     end
 
-    def abort_with_error_message(code, additional_error_message = "")
+    def abort_with_error_message(code, progname, additional_error_message = "")
         if is_commandline_tool
-            abort error_code_to_commandline_error_message(
-                code, additional_error_message
-            )
+            $logger.fatal(progname) {
+                error_code_to_commandline_error_message(
+                    code, additional_error_message
+                )
+            }
+            abort
         else
             raise EnhancerError, error_code_to_webserver_error_message(code)
         end
     end
 
-    def warn_with_error_message(code, additional_warning_message = "")
+    def warn_with_error_message(code, progname, additional_warning_message = "")
         if is_commandline_tool
-            warn error_code_to_commandline_warning_message(
-                code, additional_warning_message
-            )
+            $logger.warn(progname) {
+                error_code_to_commandline_warning_message(
+                    code, additional_warning_message
+                )
+            }
         else
             # TODO
             # webserver

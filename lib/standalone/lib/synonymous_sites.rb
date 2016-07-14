@@ -1,10 +1,5 @@
 class SynonymousSites
 
-    def self.get_all_sites(exons, introns)
-        obj = SynonymousSites.new(exons, introns)
-        obj.get_synonymous_sites_in_exons
-    end
-
     def initialize(exons, introns)
         @exons = exons
         @introns = introns
@@ -85,7 +80,7 @@ class SynonymousSites
     end
 
     def cds_length_upto_exon(exon_index)
-        @exons[0..exon_index-1].join("").size
+        exon_index == 0 ? 0 : @exons[0..exon_index-1].join("").size
     end
 
     def cds_length_including_exon(exon_index)

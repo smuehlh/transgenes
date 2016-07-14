@@ -26,7 +26,7 @@ class ToGene
     rescue StandardError => exp
         # something went very wrong. most likely the input file is corrupt.
         ErrorHandling.abort_with_error_message(
-            "invalid_file_format", @file_info
+            "invalid_file_format", "ToGene", @file_info
         )
     end
 
@@ -54,7 +54,7 @@ class ToGene
 
     def ensure_file_format_is_valid(file)
         ErrorHandling.abort_with_error_message(
-            "invalid_file_format", @file_info
+            "invalid_file_format", "ToGene", @file_info
         ) unless is_valid_file_extension(file)
     end
 
@@ -63,7 +63,7 @@ class ToGene
             @file_to_gene_obj.split_file_into_single_genes
 
         ErrorHandling.abort_with_error_message(
-            "invalid_file_format", @file_info
+            "invalid_file_format", "ToGene", @file_info
         ) unless are_feature_starts_found
     end
 
@@ -71,11 +71,11 @@ class ToGene
         possible_feature_starts = format_list_with_feature_starts
         if use_feature_starting_in_line
             ErrorHandling.abort_with_error_message(
-                "invalid_gene_start", possible_feature_starts
+                "invalid_gene_start", "ToGene", possible_feature_starts
             ) unless is_valid_feature_start(use_feature_starting_in_line)
         else
             ErrorHandling.abort_with_error_message(
-                "missing_gene_start", possible_feature_starts
+                "missing_gene_start", "ToGene", possible_feature_starts
             ) unless is_single_feature_record
         end
     end
@@ -83,7 +83,7 @@ class ToGene
     def warn_if_wanted_gene_is_partial(use_gene_starting_in_line)
         gene_record = get_wanted_feature_record(use_gene_starting_in_line)
         ErrorHandling.warn_with_error_message(
-            "partial_gene"
+            "partial_gene", "ToGene"
         ) if @file_to_gene_obj.is_partial_gene(gene_record)
     end
 
@@ -114,20 +114,21 @@ class ToGene
 
     def ensure_gene_name_is_found
         ErrorHandling.abort_with_error_message(
-            "invalid_file_format", "#{@file_info}.\nMissing gene description"
+            "invalid_file_format", "ToGene",
+            "#{@file_info}.\nMissing gene description"
         ) unless is_gene_description_found
     end
 
     def ensure_exons_and_introns_are_found
         ErrorHandling.abort_with_error_message(
-            "invalid_file_format",
+            "invalid_file_format", "ToGene",
             "#{@file_info}.\nMissing or invalid gene record"
         ) unless are_exons_and_introns_found
     end
 
     def ensure_exons_contain_valid_codons_only
         ErrorHandling.abort_with_error_message(
-            "invalid_codons", @file_info
+            "invalid_codons", "ToGene", @file_info
         ) unless are_codons_valid
     end
 

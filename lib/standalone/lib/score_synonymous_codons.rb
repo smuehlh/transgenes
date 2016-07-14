@@ -1,8 +1,8 @@
 class ScoreSynonymousCodons
 
-    def initialize(exons, ese_motifs)
+    def initialize(strategy, exons, ese_motifs)
         @sequence = exons.join("")
-        init_scoring_obj(ese_motifs)
+        init_scoring_objects(strategy, ese_motifs)
     end
 
     def score_synonymous_codons_at(pos)
@@ -15,10 +15,30 @@ class ScoreSynonymousCodons
         @original_codon != codon
     end
 
+    def log_changes
+        codons_with_scores =
+            @sorted_synonymous_codons.collect.each_with_index do |codon, ind|
+                score = -@sorted_scores[ind].round(2)
+                "#{codon}: #{score}"
+            end.join(", ")
+        "Pos #{@pos}: #{@original_codon} -> #{@sorted_synonymous_codons.first} (#{codons_with_scores})"
+    end
+
     private
 
-    def init_scoring_obj(ese_motifs)
-        @score_obj = RawSequenceScores.new(ese_motifs)
+    def init_scoring_objects(strategy, ese_motifs)
+        @strategy_scoring_obj =
+            case strategy
+            when "raw" then RawSequenceScores.new
+            when "humanize" then HumanMatchedSequenceScores.new
+            when "gc"
+            else
+                # hopefully this will be never executed.
+                ErrorHandling.abort_with_error_message(
+                    "unknown_strategy", "ScoreSynonymousCodons"
+                )
+            end
+        @ese_scoring_obj = EseScores.new(ese_motifs)
     end
 
     def init_vars_describing_codon_and_position(pos)
@@ -31,7 +51,7 @@ class ScoreSynonymousCodons
     def score_synonymous_codons
         @scores = @synonymous_codons.collect do |codon|
             windows = get_sequence_snippets(codon)
-            @score_obj.score_synonymous_codon(windows, codon, @original_codon)
+            score_synonymous_codon(windows, codon)
         end
     end
 
@@ -39,9 +59,12 @@ class ScoreSynonymousCodons
         indices = (0..@scores.size-1)
         negative_scores_with_indices = @scores.map{ |x| -x }.zip(indices)
         sorted_scores_with_original_index = negative_scores_with_indices.sort
-        sorted_scores_with_original_index.collect do |dummy, ind|
-            @synonymous_codons[ind]
+        @sorted_synonymous_codons, @sorted_scores = [], []
+        sorted_scores_with_original_index.collect do |score, ind|
+            @sorted_synonymous_codons.push(@synonymous_codons[ind])
+            @sorted_scores.push(score)
         end
+        @sorted_synonymous_codons
     end
 
     def get_codon_at_pos
@@ -76,7 +99,6 @@ class ScoreSynonymousCodons
         [head, mutation, tail].join("")
     end
 
-
     def mutate_sequence_snippets(new_codon)
         pos = max_distance_in_sequence_snippets_to_pos
         @original_sequence_snippets.collect do |window|
@@ -90,4 +112,19 @@ class ScoreSynonymousCodons
         Constants.window_size - 1
     end
 
+    def score_synonymous_codon(windows, synonymous_codon)
+        strategy_score =
+            @strategy_scoring_obj.score_synonymous_codon_by_strategy(
+                synonymous_codon, @original_codon
+            )
+        ese_score =
+            @ese_scoring_obj.score_synonymous_codon_by_ese_resemblance(windows)
+
+        combine_scores(strategy_score, ese_score)
+    end
+
+    def combine_scores(strategy_score, ese_score)
+        # assume the scores are already weighted and just need to be combined!
+        strategy_score + ese_score
+    end
 end
