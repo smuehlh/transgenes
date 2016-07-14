@@ -21,7 +21,13 @@ module Logging
     private
 
     def initialize_logger(output, level)
-        this_logger = Logger.new(output)
+        this_logger =
+            if output.instance_of?(IO)
+                Logger.new(output)
+            else
+                file = File.open(output, File::WRONLY | File::TRUNC | File::CREAT)
+                Logger.new(file)
+            end
         this_logger.level = level
         this_logger.progname = "SequenceOptimizer"
         this_logger.datetime_format = "%Y-%m-%d %H:%M:%S"
