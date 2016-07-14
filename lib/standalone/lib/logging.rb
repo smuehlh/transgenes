@@ -22,17 +22,18 @@ module Logging
 
     def initialize_logger(output, level)
         progname = "SequenceOptimizer"
+        timeformat = "%Y-%m-%d %H:%M:%S"
         this_logger =
             if output.instance_of?(IO)
                 Logger.new(output)
             else
                 file = File.open(output, File::WRONLY | File::TRUNC | File::CREAT)
-                file.puts "Created logfile on #{Time.now.to_s} by #{progname}."
+                file.puts "Created logfile on #{Time.now.strftime(timeformat)} by #{progname}."
                 Logger.new(file)
             end
         this_logger.level = level
         this_logger.progname = progname
-        this_logger.datetime_format = "%Y-%m-%d %H:%M:%S"
+        this_logger.datetime_format = timeformat
 
         this_logger
     end
