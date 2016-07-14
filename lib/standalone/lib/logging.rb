@@ -32,6 +32,7 @@ module Logging
     def customize_output_format_of_multiline_messages(this_logger)
         original_formatter = Logger::Formatter.new
         this_logger.formatter = proc do |severity, datetime, progname, msg|
+            msg = msg.to_s
             patched_msg =
                 if msg.include?("\n")
                     spacer = "\n\t"
@@ -39,7 +40,7 @@ module Logging
                 else
                     msg
                 end
-            original_formatter.call(severity, datetime, progname, patched_msg)
+            "#{severity} -- #{progname}: #{patched_msg}"
         end
     end
 
