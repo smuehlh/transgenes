@@ -141,6 +141,9 @@ function bind_to_checkbox_change() {
 function init_params_partial() {
     params.filter(":input[type=checkbox]").removeAttr('checked');
     params.filter(":input").prop("disabled", true);
+
+    params.filter("#submit_keep_first_intron").prop('checked', true);
+    params.filter("#submit_strategy_humanize").prop('checked', true);
 };
 
 function enable_params_partial() {
