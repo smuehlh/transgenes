@@ -88,7 +88,7 @@ class EnhancersController < ApplicationController
         # use selected record (if any). default to first record.
         if @selected_line = record_params[:line]
             # class variable needed for view
-            Record.where(line: @selected_line).first
+            @enhancer.records.where(line: @selected_line).first
         else
             @enhancer.records.first
         end
