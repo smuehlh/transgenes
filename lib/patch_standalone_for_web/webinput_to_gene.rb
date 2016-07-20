@@ -8,7 +8,7 @@ class WebinputToGene
         @error = nil
         @warning = nil
         @starting_lines_with_gene_records = {}
-        CoreExtensions::Settings.setup_logger
+        CoreExtensions::Settings.setup("logger")
 
         feature_type = enhancer_params[:name]
         file = get_fileupload_path_or_save_textinput_to_file(
