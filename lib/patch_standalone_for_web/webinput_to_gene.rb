@@ -8,8 +8,7 @@ class WebinputToGene
         @error = nil
         @warning = nil
         @starting_lines_with_gene_records = {}
-
-        setup_logger
+        CoreExtensions::Settings.setup_logger
 
         feature_type = enhancer_params[:name]
         file = get_fileupload_path_or_save_textinput_to_file(
@@ -18,7 +17,7 @@ class WebinputToGene
         parse_file_and_get_gene_records(feature_type, file)
         delete_textinput_file(file)
 
-        close_logger
+        CoreExtensions::Settings.close_logger
     end
 
     def get_records
@@ -26,17 +25,6 @@ class WebinputToGene
     end
 
     private
-
-    def setup_logger
-        $logger = Logging.setup(
-            File.join(Rails.root, "log", "webinput_to_gene.log"),
-            Logger::WARN
-        )
-    end
-
-    def close_logger
-        $logger.close
-    end
 
     def get_fileupload_path_or_save_textinput_to_file(params, is_fileupload_input)
         if is_fileupload_input
