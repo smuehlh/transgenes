@@ -78,6 +78,9 @@ class WebinputToGene
                 description: gene.description
             }
         end
+
+    rescue EnhancerError => exception
+        @error = exception.to_s
     end
 
     def get_first_feature_starts_and_warn_if_max_num_is_exceeded(feature_type, file)
@@ -87,7 +90,5 @@ class WebinputToGene
             @warning = "Found too many gene records. Only the first #{max_num} have been parsed."
         end
         starts[0..max_num-1]
-    rescue EnhancerError => exception
-        @error = exception.to_s
     end
 end
