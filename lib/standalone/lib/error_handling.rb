@@ -1,4 +1,4 @@
-class EnhancerError < StandardError
+class EnhancerError < Exception
 end
 
 module ErrorHandling

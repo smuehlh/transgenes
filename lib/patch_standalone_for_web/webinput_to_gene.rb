@@ -18,7 +18,7 @@ class WebinputToGene
     end
 
     def get_records
-        @error.nil? ? @gene_records : {}
+        @gene_records.any? ? @gene_records : {}
     end
 
     private
@@ -64,7 +64,13 @@ class WebinputToGene
             )
         starting_lines.each do |line|
             gene = Gene.new
-            gene.add_cds(*ToGene.init_and_parse(feature_type, file, line))
+            begin
+                gene.add_cds(*ToGene.init_and_parse(feature_type, file, line))
+            rescue EnhancerError => exception
+                str = "Gene record in line #{line}: #{exception.to_s}"
+                @error = @error ? "#{@error}\n#{str}" : str
+                next
+            end
             @gene_records[line] = {
                 exons: gene.exons,
                 introns: gene.introns,
@@ -72,8 +78,6 @@ class WebinputToGene
                 description: gene.description
             }
         end
-    rescue EnhancerError => exception
-        @error = exception.to_s
     end
 
     def get_first_feature_starts_and_warn_if_max_num_is_exceeded(feature_type, file)
@@ -83,5 +87,7 @@ class WebinputToGene
             @warning = "Found too many gene records. Only the first #{max_num} have been parsed."
         end
         starts[0..max_num-1]
+    rescue EnhancerError => exception
+        @error = exception.to_s
     end
 end

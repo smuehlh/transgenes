@@ -77,8 +77,7 @@ class EnhancersController < ApplicationController
     end
 
     def update_active_enhancer_and_generate_gene_statistics
-        unless flash.now[:error]
-            record = get_wanted_record
+        if record = get_wanted_record
             @enhancer.update_with_record_data(record)
             generate_gene_statistics
         end
