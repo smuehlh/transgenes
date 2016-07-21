@@ -91,8 +91,9 @@ module ErrorHandling
             }
             abort
         else
-            $logger.fatal( error_code_to_webserver_error_message(code) )
-            raise EnhancerError, progname
+            msg = error_code_to_webserver_error_message(code)
+            $logger.fatal(msg)
+            raise EnhancerError, msg
         end
     end
 

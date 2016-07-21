@@ -2,7 +2,7 @@ class WebinputToGene
     ToGene.extend CoreExtensions::FileParsing
     ToGene.include CoreExtensions::FileParsing
 
-    attr_reader :error
+    attr_reader :error, :log
 
     def initialize(enhancer_params, is_fileupload_input)
         @error = nil
@@ -16,8 +16,7 @@ class WebinputToGene
         parse_file_and_get_gene_records(feature_type, file)
         delete_textinput_file(file)
 
-        log = CoreExtensions::Settings.get_log_content
-        @error = log unless log.blank?
+        @log = CoreExtensions::Settings.get_log_content
     end
 
     def get_records
@@ -69,7 +68,7 @@ class WebinputToGene
             begin
                 gene.add_cds(*ToGene.init_and_parse(feature_type, file, line))
             rescue EnhancerError => exception
-                str = "Gene record in line #{line}: #{exception.to_s}"
+                str = "Cannot parse gene record in line #{line}: #{exception.to_s}"
                 @error = @error ? "#{@error}\n#{str}" : str
                 next
             end
