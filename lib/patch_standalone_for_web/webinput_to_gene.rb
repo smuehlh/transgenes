@@ -6,7 +6,7 @@ class WebinputToGene
 
     def initialize(enhancer_params, is_fileupload_input)
         @error = nil
-        @starting_lines_with_gene_records = {}
+        @gene_records = {}
         CoreExtensions::Settings.setup("logger")
 
         feature_type = enhancer_params[:name]
@@ -61,7 +61,6 @@ class WebinputToGene
     end
 
     def parse_file_and_get_gene_records(feature_type, file)
-        @gene_records = {}
         starting_lines = get_first_feature_starts_and_warn_if_max_num_is_exceeded(
                 feature_type, file
             )
