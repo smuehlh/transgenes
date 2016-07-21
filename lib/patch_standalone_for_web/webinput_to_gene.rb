@@ -60,17 +60,17 @@ class WebinputToGene
     end
 
     def parse_file_and_get_gene_records(feature_type, file)
-        starting_lines = get_first_feature_starts_and_warn_if_max_num_is_exceeded(
+        feature_starts = get_first_feature_starts_and_warn_if_max_num_is_exceeded(
                 feature_type, file
             )
-        starting_lines.each do |line|
+        feature_starts.each do |line, teaser|
             gene = Gene.new
             begin
                 gene.add_cds(*ToGene.init_and_parse(feature_type, file, line))
             rescue EnhancerError => exception
-                append_to_error(
-                    "Cannot parse gene record in line #{line}: #{exception.to_s}"
-                )
+                msg = exception.to_s
+                msg = "Cannot parse gene record starting with: #{teaser}: #{msg}" if feature_starts.size > 1
+                append_to_error(msg)
                 next
             end
             @gene_records[line] = {
@@ -87,13 +87,13 @@ class WebinputToGene
 
     def get_first_feature_starts_and_warn_if_max_num_is_exceeded(feature_type, file)
         max_num = 10
-        starts = ToGene.get_all_feature_starts(feature_type, file)
-        if starts.size > max_num
+        feature_starts = ToGene.get_all_feature_starts(feature_type, file)
+        if feature_starts.size > max_num
             append_to_error(
                 "Found too many gene records. Only the first #{max_num} have been parsed."
             )
         end
-        starts[0..max_num-1]
+        feature_starts.first(max_num).to_h
     end
 
     def append_to_error(msg)

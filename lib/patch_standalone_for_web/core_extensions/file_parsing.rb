@@ -4,7 +4,7 @@ module CoreExtensions
         # future class method
         def get_all_feature_starts(use_feature, file)
             obj = ToGene.new(use_feature)
-            obj.split_file_into_features_and_return_feature_starts(file)
+            obj.split_file_into_features_and_return_formatted_features(file)
         rescue EnhancerError
             # re-raise error. handle in web-interface
             raise
@@ -16,9 +16,13 @@ module CoreExtensions
         end
 
         # future instance method
-        def split_file_into_features_and_return_feature_starts(file)
+        # features will be formatted for output in error messages
+        def split_file_into_features_and_return_formatted_features(file)
             ensure_file_format_and_split_file_into_features(file)
-            @feature_records_by_feature_starts.keys
+            formatted_records_with_starts =
+                @feature_records_by_feature_starts.collect do |start, record|
+                    [start, truncate_record(record)]
+                end.to_h
         end
     end
 end

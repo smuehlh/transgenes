@@ -188,10 +188,14 @@ class ToGene
 
     def format_list_with_feature_starts
         @feature_records_by_feature_starts.map do |start, full_record|
-            first_line = full_record.first.strip
-            first_line = "#{first_line[0..50]} ..." if first_line.size > 50
-            "\t#{start}: #{first_line}"
+            "\t#{start}#{truncate_record(full_record)}"
         end.join("\n")
+    end
+
+    def truncate_record(full_record)
+        first_line = full_record.first.strip
+        first_line = "#{first_line[0..50]} ..." if first_line.size > 50
+        first_line
     end
 
     def first_feature_record
