@@ -2,11 +2,10 @@ class WebinputToGene
     ToGene.extend CoreExtensions::FileParsing
     ToGene.include CoreExtensions::FileParsing
 
-    attr_reader :error, :warning
+    attr_reader :error
 
     def initialize(enhancer_params, is_fileupload_input)
         @error = nil
-        @warning = nil
         @starting_lines_with_gene_records = {}
         CoreExtensions::Settings.setup("logger")
 
@@ -91,7 +90,7 @@ class WebinputToGene
         max_num = 10
         starts = ToGene.get_all_feature_starts(feature_type, file)
         if starts.size > max_num
-            @warning = "Found too many gene records. Only the first #{max_num} have been parsed."
+            @error = "Found too many gene records. Only the first #{max_num} have been parsed."
         end
         starts[0..max_num-1]
     end

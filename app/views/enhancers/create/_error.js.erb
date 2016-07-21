@@ -1,4 +1,4 @@
-<% if msg = flash.now[:error] || flash.now[:warning] %>
+<% if msg = flash.now[:error] %>
     $("#error-alert-<%= id %>").show();
     // display warning only if no error occurred!
     $("#error-alert-text-<%= id %>").html(

@@ -73,7 +73,6 @@ class EnhancersController < ApplicationController
             @enhancer.records.push(record)
         end
         flash.now[:error] = gene_parser.error
-        flash.now[:warning] = gene_parser.warning
     end
 
     def update_active_enhancer_and_generate_gene_statistics
