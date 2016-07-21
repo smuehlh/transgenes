@@ -1,9 +1,9 @@
-<% if msg = flash.now[:error] %>
+<% if flash.now[:error].blank? %>
+    $("#error-alert-<%= id %>").hide();
+<% else %>
     $("#error-alert-<%= id %>").show();
     // display warning only if no error occurred!
     $("#error-alert-text-<%= id %>").html(
-        "<%= escape_javascript(msg).gsub('\\n', '<br>') %>"
+        "<%= escape_javascript(flash.now[:error]).gsub('\\n', '<br>') %>"
     );
-<% else %>
-    $("#error-alert-<%= id %>").hide();
 <% end %>

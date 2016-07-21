@@ -5,7 +5,7 @@ class WebinputToGene
     attr_reader :error, :log
 
     def initialize(enhancer_params, is_fileupload_input)
-        @error = nil
+        @error = ""
         @gene_records = {}
         CoreExtensions::Settings.setup("logger")
 
@@ -68,8 +68,9 @@ class WebinputToGene
             begin
                 gene.add_cds(*ToGene.init_and_parse(feature_type, file, line))
             rescue EnhancerError => exception
-                str = "Cannot parse gene record in line #{line}: #{exception.to_s}"
-                @error = @error ? "#{@error}\n#{str}" : str
+                append_to_error(
+                    "Cannot parse gene record in line #{line}: #{exception.to_s}"
+                )
                 next
             end
             @gene_records[line] = {
@@ -88,8 +89,14 @@ class WebinputToGene
         max_num = 10
         starts = ToGene.get_all_feature_starts(feature_type, file)
         if starts.size > max_num
-            @error = "Found too many gene records. Only the first #{max_num} have been parsed."
+            append_to_error(
+                "Found too many gene records. Only the first #{max_num} have been parsed."
+            )
         end
         starts[0..max_num-1]
+    end
+
+    def append_to_error(msg)
+        @error = @error.blank? ? msg : "#{@error}\n#{msg}"
     end
 end
