@@ -91,7 +91,8 @@ module ErrorHandling
             }
             abort
         else
-            raise EnhancerError, error_code_to_webserver_error_message(code)
+            $logger.fatal( error_code_to_webserver_error_message(code) )
+            raise EnhancerError, progname
         end
     end
 
@@ -103,8 +104,7 @@ module ErrorHandling
                 )
             }
         else
-            # TODO
-            # webserver
+            $logger.warn( error_code_to_commandline_warning_message(code) )
         end
     end
 end

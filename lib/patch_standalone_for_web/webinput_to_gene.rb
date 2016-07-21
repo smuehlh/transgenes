@@ -17,7 +17,8 @@ class WebinputToGene
         parse_file_and_get_gene_records(feature_type, file)
         delete_textinput_file(file)
 
-        CoreExtensions::Settings.close_logger
+        log = CoreExtensions::Settings.get_log_content
+        @error = log unless log.blank?
     end
 
     def get_records

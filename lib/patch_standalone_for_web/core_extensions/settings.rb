@@ -10,8 +10,12 @@ module CoreExtensions
             end
         end
 
-        def close_logger
-            $logger.close
+        def get_log_content
+            @file.rewind
+            content = @file.read
+            close_logger # important: first read, than close the logger.
+
+            content
         end
 
         private
@@ -21,10 +25,12 @@ module CoreExtensions
         end
 
         def setup_logger
-            $logger = Logging.setup(
-                File.join(Rails.root, "log", "webinput_to_gene.log"),
-                Logger::WARN
-            )
+            @file = StringIO.new
+            $logger = Logging.build_logger(@file, Logger::WARN, simplify_log=true)
+        end
+
+        def close_logger
+            $logger.close
         end
     end
 end
