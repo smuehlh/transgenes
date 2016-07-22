@@ -19,17 +19,17 @@ class Gene
         @introns = introns
         @description = gene_name
 
-        @sequence = combine_features_to_sequence
+        combine_features_to_sequence
     end
 
     def add_five_prime_utr(exons, introns, dummy)
         @five_prime_utr = combine_exons_and_introns(exons, introns)
-        @sequence = combine_features_to_sequence
+        combine_features_to_sequence
     end
 
     def add_three_prime_utr(exons, introns, dummy)
         @three_prime_utr = combine_exons_and_introns(exons, introns)
-        @sequence = combine_features_to_sequence
+        combine_features_to_sequence
     end
 
     def add_ese_list(ese_motifs)
@@ -38,7 +38,7 @@ class Gene
 
     def remove_introns(is_remove_first_intron)
         @introns = is_remove_first_intron ? [] : [@introns.first]
-        @sequence = combine_features_to_sequence
+        combine_features_to_sequence
     end
 
     def log_statistics
@@ -66,8 +66,7 @@ class Gene
             end
         end
 
-        # combine sequences
-        @sequence = combine_features_to_sequence
+        combine_features_to_sequence
     end
 
     def log_tweak_statistics
@@ -80,11 +79,12 @@ class Gene
     private
 
     def combine_features_to_sequence
-        [
-            @five_prime_utr,
-            combine_exons_and_introns(@exons, @introns),
-            @three_prime_utr
-        ].join("")
+        @sequence =
+            [
+                @five_prime_utr,
+                combine_exons_and_introns(@exons, @introns),
+                @three_prime_utr
+            ].join("")
     end
 
     def combine_exons_and_introns(exons, introns)
