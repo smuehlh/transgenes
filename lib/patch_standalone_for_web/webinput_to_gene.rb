@@ -69,7 +69,7 @@ class WebinputToGene
                 gene.add_cds(*ToGene.init_and_parse(feature_type, file, line))
             rescue EnhancerError => exception
                 msg = exception.to_s
-                msg = "Cannot parse gene record starting with: #{teaser}: #{msg}" if feature_starts.size > 1
+                msg = "Cannot parse gene record (#{teaser}): #{msg}" if feature_starts.size > 1
                 append_to_error(msg)
                 next
             end
