@@ -21,7 +21,12 @@ class EnhancersController < ApplicationController
 
     def submit
         options = WebinputToOptions.new(submit_params)
+        gene = init_gene
+        gene.remove_introns(options.remove_first_intron)
+        gene.tweak_sequence(options.strategy)
 
+        @sequence = GeneToFasta.formatting(gene)
+        flash.now[:error] = options.error
     end
 
     private
