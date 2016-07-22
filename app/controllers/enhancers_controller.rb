@@ -93,23 +93,26 @@ class EnhancersController < ApplicationController
     end
 
     def generate_gene_statistics
-        five_enhancer, cds_enhancer, three_enhancer = get_gene_enhancers
-        is_remove_first_intron = false
-        gene = Gene.new
-        if cds_enhancer.data
-            gene.add_cds(*cds_enhancer.to_gene)
-            gene.remove_introns(is_remove_first_intron)
-        end
-        gene.add_five_prime_utr(*five_enhancer.to_gene) if five_enhancer.data
-        gene.add_three_prime_utr(*three_enhancer.to_gene) if three_enhancer.data
+        gene = init_gene
 
+        # generate statistics with first intron kept
+        gene.remove_introns(is_remove_first_intron = false)
         @statistics = {
             n_exons: gene.exons.size,
             sequence_length_with_first_intron: gene.sequence.size
         }
 
-        # remove first intron to generate statistics for that as well
-        gene.remove_introns(! is_remove_first_intron)
+        # ... and first first intron removed
+        gene.remove_introns(is_remove_first_intron = true)
         @statistics[:sequence_length_without_first_intron] = gene.sequence.size
+    end
+
+    def init_gene
+        five_enhancer, cds_enhancer, three_enhancer = get_gene_enhancers
+        gene = Gene.new
+        gene.add_cds(*cds_enhancer.to_gene) if cds_enhancer.data
+        gene.add_five_prime_utr(*five_enhancer.to_gene) if five_enhancer.data
+        gene.add_three_prime_utr(*three_enhancer.to_gene) if three_enhancer.data
+        gene
     end
 end
