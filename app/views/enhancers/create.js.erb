@@ -11,5 +11,6 @@ $(id).trigger("contentchange");
 // set up tooltips in the updated preview
 $('[data-toggle="tooltip"]').tooltip();
 
-// show statistics about uploaded data
+// show statistics about uploaded data and ensure they are displayed correctly
 $("#input-view-stats").html("<%= escape_javascript(render partial: 'stats') %>")
+toggle_stats_depending_on_intron_checkbox();

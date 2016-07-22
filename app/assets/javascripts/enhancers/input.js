@@ -128,13 +128,7 @@ function bind_to_content_change() {
 
 function bind_to_checkbox_change() {
     params.filter("#submit_keep_first_intron").on('click', function() {
-        if ($(this).prop('checked')) {
-            $("#stats-with-first-intron").show();
-            $("#stats-without-first-intron").hide();
-        } else {
-            $("#stats-with-first-intron").hide();
-            $("#stats-without-first-intron").show();
-        }
+        toggle_stats_depending_on_intron_checkbox();
     });
 }
 
@@ -148,4 +142,14 @@ function init_params_partial() {
 
 function enable_params_partial() {
     params.filter(":input").prop("disabled", false);
+};
+
+function toggle_stats_depending_on_intron_checkbox() {
+    if (params.filter("#submit_keep_first_intron").prop('checked')) {
+        $("#stats-with-first-intron").show();
+        $("#stats-without-first-intron").hide();
+    } else {
+        $("#stats-with-first-intron").hide();
+        $("#stats-without-first-intron").show();
+    }
 };
