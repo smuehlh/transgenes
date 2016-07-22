@@ -21,7 +21,7 @@
             <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"}, disabled: true %>
             <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"}, disabled: true %>
         </div>
-        <%= f.text_area :data, class: "form-control monospaced", placeholder: "Enter sequence", maxlength: 2000 %>
+        <%= f.text_area :data, rows: 8, class: "form-control monospaced", placeholder: "Enter sequence", maxlength: 2000 %>
     </div>
     <div class="form-group">
         <%= f.label :file, "Or, upload Genebank or FASTA file", class: "control-label" %>
