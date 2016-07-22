@@ -20,6 +20,7 @@ class EnhancersController < ApplicationController
     end
 
     def submit
+        options = WebinputToOptions.new(submit_params)
 
     end
 
@@ -35,6 +36,10 @@ class EnhancersController < ApplicationController
     def record_params
         # INFO: records might not be initialized: use fetch instead of require.
         params.fetch(:records, {}).permit(:line)
+    end
+
+    def submit_params
+        params.require(:submit).permit(:strategy, :keep_first_intron)
     end
 
     def delete_old_init_new_gene_enhancers
