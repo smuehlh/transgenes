@@ -25,7 +25,7 @@ module ErrorHandling
     def error_code_to_webserver_error_message(code)
         case code
         when "invalid_file_format"
-            "Unrecognized format. Input has to be either a GeneBank record or a FASTA file. Also, it has to specify the requested gene record."
+            "Unrecognized format. Input has to be either a GeneBank record or a FASTA file."
         when "invalid_codons"
             "Found invalid codon(s)"
         when "invalid_ese_format"
