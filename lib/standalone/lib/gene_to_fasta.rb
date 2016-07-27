@@ -1,15 +1,27 @@
-module GeneToFasta
+class GeneToFasta
 
-    extend self
+    attr_reader :header, :sequence, :fasta
 
-    def write(file, gene_obj)
-        data = formatting(gene_obj)
-        FileHelper.write_to_file(file, data)
+    def self.write(file, gene_obj)
+        fasta_obj = GeneToFasta.new(gene_obj.description, gene_obj.sequence)
+        fasta_obj.write(file)
     end
 
-    def formatting(gene_obj)
-        str = ">#{gene_obj.description}\n"
-        str += split_sequence_to_fasta_lines(gene_obj.sequence)
+    def initialize(description, sequence)
+        @header = str_to_fasta_header(description)
+        @sequence = split_sequence_to_fasta_lines(sequence)
+
+        @fasta = "#{@header}\n#{sequence}"
+    end
+
+    def write(file)
+        FileHelper.write_to_file(file, @fasta)
+    end
+
+    private
+
+    def str_to_fasta_header(str)
+        ">#{str}"
     end
 
     def split_sequence_to_fasta_lines(sequence)
