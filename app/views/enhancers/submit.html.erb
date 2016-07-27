@@ -1,2 +1,11 @@
-<%= @sequence %>
+<dl>
+    <dt>
+        <%= content_tag(:span, @description, class: "monospaced") %>
+    </dt>
+    <dd>
+        <div class="well well-sm clearfix">
+            <%= content_tag(:span, patch_multiline_text_for_web(@sequence), class: "text-muted monospaced") %>
+        </div>
+    </dd>
+</dl>
 <!-- TODO: submit form via ajax to stay on same page... -->

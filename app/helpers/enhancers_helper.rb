@@ -12,6 +12,10 @@ module EnhancersHelper
         wrapped_word.include?("\n") ? "#{teaser}..." : teaser
     end
 
+    def patch_multiline_text_for_web(text)
+        text.gsub("\n", "<br>").html_safe
+    end
+
     def html_compatible_enhancer_name(name)
         case name
         when "5'UTR" then "five"
