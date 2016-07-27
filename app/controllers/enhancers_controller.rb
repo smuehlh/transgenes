@@ -20,13 +20,8 @@ class EnhancersController < ApplicationController
     end
 
     def submit
-        options = WebinputToOptions.new(submit_params)
-        gene = init_gene
-        gene.remove_introns(options.remove_first_intron)
-        gene.tweak_sequence(options.strategy)
-
-        @sequence = GeneToFasta.formatting(gene)
-        flash.now[:error] = options.error
+        gene = tweak_gene(submit_params)
+        @description, @sequence, @fasta = output_gene(gene)
     end
 
     private
@@ -124,5 +119,19 @@ class EnhancersController < ApplicationController
         gene.add_five_prime_utr(*five_enhancer.to_gene) if five_enhancer.data
         gene.add_three_prime_utr(*three_enhancer.to_gene) if three_enhancer.data
         gene
+    end
+
+    def tweak_gene(submit_params)
+        options = WebinputToOptions.new(submit_params)
+        gene = init_gene
+        gene.remove_introns(options.remove_first_intron)
+        gene.tweak_sequence(options.strategy)
+
+        gene
+    end
+
+    def output_gene(gene)
+        fasta = GeneToFasta.new(gene.description, gene.sequence)
+        [fasta.header, fasta.sequence, fasta.fasta]
     end
 end
