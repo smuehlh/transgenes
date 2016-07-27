@@ -8,6 +8,7 @@ Rails.application.routes.draw do
 
   resources :enhancers, only: [:index, :create] do
     post :submit, on: :collection
+    get :download, on: :collection
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

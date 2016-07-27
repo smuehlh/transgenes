@@ -24,6 +24,12 @@ class EnhancersController < ApplicationController
         @description, @sequence, @fasta = output_gene(gene)
     end
 
+    def download
+        data = "test"
+        filename = Dir::Tmpname.make_tmpname ["gene",".fas"], nil
+        send_data(data, :type => 'text/plain', :filename => filename)
+    end
+
     private
 
     # Never trust parameters from the scary internet, only allow the white list through.
