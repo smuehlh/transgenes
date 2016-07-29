@@ -11,7 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160606143844) do
+ActiveRecord::Schema.define(version: 20160727141321) do
+
+  create_table "enhanced_genes", force: :cascade do |t|
+    t.text     "gene_name"
+    t.text     "data"
+    t.text     "log"
+    t.string   "strategy"
+    t.boolean  "keep_first_intron"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
 
   create_table "enhancers", force: :cascade do |t|
     t.text     "data"
