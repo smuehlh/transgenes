@@ -1,5 +1,24 @@
 <dl>
     <dt>
+        Parameters used
+    </dt>
+    <dd>
+        <div class="well well-sm">
+            <table class="custom-table">
+                <tbody>
+                    <tr>
+                        <td>Strategy</td>
+                        <td><%= @enhanced_gene.strategy.capitalize %></td>
+                    </tr>
+                    <tr>
+                        <td>First intron is kept</td>
+                        <td><%= @enhanced_gene.keep_first_intron ? "Yes" : "No" %></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </dd>
+    <dt>
         Gene sequence
     </dt>
     <dd>
