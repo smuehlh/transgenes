@@ -1,3 +1,5 @@
+
+
 <dl>
     <dt>
         <%= @enhanced_gene.gene_name %>
@@ -13,9 +15,27 @@
     <dd>
         <div class="well well-sm clearfix">
             <%= content_tag(:span,
-                patch_multiline_text_for_web(@enhanced_gene.log),
+                teaser_wrapped_single_word_with_ellipsis(@enhanced_gene.log),
                 class: "text-muted monospaced"
             ) %>
+            <span data-toggle="modal" data-target="#submit-modal">
+                <button type="button" id="submit-modal-button" class="btn btn-primary btn-xs pull-right" data-toggle="tooltip" title="View data">
+                    <span class="glyphicon glyphicon-search"></span> View
+                </button>
+            </span>
+            <div id="submit-modal" class="modal" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Log content</h4>
+                        </div>
+                        <div class="modal-body">
+                            <pre class="text-muted input-view-text"><%= @enhanced_gene.log %></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </dd>
     <dt>Downloads</dt>
