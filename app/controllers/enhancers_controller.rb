@@ -26,7 +26,7 @@ class EnhancersController < ApplicationController
     end
 
     def download
-        data = "test"
+        data = EnhancedGene.first.to_fasta
         filename = Dir::Tmpname.make_tmpname ["gene",".fas"], nil
         send_data(data, :type => 'text/plain', :filename => filename)
     end

@@ -1,7 +1,7 @@
 class EnhancedGene < ActiveRecord::Base
 
     def to_fasta
-        fasta = GeneToFasta.new(self.gene_name, self.data)
-        [fasta.header, fasta.sequence]
+        to_fasta_obj = GeneToFasta.new(self.gene_name, self.data)
+        to_fasta_obj.fasta
     end
 end
