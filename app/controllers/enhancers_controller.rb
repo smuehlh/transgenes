@@ -26,8 +26,13 @@ class EnhancersController < ApplicationController
     end
 
     def download
-        data = EnhancedGene.first.to_fasta
-        filename = Dir::Tmpname.make_tmpname ["gene",".fas"], nil
+        if download_params[:fasta]
+            data = EnhancedGene.first.to_fasta
+            filename = Dir::Tmpname.make_tmpname ["gene",".fas"], nil
+        else
+            data = EnhancedGene.first.log
+            filename = Dir::Tmpname.make_tmpname ["gene",".log"], nil
+        end
         send_data(data, :type => 'text/plain', :filename => filename)
     end
 
@@ -47,6 +52,10 @@ class EnhancersController < ApplicationController
 
     def submit_params
         params.require(:submit).permit(:strategy, :keep_first_intron)
+    end
+
+    def download_params
+        params.permit(:fasta)
     end
 
     def delete_old_init_new_gene_enhancers
@@ -137,11 +146,12 @@ class EnhancersController < ApplicationController
         gene = init_gene
         gene.remove_introns(options.remove_first_intron)
         gene.tweak_sequence(options.strategy)
+        gene.log_tweak_statistics
 
         EnhancedGene.create(
             gene_name: gene.description,
             data: gene.sequence,
-            # log: CoreExtensions::Settings.get_log_content,
+            log: CoreExtensions::Settings.get_log_content,
             strategy: options.strategy,
             keep_first_intron: ! options.remove_first_intron
         )

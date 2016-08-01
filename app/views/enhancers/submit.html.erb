@@ -1,4 +1,3 @@
-<%= link_to "Download as FASTA", download_enhancers_path %>
 <dl>
     <dt>
         <%= @enhanced_gene.gene_name %>
@@ -8,5 +7,22 @@
             <%= content_tag(:span, @enhanced_gene.data, class: "text-muted monospaced") %>
         </div>
     </dd>
+    <dt>
+        Log
+    </dt>
+    <dd>
+        <div class="well well-sm clearfix">
+            <%= content_tag(:span,
+                patch_multiline_text_for_web(@enhanced_gene.log),
+                class: "text-muted monospaced"
+            ) %>
+        </div>
+    </dd>
+    <dt>Downloads</dt>
+    <dl>
+        <%= link_to "Download enhanced gene (as FASTA file).", download_enhancers_path(fasta: true) %>
+        <br>
+        <%= link_to "Download log file.", download_enhancers_path%>
+    </dl>
 </dl>
 <!-- TODO: submit form via ajax to stay on same page... -->

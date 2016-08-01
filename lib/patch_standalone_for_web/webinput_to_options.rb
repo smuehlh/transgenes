@@ -3,7 +3,7 @@ class WebinputToOptions
     attr_reader :strategy, :remove_first_intron
 
     def initialize(submit_params)
-        CoreExtensions::Settings.setup("logger") unless $logger
+        CoreExtensions::Settings.setup("logger")
         @remove_first_intron = ! submit_params[:keep_first_intron]
 
         @strategy =
