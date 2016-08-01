@@ -11,7 +11,7 @@ class GeneToFasta
         @header = str_to_fasta_header(description)
         @sequence = split_sequence_to_fasta_lines(sequence)
 
-        @fasta = "#{@header}\n#{sequence}"
+        @fasta = "#{@header}\n#{@sequence}"
     end
 
     def write(file)
