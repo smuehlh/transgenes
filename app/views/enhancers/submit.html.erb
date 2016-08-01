@@ -1,16 +1,17 @@
-
-
 <dl>
     <dt>
-        <%= @enhanced_gene.gene_name %>
+        Gene sequence
     </dt>
     <dd>
         <div class="well well-sm clearfix">
-            <%= content_tag(:span, @enhanced_gene.data, class: "text-muted monospaced") %>
+            <%= content_tag(:span,
+                    patch_multiline_text_for_web(@enhanced_gene.to_fasta),
+                    class: "text-muted monospaced"
+            ) %>
         </div>
     </dd>
     <dt>
-        Log
+        Log content
     </dt>
     <dd>
         <div class="well well-sm clearfix">
