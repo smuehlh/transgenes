@@ -3,6 +3,7 @@ class EnhancersController < ApplicationController
     def index
         flash.clear
         delete_old_init_new_gene_enhancers
+        delete_old_enhanced_gene
         @five_enhancer, @cds_enhancer, @three_enhancer = get_gene_enhancers
     end
 
@@ -20,8 +21,8 @@ class EnhancersController < ApplicationController
     end
 
     def submit
-        gene = tweak_gene(submit_params)
-        @description, @sequence, @fasta = output_gene(gene)
+        delete_old_enhanced_gene
+        @enhanced_gene = tweak_gene
     end
 
     def download
@@ -55,6 +56,10 @@ class EnhancersController < ApplicationController
         Enhancer.create(name: "5'UTR")
         Enhancer.create(name: "CDS")
         Enhancer.create(name: "3'UTR")
+    end
+
+    def delete_old_enhanced_gene
+        EnhancedGene.delete_all
     end
 
     def get_gene_enhancers
@@ -127,17 +132,18 @@ class EnhancersController < ApplicationController
         gene
     end
 
-    def tweak_gene(submit_params)
+    def tweak_gene
         options = WebinputToOptions.new(submit_params)
         gene = init_gene
         gene.remove_introns(options.remove_first_intron)
         gene.tweak_sequence(options.strategy)
 
-        gene
-    end
-
-    def output_gene(gene)
-        fasta = GeneToFasta.new(gene.description, gene.sequence)
-        [fasta.header, fasta.sequence, fasta.fasta]
+        EnhancedGene.create(
+            gene_name: gene.description,
+            data: gene.sequence,
+            # log: CoreExtensions::Settings.get_log_content,
+            strategy: options.strategy,
+            keep_first_intron: ! options.remove_first_intron
+        )
     end
 end

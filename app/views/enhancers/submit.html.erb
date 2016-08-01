@@ -1,11 +1,11 @@
 <%= link_to "Download this Document!", download_enhancers_path %>
 <dl>
     <dt>
-        <%= content_tag(:span, @description, class: "monospaced") %>
+        <%= @enhanced_gene.gene_name %>
     </dt>
     <dd>
         <div class="well well-sm clearfix">
-            <%= content_tag(:span, patch_multiline_text_for_web(@sequence), class: "text-muted monospaced") %>
+            <%= content_tag(:span, @enhanced_gene.data, class: "text-muted monospaced") %>
         </div>
     </dd>
 </dl>
