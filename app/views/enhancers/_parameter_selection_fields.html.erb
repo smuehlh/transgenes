@@ -1,19 +1,19 @@
 <%= content_tag(:h4, "General considerations") %>
 <div class="checkbox">
-    <input id="submit_keep_first_intron" class="params-form" name="submit[keep_first_intron]" disabled="disabled" type="checkbox" value="" checked>
-    <label for="submit_keep_first_intron">Keep first intron</label>
+    <%= f.check_box :keep_first_intron, {checked: true, disabled: true, class: "params-form"}, "true", "false" %>
+    <%= f.label :keep_first_intron, "Keep first intron" %>
 </div>
 
 <%= content_tag(:h4, "Strategy") %>
 <div class="radio">
-    <input id="submit_strategy_gc" class="params-form" type="radio" name="submit[strategy]" value="gc" disabled="disabled">
-    <label for="submit_strategy_gc"><strong>gc</strong> - Match GC content of 1- or 2-exon genes.</label>
+    <%= f.radio_button :strategy, 'gc', {disabled: true, class: "params-form"} %>
+    <%= f.label :strategy_gc, content_tag(:strong, 'gc') + ' - Match GC content of 1- or 2-exon genes.' %>
 </div>
 <div class="radio">
-    <input id="submit_strategy_humanize" class="params-form" type="radio" name="submit[strategy]" value="humanize" disabled="disabled" checked="checked">
-    <label for="submit_strategy_humanize"><strong>humanize</strong> - Match human codon usage</label>
+    <%= f.radio_button :strategy, 'humanize', {:checked => true, disabled: true, class: "params-form"} %>
+    <%= f.label :strategy_humanize, content_tag(:strong, 'humanize') + ' - Match human codon usage' %>
 </div>
 <div class="radio">
-    <input id="submit_strategy_raw" class="params-form" type="radio" name="submit[strategy]" value="raw" disabled="disabled">
-    <label for="submit_strategy_raw"><strong>raw</strong> - Leave the sequence as is</label>
+    <%= f.radio_button :strategy, 'raw', {disabled: true, class: "params-form"} %>
+    <%= f.label :strategy_raw, content_tag(:strong, 'raw') +  ' - Leave the sequence as is.' %>
 </div>

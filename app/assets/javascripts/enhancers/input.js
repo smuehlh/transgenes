@@ -1,7 +1,7 @@
 $(document).ready(function() {
     inputs = $("[id^=input-tab]>form");
     previews = $("[id^=input-view]");
-    params = $("#new_submit .params-form");
+    params = $("#new_enhanced_gene .params-form");
 
     clear_forms();
     hide_alerts();
@@ -127,7 +127,7 @@ function bind_to_content_change() {
 };
 
 function bind_to_checkbox_change() {
-    params.filter("#submit_keep_first_intron").on('click', function() {
+    params.filter("#enhanced_gene_keep_first_intron").on('click', function() {
         toggle_stats_depending_on_intron_checkbox();
     });
 }
@@ -136,8 +136,8 @@ function init_params_partial() {
     params.filter(":input[type=checkbox]").removeAttr('checked');
     params.filter(":input").prop("disabled", true);
 
-    params.filter("#submit_keep_first_intron").prop('checked', true);
-    params.filter("#submit_strategy_humanize").prop('checked', true);
+    params.filter("#enhanced_gene_keep_first_intron").prop('checked', true);
+    params.filter("#enhanced_gene_strategy_humanize").prop('checked', true);
 };
 
 function enable_params_partial() {
@@ -145,7 +145,7 @@ function enable_params_partial() {
 };
 
 function toggle_stats_depending_on_intron_checkbox() {
-    if (params.filter("#submit_keep_first_intron").prop('checked')) {
+    if (params.filter("#enhanced_gene_keep_first_intron").prop('checked')) {
         $("#stats-with-first-intron").show();
         $("#stats-without-first-intron").hide();
     } else {

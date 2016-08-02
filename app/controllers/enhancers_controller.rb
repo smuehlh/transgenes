@@ -50,8 +50,8 @@ class EnhancersController < ApplicationController
         params.fetch(:records, {}).permit(:line)
     end
 
-    def submit_params
-        params.require(:submit).permit(:strategy, :keep_first_intron)
+    def enhanced_gene_params
+        params.require(:enhanced_gene).permit(:strategy, :keep_first_intron)
     end
 
     def download_params
@@ -142,7 +142,7 @@ class EnhancersController < ApplicationController
     end
 
     def tweak_gene
-        options = WebinputToOptions.new(submit_params)
+        options = WebinputToOptions.new(enhanced_gene_params)
         gene = init_gene
         gene.remove_introns(options.remove_first_intron)
         gene.tweak_sequence(options.strategy)

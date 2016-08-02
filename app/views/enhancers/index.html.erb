@@ -26,7 +26,7 @@
     </div>
 
 <h3>Select parameters</h3>
-    <%= form_for(Submit.new, url: submit_enhancers_path) do |submit_form| %>
+    <%= form_for EnhancedGene.new, :url => {:action => "submit"}, html: { style: "display:inline;", role: "form" } do |submit_form| %>
         <%= render partial: "parameter_selection_fields", locals: {f: submit_form} %>
 
 <h3>Submit your job</h3>
