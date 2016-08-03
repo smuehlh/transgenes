@@ -3,11 +3,9 @@ module CoreExtensions
 
         extend self
 
-        def setup(kind)
-            setup_errorhandling # ALWAYS setup error handling
-            case kind
-            when "logger" then setup_logger
-            end
+        def setup
+            setup_errorhandling
+            setup_logger
         end
 
         def get_log_content
@@ -25,6 +23,8 @@ module CoreExtensions
         end
 
         def setup_logger
+            $logger.close if $logger
+
             @file = StringIO.new
             $logger = Logging.build_logger(@file, Logger::INFO, simplify_log=true)
         end

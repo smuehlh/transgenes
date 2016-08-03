@@ -2,12 +2,12 @@ class WebinputToGene
     ToGene.extend CoreExtensions::FileParsing
     ToGene.include CoreExtensions::FileParsing
 
-    attr_reader :error, :log
+    attr_reader :error
 
     def initialize(enhancer_params, is_fileupload_input)
-        @error = ""
+        @error = "" # NOTE: use @error instead of log-content to customize error messages.
         @gene_records = {}
-        CoreExtensions::Settings.setup("logger")
+        CoreExtensions::Settings.setup
 
         feature_type = enhancer_params[:name]
         file = get_fileupload_path_or_save_textinput_to_file(
@@ -15,8 +15,6 @@ class WebinputToGene
 
         parse_file_and_get_gene_records(feature_type, file)
         delete_textinput_file(file)
-
-        @log = CoreExtensions::Settings.get_log_content
     end
 
     def get_records
