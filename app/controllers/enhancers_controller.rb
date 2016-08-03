@@ -8,7 +8,7 @@ class EnhancersController < ApplicationController
     end
 
     def create
-        @enhancer = Enhancer.where(name: enhancer_params[:name]).first
+        @enhancer = get_gene_enhancer_by_name(enhancer_params[:name])
         if enhancer_params[:commit] == "Save"
             reset_active_enhancer_and_associated_records
             update_records_associated_with_active_enhancer
@@ -80,7 +80,7 @@ class EnhancersController < ApplicationController
     end
 
     def get_gene_enhancer_by_name(name)
-        Enhancer.where(name: name).first
+        Enhancer.where("session_id = ? AND name = ?", session.id, name).first
     end
 
     def reset_active_enhancer_and_associated_records
