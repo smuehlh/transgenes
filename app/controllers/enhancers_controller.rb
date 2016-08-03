@@ -2,8 +2,9 @@ class EnhancersController < ApplicationController
 
     def index
         flash.clear
-        delete_old_init_new_gene_enhancers
-        delete_old_enhanced_gene
+        reset_session
+        init_gene_enhancers
+        init_enhanced_gene
         @five_enhancer, @cds_enhancer, @three_enhancer = get_gene_enhancers
     end
 
@@ -21,16 +22,17 @@ class EnhancersController < ApplicationController
     end
 
     def submit
-        delete_old_enhanced_gene
-        @enhanced_gene = tweak_gene
+        @enhanced_gene = get_enhanced_gene
+        reset_enhanced_gene
+        tweak_gene
     end
 
     def download
         if download_params[:fasta]
-            data = EnhancedGene.first.to_fasta
+            data = get_enhanced_gene.to_fasta
             filename = Dir::Tmpname.make_tmpname ["gene",".fas"], nil
         else
-            data = EnhancedGene.first.log
+            data = get_enhanced_gene.log
             filename = Dir::Tmpname.make_tmpname ["gene",".log"], nil
         end
         send_data(data, :type => 'text/plain', :filename => filename)
@@ -58,17 +60,15 @@ class EnhancersController < ApplicationController
         params.permit(:fasta)
     end
 
-    def delete_old_init_new_gene_enhancers
-        Enhancer.delete_all
-        Record.delete_all
+    def init_gene_enhancers
         # order does matter!
         Enhancer.create(name: "5'UTR", session_id: session.id)
         Enhancer.create(name: "CDS", session_id: session.id)
         Enhancer.create(name: "3'UTR", session_id: session.id)
     end
 
-    def delete_old_enhanced_gene
-        EnhancedGene.delete_all
+    def init_enhanced_gene
+        EnhancedGene.create(session_id: session.id)
     end
 
     def get_gene_enhancers
@@ -83,10 +83,18 @@ class EnhancersController < ApplicationController
         Enhancer.where("session_id = ? AND name = ?", session.id, name).first
     end
 
+    def get_enhanced_gene
+        EnhancedGene.where("session_id = ?", session.id).first
+    end
+
     def reset_active_enhancer_and_associated_records
         # records associated with previous input (if any) are invalid.
         @enhancer.reset
         @enhancer.records.delete_all
+    end
+
+    def reset_enhanced_gene
+        @enhanced_gene.reset
     end
 
     def update_records_associated_with_active_enhancer
@@ -152,13 +160,12 @@ class EnhancersController < ApplicationController
         gene.tweak_sequence(options.strategy)
         gene.log_tweak_statistics
 
-        EnhancedGene.create(
+        @enhanced_gene.update_attributes(
             gene_name: gene.description,
             data: gene.sequence,
             log: CoreExtensions::Settings.get_log_content,
             strategy: options.strategy,
-            keep_first_intron: ! options.remove_first_intron,
-            session_id: session.id
+            keep_first_intron: ! options.remove_first_intron
         )
     end
 end
