@@ -62,9 +62,9 @@ class EnhancersController < ApplicationController
         Enhancer.delete_all
         Record.delete_all
         # order does matter!
-        Enhancer.create(name: "5'UTR")
-        Enhancer.create(name: "CDS")
-        Enhancer.create(name: "3'UTR")
+        Enhancer.create(name: "5'UTR", session_id: session.id)
+        Enhancer.create(name: "CDS", session_id: session.id)
+        Enhancer.create(name: "3'UTR", session_id: session.id)
     end
 
     def delete_old_enhanced_gene
@@ -153,7 +153,8 @@ class EnhancersController < ApplicationController
             data: gene.sequence,
             log: CoreExtensions::Settings.get_log_content,
             strategy: options.strategy,
-            keep_first_intron: ! options.remove_first_intron
+            keep_first_intron: ! options.remove_first_intron,
+            session_id: session.id
         )
     end
 end
