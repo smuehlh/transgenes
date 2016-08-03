@@ -114,8 +114,8 @@ class EnhancersController < ApplicationController
     def get_wanted_record
         # use selected record (if any). default to first record.
         if @selected_line = record_params[:line]
-            # class variable needed for view
-            @enhancer.records.where(line: @selected_line).first
+            # class variable '@selected_line' needed for view
+            @enhancer.records.where("line = ?", @selected_line).first
         else
             @enhancer.records.first
         end
