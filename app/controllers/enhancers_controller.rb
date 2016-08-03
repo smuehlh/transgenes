@@ -73,10 +73,14 @@ class EnhancersController < ApplicationController
 
     def get_gene_enhancers
         [
-            Enhancer.where(name: "5'UTR").first,
-            Enhancer.where(name: "CDS").first,
-            Enhancer.where(name: "3'UTR").first
+            get_gene_enhancer_by_name("5'UTR"),
+            get_gene_enhancer_by_name("CDS"),
+            get_gene_enhancer_by_name("3'UTR")
         ]
+    end
+
+    def get_gene_enhancer_by_name(name)
+        Enhancer.where(name: name).first
     end
 
     def reset_active_enhancer_and_associated_records
