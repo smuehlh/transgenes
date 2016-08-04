@@ -3,6 +3,10 @@
     <%= f.check_box :keep_first_intron, {checked: true, disabled: true, class: "params-form"}, "true", "false" %>
     <%= f.label :keep_first_intron, "Keep first intron" %>
 </div>
+<div class="form-group">
+    <%= f.label :ese, "Optional: Upload ESE list", class: "control-label" %>
+    <%= f.file_field :ese, accept: ".txt", class: "params-form" %>
+</div>
 
 <%= content_tag(:h4, "Strategy") %>
 <div class="radio form-group">

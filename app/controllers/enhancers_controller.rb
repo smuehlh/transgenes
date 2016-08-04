@@ -53,7 +53,7 @@ class EnhancersController < ApplicationController
     end
 
     def enhanced_gene_params
-        params.require(:enhanced_gene).permit(:strategy, :keep_first_intron)
+        params.require(:enhanced_gene).permit(:strategy, :keep_first_intron, :ese)
     end
 
     def download_params
