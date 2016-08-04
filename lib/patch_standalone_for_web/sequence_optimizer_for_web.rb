@@ -8,7 +8,7 @@ module SequenceOptimizerForWeb
         log = tweak_gene_verbosely(gene, options)
 
         info = combine_info_about_tweaked_gene(log, options)
-        gene, info
+        [gene, info]
     end
 
     private
@@ -32,7 +32,7 @@ module SequenceOptimizerForWeb
     end
 
     def combine_info_about_tweaked_gene(log, options)
-        Info = Struct.new(:log, :strategy, :keep_first_intron)
-        Info.new(log, options.strategy, options.keep_first_intron)
+        Struct.new("Info", :log, :strategy, :keep_first_intron)
+        Struct::Info.new(log, options.strategy, options.is_keep_first_intron)
     end
 end
