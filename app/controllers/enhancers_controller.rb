@@ -153,16 +153,26 @@ class EnhancersController < ApplicationController
         gene
     end
 
-    def tweak_gene
-        gene = init_gene
-        enhanced_gene_info = SequenceOptimizerForWeb.tweak_gene(gene, enhanced_gene_params)
+    def prepare_gene_enhancers_for_sequence_optimizer
+        five_enhancer, cds_enhancer, three_enhancer = get_gene_enhancers
+        {
+            five_utr: five_enhancer.data ? five_enhancer.to_gene : nil,
+            cds: cds_enhancer.data ? cds_enhancer.to_gene : nil,
+            three_utr: three_enhancer.data ? three_enhancer.to_gene : nil
+        }
+    end
 
+    def tweak_gene
+        gene, info = SequenceOptimizerForWeb.tweak_gene(
+            prepare_gene_enhancers_for_sequence_optimizer,
+            enhanced_gene_params
+        )
         @enhanced_gene.update_attributes(
             gene_name: gene.description,
             data: gene.sequence,
-            log: enhanced_gene_info[:log],
-            strategy: enhanced_gene_info[:strategy],
-            keep_first_intron: enhanced_gene_info[:keep_first_intron]
+            log: info.log,
+            strategy: info.strategy,
+            keep_first_intron: info.keep_first_intron
         )
     end
 end
