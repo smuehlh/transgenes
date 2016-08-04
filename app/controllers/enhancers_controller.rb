@@ -130,27 +130,14 @@ class EnhancersController < ApplicationController
     end
 
     def generate_gene_statistics
-        gene = init_gene
+        stats = SequenceOptimizerForWeb.gene_statistics(prepare_gene_enhancers_for_sequence_optimizer
+        )
 
-        # generate statistics with first intron kept
-        gene.remove_introns(is_remove_first_intron = false)
         @statistics = {
-            n_exons: gene.exons.size,
-            sequence_length_with_first_intron: gene.sequence.size
+            n_exons: stats.n_exons,
+            sequence_length_with_first_intron: stats.len_w_first_intron,
+            sequence_length_without_first_intron: stats.len_wo_first_intron
         }
-
-        # ... and first first intron removed
-        gene.remove_introns(is_remove_first_intron = true)
-        @statistics[:sequence_length_without_first_intron] = gene.sequence.size
-    end
-
-    def init_gene
-        five_enhancer, cds_enhancer, three_enhancer = get_gene_enhancers
-        gene = Gene.new
-        gene.add_cds(*cds_enhancer.to_gene) if cds_enhancer.data
-        gene.add_five_prime_utr(*five_enhancer.to_gene) if five_enhancer.data
-        gene.add_three_prime_utr(*three_enhancer.to_gene) if three_enhancer.data
-        gene
     end
 
     def prepare_gene_enhancers_for_sequence_optimizer

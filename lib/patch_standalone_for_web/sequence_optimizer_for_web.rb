@@ -2,6 +2,16 @@ module SequenceOptimizerForWeb
 
     extend self
 
+    def gene_statistics(web_genes)
+        gene_w_first_intron = init_gene_obj(web_genes)
+        gene_w_first_intron.remove_introns(is_remove_first_intron = false) # 1.intron kept
+
+        gene_wo_first_intron = init_gene_obj(web_genes)
+        gene_wo_first_intron.remove_introns(is_remove_first_intron = true) # 1.intron removed
+
+        combine_info_about_gene_stats(gene_w_first_intron, gene_wo_first_intron)
+    end
+
     def tweak_gene(web_genes, web_params)
         options = WebinputToOptions.new(web_params)
         gene = init_gene_obj(web_genes)
@@ -19,6 +29,15 @@ module SequenceOptimizerForWeb
         gene.add_five_prime_utr(*web_genes[:five_utr]) if web_genes[:five_utr]
         gene.add_three_prime_utr(*web_genes[:three_utr]) if web_genes[:three_utr]
         gene
+    end
+
+    def combine_info_about_gene_stats(gene_w_first_intron, gene_wo_first_intron)
+        Struct.new("Info", :n_exons, :len_w_first_intron, :len_wo_first_intron)
+        Struct::Info.new(
+            gene_w_first_intron.exons.size,
+            gene_w_first_intron.sequence.size,
+            gene_wo_first_intron.sequence.size
+        )
     end
 
     def tweak_gene_verbosely(gene, options)
