@@ -154,18 +154,15 @@ class EnhancersController < ApplicationController
     end
 
     def tweak_gene
-        options = WebinputToOptions.new(enhanced_gene_params)
         gene = init_gene
-        gene.remove_introns(options.remove_first_intron)
-        gene.tweak_sequence(options.strategy)
-        gene.log_tweak_statistics
+        enhanced_gene_info = SequenceOptimizerForWeb.tweak_gene(gene, enhanced_gene_params)
 
         @enhanced_gene.update_attributes(
             gene_name: gene.description,
             data: gene.sequence,
-            log: CoreExtensions::Settings.get_log_content,
-            strategy: options.strategy,
-            keep_first_intron: ! options.remove_first_intron
+            log: enhanced_gene_info[:log],
+            strategy: enhanced_gene_info[:strategy],
+            keep_first_intron: enhanced_gene_info[:keep_first_intron]
         )
     end
 end
