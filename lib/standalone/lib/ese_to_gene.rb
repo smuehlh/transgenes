@@ -5,7 +5,7 @@ class EseToGene
     def self.init_and_parse(file)
         obj = EseToGene.new
         obj.parse_file_or_die(file)
-        [obj.motifs]
+        obj.motifs
     end
 
     def initialize

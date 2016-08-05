@@ -31,7 +31,7 @@ gene.remove_introns(options.remove_first_intron)
 gene.log_statistics
 
 # tweak sequence
-gene.add_ese_list(*EseToGene.init_and_parse(options.ese)) if options.ese
+gene.add_ese_list(EseToGene.init_and_parse(options.ese)) if options.ese
 gene.tweak_sequence(options.strategy)
 gene.log_tweak_statistics
 
