@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get '/privacy' => 'pages#privacy'
 
   resources :enhancers, only: [:index, :create] do
+    post :ese, on: :collection
     post :submit, on: :collection
     get :download, on: :collection
   end

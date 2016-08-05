@@ -21,6 +21,10 @@ class EnhancersController < ApplicationController
         end
     end
 
+    def ese
+
+    end
+
     def submit
         @enhanced_gene = get_enhanced_gene
         reset_enhanced_gene

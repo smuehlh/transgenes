@@ -1,11 +1,21 @@
-<%= form_for EnhancedGene.new, :url => {:action => "submit"}, html: { style: "display:inline;", role: "form" } do |f| %>
+<%= form_for Ese.new, :url => {:action => "ese"}, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
+    <div id="error-alert-ese" class="alert alert-danger" role="alert" style="display: none;">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        <span id="error-alert-text-ese"></span>
+    </div>
+
     <div class="form-group">
-        <%= f.label :ese, "Optional: Upload ESE motifs", class: "control-label" %>
-        <div id="error-alert-ese" class="alert alert-danger params-form" role="alert" style="display: none;">
-            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            <span class="sr-only">Error:</span>
-            <span id="error-alert-text-ese"></span>
+        <%= f.hidden_field :commit, value: "" %>
+        <%= f.label :data, "Enter ESE motifs", class:"control-label" %>
+        <div class="pull-right control-group">
+            <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"}, disabled: true %>
+            <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"}, disabled: true %>
         </div>
-        <%= f.file_field :ese, accept: ".txt", class: "params-form" %>
+        <%= f.text_area :data, rows: 5, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 1000 %>
+    </div>
+    <div class="form-group">
+        <%= f.label :file, "Or, upload file", class: "control-label" %>
+        <%= f.file_field :file, accept: ".txt" %>
     </div>
 <% end %>

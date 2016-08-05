@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160803093706) do
+ActiveRecord::Schema.define(version: 20160805100655) do
 
   create_table "enhanced_genes", force: :cascade do |t|
     t.text     "gene_name"
@@ -38,6 +38,15 @@ ActiveRecord::Schema.define(version: 20160803093706) do
   end
 
   add_index "enhancers", ["session_id"], name: "index_enhancers_on_session_id"
+
+  create_table "eses", force: :cascade do |t|
+    t.text     "data"
+    t.string   "session_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "eses", ["session_id"], name: "index_eses_on_session_id"
 
   create_table "records", force: :cascade do |t|
     t.integer  "line"
