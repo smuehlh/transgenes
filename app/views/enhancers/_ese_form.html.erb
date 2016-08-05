@@ -4,6 +4,12 @@
         <span class="sr-only">Error:</span>
         <span id="error-alert-text-ese"></span>
     </div>
+    <div id="params-ese-alert" class="alert alert-info" role="alert" style="display: none;">
+        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        <span class="sr-only">Info:</span>
+        ESE motifs near introns will be destroyed.
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    </div>
 
     <div class="form-group">
         <%= f.hidden_field :commit, value: "" %>
