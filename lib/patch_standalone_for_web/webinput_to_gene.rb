@@ -1,6 +1,7 @@
 class WebinputToGene
     ToGene.extend CoreExtensions::FileParsing
     ToGene.include CoreExtensions::FileParsing
+    include CoreExtensions::FileHelper
 
     attr_reader :error
 
@@ -14,7 +15,7 @@ class WebinputToGene
             enhancer_params, is_fileupload_input)
 
         parse_file_and_get_gene_records(feature_type, file)
-        delete_textinput_file(file)
+        delete_temp_file(file)
     end
 
     def get_records
@@ -27,16 +28,10 @@ class WebinputToGene
         if is_fileupload_input
             params[:file].path
         else
-            write_textinput_to_file(params[:data])
+            base =  "gene"
+            ext = get_file_extension_matching_input_type(params[:data])
+            write_to_temp_file(base, ext, params[:data])
         end
-    end
-
-    def write_textinput_to_file(data)
-        ext = get_file_extension_matching_input_type(data)
-        file = Tempfile.new(['gene', ext])
-        file.write(data)
-        file.close
-        file
     end
 
     def get_file_extension_matching_input_type(data)
@@ -50,11 +45,6 @@ class WebinputToGene
             # unknown input.
             ".unknown"
         end
-    end
-
-    def delete_textinput_file(file)
-        # remove tempfile (was created only in case of textinput)
-        file.delete if file.kind_of?(Tempfile)
     end
 
     def parse_file_and_get_gene_records(feature_type, file)

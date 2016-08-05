@@ -1,5 +1,7 @@
 class WebinputToEse
 
+    include CoreExtensions::FileHelper
+
     attr_reader :error
 
     def initialize(ese_params, is_fileupload_input)
@@ -23,20 +25,10 @@ class WebinputToEse
         if is_fileupload_input
             params[:file].path
         else
-            write_textinput_to_file(params[:data])
+            base = "gene"
+            ext = ".txt"
+            write_to_temp_file(base, ext, params[:data])
         end
-    end
-
-    def write_textinput_to_file(data)
-        file = Tempfile.new(['gene', '.txt'])
-        file.write(data)
-        file.close
-        file
-    end
-
-    def delete_textinput_file(file)
-        # remove tempfile (was created only in case of textinput)
-        file.delete if file.kind_of?(Tempfile)
     end
 
     def parse_file_and_get_ese_motifs(file)
