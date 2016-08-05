@@ -27,7 +27,7 @@
 
 <h3>Select parameters</h3>
     <%= form_for EnhancedGene.new, :url => {:action => "submit"}, html: { style: "display:inline;", role: "form" } do |submit_form| %>
-        <%= render partial: "parameter_selection_fields", locals: {f: submit_form} %>
+        <%= render partial: "enhancers/submit/parameter_selection_fields", locals: {f: submit_form} %>
 
 <h3>Submit your job</h3>
     <div id="input-view-alert" class="alert alert-info" role="alert" style="display: none;">
@@ -49,5 +49,5 @@
     </div>
 
 <!-- close the submit-form -->
-        <%= render partial: "parameter_selection_actions", locals: {f: submit_form} %>
+        <%= render partial: "enhancers/submit/parameter_selection_actions", locals: {f: submit_form} %>
     <% end %>
