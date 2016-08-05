@@ -198,7 +198,8 @@ class EnhancersController < ApplicationController
             data: gene.sequence,
             log: info.log,
             strategy: info.strategy,
-            keep_first_intron: info.keep_first_intron
+            keep_first_intron: info.keep_first_intron,
+            destroy_ese_motifs: gene.ese_motifs.any?
         )
     end
 end

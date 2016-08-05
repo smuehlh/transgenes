@@ -1,5 +1,5 @@
 class Gene
-    attr_reader :exons, :introns, :five_prime_utr, :three_prime_utr, :sequence, :description
+    attr_reader :exons, :introns, :ese_motifs, :five_prime_utr, :three_prime_utr, :sequence, :description
 
     def initialize
         @description = ""

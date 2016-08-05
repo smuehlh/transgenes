@@ -14,6 +14,10 @@
                         <td>First intron is kept</td>
                         <td><%= @enhanced_gene.keep_first_intron ? "Yes" : "No" %></td>
                     </tr>
+                    <tr>
+                        <td>ESE motifs are destroyed</td>
+                        <td><%= @enhanced_gene.destroy_ese_motifs ? "Yes" : "No" %></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
