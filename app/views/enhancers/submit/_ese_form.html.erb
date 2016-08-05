@@ -1,0 +1,11 @@
+<%= form_for EnhancedGene.new, :url => {:action => "submit"}, html: { style: "display:inline;", role: "form" } do |f| %>
+    <div class="form-group">
+        <%= f.label :ese, "Optional: Upload ESE motifs", class: "control-label" %>
+        <div id="error-alert-ese" class="alert alert-danger params-form" role="alert" style="display: none;">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            <span id="error-alert-text-ese"></span>
+        </div>
+        <%= f.file_field :ese, accept: ".txt", class: "params-form" %>
+    </div>
+<% end %>

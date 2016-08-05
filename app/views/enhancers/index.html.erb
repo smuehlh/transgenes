@@ -26,6 +26,9 @@
     </div>
 
 <h3>Select parameters</h3>
+    <!-- ESE input -->
+    <%= render partial: "enhancers/submit/ese_form" %>
+    <!-- submit params -->
     <%= form_for EnhancedGene.new, :url => {:action => "submit"}, html: { style: "display:inline;", role: "form" } do |submit_form| %>
         <%= render partial: "enhancers/submit/parameter_selection_fields", locals: {f: submit_form} %>
 

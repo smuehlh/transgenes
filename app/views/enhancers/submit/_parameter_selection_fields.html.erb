@@ -1,20 +1,10 @@
-<%= content_tag(:h4, "General considerations") %>
+<%= f.label :keep_first_intron, "Select if first intron should be kept or removed" %>
 <div class="checkbox form-group">
     <%= f.check_box :keep_first_intron, {checked: true, disabled: true, class: "params-form"}, "true", "false" %>
     <%= f.label :keep_first_intron, "Keep first intron" %>
 </div>
 
-<div class="form-group">
-    <%= f.label :ese, "Optional: Upload ESE motifs", class: "control-label" %>
-    <div id="error-alert-ese" class="alert alert-danger params-form" role="alert" style="display: none;">
-        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span class="sr-only">Error:</span>
-        <span id="error-alert-text-ese"></span>
-    </div>
-    <%= f.file_field :ese, accept: ".txt", class: "params-form" %>
-</div>
-
-<%= content_tag(:h4, "Strategy") %>
+<%= f.label :strategy_gc, "Select a strategy" %>
 <div class="radio form-group">
     <%= f.radio_button :strategy, 'gc', {disabled: true, class: "params-form"} %>
     <%= f.label :strategy_gc, content_tag(:strong, 'gc') + ' - Match GC content of 1- or 2-exon genes.' %>
