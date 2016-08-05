@@ -29,7 +29,7 @@ module ErrorHandling
         when "invalid_codons"
             "Found invalid codon(s)"
         when "invalid_ese_format"
-            "Unrecognized format. Input has to contain ESE motifs only, one per line."
+            "Unrecognized format. Input might contain ESE motifs only (one per line)."
         else
             "Something went wrong."
         end
