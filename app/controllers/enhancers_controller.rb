@@ -4,6 +4,7 @@ class EnhancersController < ApplicationController
         flash.clear
         reset_session
         init_gene_enhancers
+        init_ese
         init_enhanced_gene
         @five_enhancer, @cds_enhancer, @three_enhancer = get_gene_enhancers
     end
@@ -22,7 +23,12 @@ class EnhancersController < ApplicationController
     end
 
     def ese
-
+        @ese = get_ese
+        if ese_params[:commit] == "Save"
+            update_ese
+        else
+            reset_ese
+        end
     end
 
     def submit
@@ -56,6 +62,10 @@ class EnhancersController < ApplicationController
         params.fetch(:records, {}).permit(:line)
     end
 
+    def ese_params
+        params.fetch(:ese).permit(:data, :file, :commit)
+    end
+
     def enhanced_gene_params
         params.require(:enhanced_gene).permit(:strategy, :keep_first_intron, :ese)
     end
@@ -69,6 +79,10 @@ class EnhancersController < ApplicationController
         Enhancer.create(name: "5'UTR", session_id: session.id)
         Enhancer.create(name: "CDS", session_id: session.id)
         Enhancer.create(name: "3'UTR", session_id: session.id)
+    end
+
+    def init_ese
+        Ese.create(session_id: session.id)
     end
 
     def init_enhanced_gene
@@ -87,6 +101,10 @@ class EnhancersController < ApplicationController
         Enhancer.where("session_id = ? AND name = ?", session.id, name).first
     end
 
+    def get_ese
+        Ese.where("session_id = ?", session.id).first
+    end
+
     def get_enhanced_gene
         EnhancedGene.where("session_id = ?", session.id).first
     end
@@ -99,6 +117,10 @@ class EnhancersController < ApplicationController
 
     def reset_enhanced_gene
         @enhanced_gene.reset
+    end
+
+    def reset_ese
+        @ese.reset
     end
 
     def update_records_associated_with_active_enhancer
@@ -121,6 +143,13 @@ class EnhancersController < ApplicationController
             @enhancer.update_with_record_data(record)
             generate_gene_statistics
         end
+    end
+
+    def update_ese
+        ese_parser = WebinputToEse.new(ese_params,remotipart_submitted?)
+        list = ese_parser.get_ese_motifs
+        @ese.update_attribute(:data, list.join(";"))
+        flash.now[:error] = ese_parser.error
     end
 
     def get_wanted_record
