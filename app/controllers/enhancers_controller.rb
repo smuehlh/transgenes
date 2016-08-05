@@ -148,7 +148,7 @@ class EnhancersController < ApplicationController
     def update_ese
         ese_parser = WebinputToEse.new(ese_params,remotipart_submitted?)
         list = ese_parser.get_ese_motifs
-        @ese.update_attribute(:data, list.join(";"))
+        @ese.update_attribute(:data, list)
         flash.now[:error] = ese_parser.error
     end
 
@@ -182,9 +182,15 @@ class EnhancersController < ApplicationController
         }
     end
 
+    def prepare_ese_motifs_for_sequence_optimizer
+        ese = get_ese
+        ese.data
+    end
+
     def tweak_gene
         gene, info = SequenceOptimizerForWeb.tweak_gene(
             prepare_gene_enhancers_for_sequence_optimizer,
+            prepare_ese_motifs_for_sequence_optimizer,
             enhanced_gene_params
         )
         @enhanced_gene.update_attributes(

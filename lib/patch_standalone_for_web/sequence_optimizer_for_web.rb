@@ -12,9 +12,9 @@ module SequenceOptimizerForWeb
         combine_info_about_gene_stats(gene_w_first_intron, gene_wo_first_intron)
     end
 
-    def tweak_gene(web_genes, web_params)
+    def tweak_gene(web_genes, web_ese_motifs, web_params)
         options = WebinputToOptions.new(web_params)
-        gene = init_gene_obj(web_genes)
+        gene = init_gene_obj(web_genes, web_ese_motifs)
         log = tweak_gene_verbosely(gene, options)
 
         info = combine_info_about_tweaked_gene(log, options)
@@ -23,11 +23,14 @@ module SequenceOptimizerForWeb
 
     private
 
-    def init_gene_obj(web_genes)
+    def init_gene_obj(web_genes, web_ese_motifs=nil)
         gene = Gene.new
         gene.add_cds(*web_genes[:cds]) if web_genes[:cds]
         gene.add_five_prime_utr(*web_genes[:five_utr]) if web_genes[:five_utr]
         gene.add_three_prime_utr(*web_genes[:three_utr]) if web_genes[:three_utr]
+
+        gene.add_ese_list(web_ese_motifs) if web_ese_motifs
+
         gene
     end
 
