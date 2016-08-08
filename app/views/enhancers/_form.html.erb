@@ -16,12 +16,13 @@
     <div class="form-group">
         <%= f.hidden_field :name, value: resource_name %>
         <%= f.hidden_field :commit, value: "" %>
-        <%= f.label :data, "Enter GeneID or FASTA sequence", class:"control-label" %>
+        <%= f.label :data, "Enter Genebank or FASTA sequence", class:"control-label" %>
         <div class="pull-right control-group">
             <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"}, disabled: true %>
             <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"}, disabled: true %>
         </div>
         <%= f.text_area :data, rows: 8, class: "form-control monospaced", placeholder: "Enter sequence", maxlength: 2000 %>
+        <small class="form-text text-muted">Complete Genebank or FASTA entries. Size is restricted to maximum 2,000 characters, larger data has to uploaded using the upload button below.</small>
     </div>
     <div class="form-group">
         <%= f.label :file, "Or, upload Genebank or FASTA file", class: "control-label" %>

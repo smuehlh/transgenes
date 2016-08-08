@@ -19,6 +19,7 @@
             <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"}, disabled: true %>
         </div>
         <%= f.text_area :data, rows: 5, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 1000 %>
+        <small class="form-text text-muted">DNA sequence motifs of 6 bases, one motif per line.</small>
     </div>
     <div class="form-group">
         <%= f.label :file, "Or, upload file", class: "control-label" %>
