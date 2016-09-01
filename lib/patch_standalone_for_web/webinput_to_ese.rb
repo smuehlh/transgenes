@@ -12,7 +12,7 @@ class WebinputToEse
         file = get_fileupload_path_or_save_textinput_to_file(
             ese_params, is_fileupload_input)
         parse_file_and_get_ese_motifs(file)
-        delete_textinput_file(file)
+        delete_temp_file(file)
     end
 
     def get_ese_motifs
