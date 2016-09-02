@@ -1,0 +1,5 @@
+Builing the index for Ensembl Gene ID autocompletion
+====================================================
+
+1) download all Ensemble Gene IDs
+> curl -o ensemble_geneids.txt -d @get_all_ensemble_geneids.xml http://www.ensembl.org/biomart/martservice?

@@ -1,0 +1,7 @@
+query=<!DOCTYPE Query>
+<Query  virtualSchemaName = "default" formatter = "CSV" header = "0" uniqueRows = "1" count = "" datasetConfigVersion = "0.6" >
+
+    <Dataset name = "hsapiens_gene_ensembl" interface = "default" >
+        <Attribute name = "ensembl_gene_id" />
+    </Dataset>
+</Query>
