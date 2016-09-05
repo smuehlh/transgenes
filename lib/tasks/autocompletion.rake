@@ -2,13 +2,11 @@ namespace :autocompletion do
 
     desc "Update (= delete and setup) Ensembl Gene Ids for autocompletion"
     task :update => [:delete, :setup] do
-        puts "All done."
     end
 
     desc "Delete Ensembl Gene Id autocompletion records"
     task delete: :environment do
-        # EnsemblGene.delete_all
-        puts "Deleted EnsemblGene records"
+        EnsemblGene.delete_all
     end
 
     desc "Setup Ensembl Gene Id autocompletion records"
