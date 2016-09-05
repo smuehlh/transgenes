@@ -1,5 +1,23 @@
 Builing the index for Ensembl Gene ID autocompletion
 ====================================================
 
-1) download all Ensemble Gene IDs
-> curl -o ensemble_geneids.txt -d @get_all_ensemble_geneids.xml http://www.ensembl.org/biomart/martservice?
+Update Ensemble Data
+--------------------
+> cd Rails.root
+> rake autocompletion:update # calls module GetEnsemblData
+
+Most of the time, you will want to run this task. Deletes old data, downloads and saves to DB new.
+
+Just in case, there are sub-tasks:
+> rake autocompletion:delete # Delete only
+> rake autocompletion:setup # Download and save to DB
+
+In case of bugs
+---------------
+Double-check code is still up to date on ensembl.org:
+- XML code as used in Curl call
+    (getting all Ensembl gene ids in current release)
+    Can be generated using BioMart
+- Ruby
+    (getting current release and getting all sequences)
+    Can be generated using Ensembl REST server
