@@ -48,9 +48,12 @@ class GetEnsemblData
     end
 
     def get_gene_sequences
-        response_type = 'text/plain'
+        log_progress
 
+        response_type = 'text/plain'
         @gene_ids.collect do |id|
+            log_progress
+
             # NOTE: mask_feature returns sequence with exons in upper in introns in lower case.
             path = "/sequence/id/#{id}?mask_feature=1;"
             request_from_ensembl_rest_server(path, response_type)
@@ -82,5 +85,15 @@ class GetEnsemblData
         end
 
         response.body
+    end
+
+    def log_progress
+        @progress = @progress ? @progress + 1 : 0
+        puts "#{@progress} / #{@gene_ids.size}" if is_logging_interval
+    end
+
+    def is_logging_interval
+        # @progress % 10_000 == 0
+        @progress % 2 == 0
     end
 end
