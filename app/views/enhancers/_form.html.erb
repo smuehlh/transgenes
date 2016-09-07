@@ -35,7 +35,7 @@
     <div class="form-group">
         <%= label :ensembl, :gene_id, "Or, enter Ensembl gene ID", class: "control-label" %>
         <!-- Assume the maximum length of a gene-id is 20 chars. -->
-        <%= text_field :ensembl, :gene_id, maxlength: 20, size: 24 %>
+        <%= text_field :ensembl, :gene_id, maxlength: 20, class: "form-control" %>
         <br><small class="form-text text-muted">Input a human Ensembl gene ID, starting with "ENS" followed by a series of digits, e.g. ENSG00000254647</small>
     </div>
     <div id="multigene-info-container-<%= id %>"></div>
