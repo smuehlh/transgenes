@@ -14,6 +14,7 @@
 //= require jquery.turbolinks
 //= require jquery_ujs
 //= require jquery.remotipart
+//= require validate
 //= require bootstrap-sprockets
 //= require enhancers
 //= require enhancers/input

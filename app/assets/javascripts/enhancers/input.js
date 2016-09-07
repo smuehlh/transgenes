@@ -10,6 +10,8 @@ $(document).ready(function() {
     bind_eventhandlers_to_input_elements();
     bind_eventhandlers_to_preview_elements();
     bind_eventhandlers_to_params_elements();
+
+    bind_validate_to_input();
 });
 
 $(document).on('page:load', function() {
@@ -152,4 +154,23 @@ function toggle_stats_depending_on_intron_checkbox() {
         $("#stats-with-first-intron").hide();
         $("#stats-without-first-intron").show();
     }
+};
+
+function bind_validate_to_input() {
+    var ensembl_maxsize = inputs.find("input[name*=ensembl]").attr('maxlength');
+    inputs.each(function() {
+        $(this).validate({
+            rules: {
+                "ensembl[gene_id]": {
+                    regex: /^ENSG\d+(?:\.\d+)?$/,
+                    maxlength: ensembl_maxsize // just in case ... maxlength is already defined (and ensured) in input-field
+                }
+            },
+            messages: {
+                "ensembl[gene_id]": {
+                    regex: "Please enter a valid Ensemble gene ID."
+                }
+            }
+        });
+    });
 };
