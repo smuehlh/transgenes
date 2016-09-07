@@ -158,11 +158,13 @@ function toggle_stats_depending_on_intron_checkbox() {
 
 function bind_validate_to_input() {
     var ensembl_maxsize = inputs.find("input[name*=ensembl]").attr('maxlength');
+    var ensembl_validation = inputs.find("input[name*=ensembl]").data('valid') || '^ENSG\d+(?:\.\d+)?$';
+
     inputs.each(function() {
         $(this).validate({
             rules: {
                 "ensembl[gene_id]": {
-                    regex: /^ENSG\d+(?:\.\d+)?$/,
+                    regex: ensembl_validation,
                     maxlength: ensembl_maxsize // just in case ... maxlength is already defined (and ensured) in input-field
                 }
             },
