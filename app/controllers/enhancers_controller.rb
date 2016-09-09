@@ -48,6 +48,13 @@ class EnhancersController < ApplicationController
         send_data(data, :type => 'text/plain', :filename => filename)
     end
 
+    def ensembl_autocomplete
+        # TODO ...
+        # try twitter bootstrap.
+        suggestions = EnsemblGene.take(10).map{|e| e.gene_id}
+        render json: suggestions
+    end
+
     private
 
     # Never trust parameters from the scary internet, only allow the white list through.

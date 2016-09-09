@@ -179,9 +179,20 @@ function bind_validate_to_input() {
 };
 
 function bind_autocomplete_to_input() {
-    var tags = ["ENSG1", "ENSG20", "ENSG205", "ENSG5"];
     inputs.find('[name="ensembl[gene_id]"]').typeahead({
-        source: tags,
+        source: function(query, process) {
+            return $.ajax({
+                url: "/enhancers/ensembl_autocomplete",
+                type: "post",
+                data: {query: query},
+                dataType: 'json',
+                success: function(result){
+                    return process(result);
+                }
+            });
+        },
+        autoSelect: true,
+        // showHintOnFocus: true, // start suggesting as soon as input is focused ...
         minLength: 1 // start suggesting as soon as "E" is typed in ...
     });
 };

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     post :ese, on: :collection
     post :submit, on: :collection
     get :download, on: :collection
+    post :ensembl_autocomplete, on: :collection
   end
 
   # The priority is based upon order of creation: first created -> highest priority.
