@@ -15,6 +15,7 @@
 //= require jquery_ujs
 //= require jquery.remotipart
 //= require validate
+//= require bootstrap3-typeahead
 //= require bootstrap-sprockets
 //= require enhancers
 //= require enhancers/input
