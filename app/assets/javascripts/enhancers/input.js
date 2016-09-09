@@ -12,6 +12,7 @@ $(document).ready(function() {
     bind_eventhandlers_to_params_elements();
 
     bind_validate_to_input();
+    bind_autocomplete_to_input();
 });
 
 $(document).on('page:load', function() {
@@ -174,5 +175,13 @@ function bind_validate_to_input() {
                 }
             }
         });
+    });
+};
+
+function bind_autocomplete_to_input() {
+    var tags = ["ENSG1", "ENSG20", "ENSG205", "ENSG5"];
+    inputs.find('[name="ensembl[gene_id]"]').typeahead({
+        source: tags,
+        minLength: 1 // start suggesting as soon as "E" is typed in ...
     });
 };
