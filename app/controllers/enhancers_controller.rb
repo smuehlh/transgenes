@@ -49,9 +49,8 @@ class EnhancersController < ApplicationController
     end
 
     def ensembl_autocomplete
-        # TODO ...
-        # try twitter bootstrap.
-        suggestions = EnsemblGene.take(10).map{|e| e.gene_id}
+        # return gene_ids of first 10 matches
+        suggestions = EnsemblGene.where("gene_id LIKE ?", "#{autocomplete_params[:query]}%").limit(10).pluck(:gene_id)
         render json: suggestions
     end
 
@@ -79,6 +78,10 @@ class EnhancersController < ApplicationController
 
     def download_params
         params.permit(:fasta)
+    end
+
+    def autocomplete_params
+        params.permit(:query)
     end
 
     def init_gene_enhancers
