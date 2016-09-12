@@ -179,18 +179,16 @@ function bind_validate_to_input() {
 };
 
 function bind_autocomplete_to_input() {
+    // instantiate & initialize the bloodhound suggestion engine
+    var geneids = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local:  ["(A)labama","Alaska","Arizona","Arkansas","Arkansas2","Barkansas"]
+    });
+    geneids.initialize();
+
     inputs.find('[name="ensembl[gene_id]"]').typeahead({
-        source: function(query, process) {
-            return $.ajax({
-                url: "/enhancers/ensembl_autocomplete",
-                type: "post",
-                data: {query: query},
-                dataType: 'json',
-                success: function(result){
-                    return process(result);
-                }
-            });
-        },
+        source: geneids.ttAdapter(),
         autoSelect: true,
         showHintOnFocus: true, // start suggesting as soon as input is focused ...
         minLength: 1 // start suggesting as soon as "E" is typed in ...
