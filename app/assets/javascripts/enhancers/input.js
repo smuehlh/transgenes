@@ -183,7 +183,20 @@ function bind_autocomplete_to_input() {
     var geneids = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.whitespace,
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local:  ["(A)labama","Alaska","Arizona","Arkansas","Arkansas2","Barkansas"]
+        remote: {
+            url: "/enhancers/ensembl_autocomplete",
+            prepare: function (query, settings) {
+                settings.type = "POST";
+                settings.contentType = "application/json; charset=UTF-8";
+                settings.dataType = "json";
+                settings.data = JSON.stringify({"query": query});
+                return settings;
+            },
+            transform: function (response) {
+console.log(JSON.stringify(response));
+                return response.map(JSON.stringify);
+            }
+        }
     });
     geneids.initialize();
 
