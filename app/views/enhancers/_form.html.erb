@@ -35,7 +35,7 @@
     <div class="form-group">
         <%= label :ensembl, :gene_id, "Or, enter Ensembl gene ID", class: "control-label" %>
         <%= text_field :ensembl, :gene_id, maxlength: EnsemblGene::MAX_LENGTH_GENEID, class: "form-control", data: {valid: EnsemblGene::FORMAT_GENEID_WEB, provide: "typeahead"}, autocomplete: "off" %>
-        <br><small class="form-text text-muted">Input a human Ensembl gene ID, starting with "ENS" followed by a series of digits, e.g. ENSG00000254647</small>
+        <small class="form-text text-muted">Input a human Ensembl gene ID, starting with "ENSG" followed by a series of digits, e.g. ENSG00000254647</small>
     </div>
     <div id="multigene-info-container-<%= id %>"></div>
     <div class="form-group" id="multigene-options-<%= id %>"></div>
