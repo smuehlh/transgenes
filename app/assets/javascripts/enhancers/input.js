@@ -179,31 +179,29 @@ function bind_validate_to_input() {
 };
 
 function bind_autocomplete_to_input() {
-    // instantiate & initialize the bloodhound suggestion engine
-    var geneids = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.whitespace,
+    var engine = new Bloodhound({
+        datumTokenizer: function(d) {
+            console.log(d);
+            // never gets executed.
+            return Bloodhound.tokenizers.whitespace(d.value);
+        },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: "/enhancers/ensembl_autocomplete",
-            prepare: function (query, settings) {
-                settings.type = "POST";
-                settings.contentType = "application/json; charset=UTF-8";
-                settings.dataType = "json";
-                settings.data = JSON.stringify({"query": query});
-                return settings;
-            },
-            transform: function (response) {
-console.log(JSON.stringify(response));
-                return response.map(JSON.stringify);
-            }
+            url: '/enhancers/ensembl_autocomplete?query=%QUERY',
+            wildcard: '%QUERY'
         }
     });
-    geneids.initialize();
+
+    var promise = engine.initialize();
+
+    promise
+    .done(function() { console.log('success!'); })
+    .fail(function() { console.log('err!'); });
 
     inputs.find('[name="ensembl[gene_id]"]').typeahead({
-        source: geneids.ttAdapter(),
-        autoSelect: true,
-        showHintOnFocus: true, // start suggesting as soon as input is focused ...
-        minLength: 1 // start suggesting as soon as "E" is typed in ...
+        displayText: function(item) {
+            return item.value;
+        },
+        source: engine.ttAdapter()
     });
 };
