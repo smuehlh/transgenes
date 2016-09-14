@@ -12,31 +12,61 @@
         <span class="sr-only">Error:</span>
         <span id="error-alert-text-<%= id %>"></span>
     </div>
+    <legend>Please input or upload a sequence, or provide a gene ID.</legend>
 
-    <div class="form-group">
-    <legend>Please provide a sequence or a gene ID.</legend>
-        <%= f.hidden_field :name, value: resource_name %>
-        <%= f.hidden_field :commit, value: "" %>
-        <%= f.label :data, "Enter Genebank or FASTA sequence", class:"control-label" %>
-        <div class="pull-right control-group">
-            <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"}, disabled: true %>
-            <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"}, disabled: true %>
+    <div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#textarea-<%= id %>">Enter Genebank or FASTA sequence</a>
+                </h4>
+            </div>
+            <div id="textarea-<%= id %>" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <!-- omit div.form-group for optimal spacing in collapsible -->
+                    <%= f.hidden_field :name, value: resource_name %>
+                    <%= f.hidden_field :commit, value: "" %>
+                    <div class="pull-right control-group">
+                        <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"}, disabled: true %>
+                        <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"}, disabled: true %>
+                    </div>
+                    <%= f.text_area :data, rows: 8, class: "form-control monospaced", placeholder: "Enter sequence", maxlength: 2000 %>
+                    <small class="form-text text-muted">Complete Genebank or FASTA entries. Size is restricted to maximum 2,000 characters, larger data has to uploaded using the upload button below. E.g.
+                    <br>>INS
+                    <br>ATGGCCCTGTGGATGCGCCTCCTGCCCC...
+                    </small>
+                </div>
+            </div>
         </div>
-        <%= f.text_area :data, rows: 8, class: "form-control monospaced", placeholder: "Enter sequence", maxlength: 2000 %>
-        <small class="form-text text-muted">Complete Genebank or FASTA entries. Size is restricted to maximum 2,000 characters, larger data has to uploaded using the upload button below. E.g.
-        <br>>INS
-        <br>ATGGCCCTGTGGATGCGCCTCCTGCCCC...
-       </small>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#fileinput-<%= id %>">Or, upload Genebank or FASTA file</a>
+                </h4>
+            </div>
+            <div id="fileinput-<%= id %>" class="panel-collapse collapse">
+              <div class="panel-body">
+                    <%= f.file_field :file, accept: valid_extensions %>
+              </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#textinput-<%= id %>">Or, enter Ensembl gene ID</a>
+                </h4>
+            </div>
+            <div id="textinput-<%= id %>" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <%= text_field :ensembl, :gene_id, maxlength: EnsemblGene::MAX_LENGTH_GENEID, class: "form-control", data: {valid: EnsemblGene::FORMAT_GENEID_WEB, provide: "typeahead"}, autocomplete: "off" %>
+                    <small class="form-text text-muted">Input a human Ensembl gene ID, starting with "ENSG" followed by a series of digits, e.g. ENSG00000254647</small>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <%= f.label :file, "Or, upload Genebank or FASTA file", class: "control-label" %>
-        <%= f.file_field :file, accept: valid_extensions %>
-    </div>
-    <div class="form-group">
-        <%= label :ensembl, :gene_id, "Or, enter Ensembl gene ID", class: "control-label" %>
-        <%= text_field :ensembl, :gene_id, maxlength: EnsemblGene::MAX_LENGTH_GENEID, class: "form-control", data: {valid: EnsemblGene::FORMAT_GENEID_WEB, provide: "typeahead"}, autocomplete: "off" %>
-        <small class="form-text text-muted">Input a human Ensembl gene ID, starting with "ENSG" followed by a series of digits, e.g. ENSG00000254647</small>
-    </div>
+
     <div id="multigene-info-container-<%= id %>"></div>
     <div class="form-group" id="multigene-options-<%= id %>"></div>
 <% end %>
