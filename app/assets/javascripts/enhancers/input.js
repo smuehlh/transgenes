@@ -97,6 +97,9 @@ function bind_to_input_text() {
         var thisform = $(this).closest("form");
         thisform.find("textarea").val('');
         thisform.find("input:file").val('');
+        thisform.find(":submit").prop('disabled', false);
+        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        thisform.submit();
     });
 };
 
