@@ -24,6 +24,7 @@ $(document).on('page:load', function() {
 function clear_forms() {
     inputs.find("textarea").val('');
     inputs.find("input:file").val('');
+    inputs.find("input:text").val('');
     inputs.find("[id^=multigene-options]").empty();
 };
 
@@ -60,6 +61,7 @@ function bind_to_input_textarea() {
         thisform.find(":submit").prop('disabled', false);
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("input:file").val('');
+        thisform.find("input:text").val('');
 
         var thisinput_size = $(this).val().length;
         var thisinput_maxsize = $(this).attr('maxlength');
@@ -83,6 +85,7 @@ function bind_to_input_file() {
         thisform.find(":submit").prop('disabled', false);
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("textarea").val('');
+        thisform.find("input:text").val('');
         thisform.find("input[type=hidden][name*=commit]").val("Save");
         thisform.submit();
     });
@@ -100,6 +103,7 @@ function bind_to_reset_button() {
         var thisform = $(this).closest("form");
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("input:file").val('');
+        thisform.find("input:text").val('');
         thisform.find("textarea").val('');
         thisform.find(":submit").prop('disabled', true);
         thisform.find("input[type=hidden][name*=commit]").val("Reset");
