@@ -59,8 +59,8 @@ class EnhancersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def enhancer_params
         # INFO: parameters not part of the model:
-        # file, commit
-        params.require(:enhancer).permit(:data, :name, :file, :commit)
+        # file, commit, ensembl
+        params.require(:enhancer).permit(:data, :name, :file, :commit).merge(ensembl: ensembl_params[:gene_id])
     end
 
     def record_params
@@ -82,6 +82,10 @@ class EnhancersController < ApplicationController
 
     def autocomplete_params
         params.permit(:query)
+    end
+
+    def ensembl_params
+        params.require(:ensembl).permit(:gene_id)
     end
 
     def init_gene_enhancers

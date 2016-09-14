@@ -19,4 +19,9 @@ class EnsemblGene < ActiveRecord::Base
             create(sequence: seq, gene_id: id, version: version)
         end
     end
+
+    def to_fasta
+        to_fasta_obj = GeneToFasta.new(self.gene_id, self.sequence)
+        to_fasta_obj.fasta
+    end
 end

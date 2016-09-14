@@ -16,6 +16,9 @@ class WebinputToGene
 
         parse_file_and_get_gene_records(feature_type, file)
         delete_temp_file(file)
+
+    rescue EnhancerError => exception
+        @error = exception.to_s
     end
 
     def get_records
@@ -28,10 +31,28 @@ class WebinputToGene
         if is_fileupload_input
             params[:file].path
         else
+            # textinput
+            data =
+                if is_ensembl_input(params[:ensembl])
+                    get_ensembl_gene(params[:ensembl])
+                else
+                    params[:data]
+                end
             base =  "gene"
-            ext = get_file_extension_matching_input_type(params[:data])
-            write_to_temp_file(base, ext, params[:data])
+            ext = get_file_extension_matching_input_type(data)
+            write_to_temp_file(base, ext, data)
         end
+    end
+
+    def is_ensembl_input(geneid)
+        geneid && ! geneid.blank?
+    end
+
+    def get_ensembl_gene(geneid)
+        gene = EnsemblGene.where("gene_id = ?", geneid).first
+        raise EnhancerError, "Invalid Ensembl gene ID provided." unless gene
+
+        gene.to_fasta
     end
 
     def get_file_extension_matching_input_type(data)
@@ -68,9 +89,6 @@ class WebinputToGene
                 description: gene.description
             }
         end
-
-    rescue EnhancerError => exception
-        @error = exception.to_s
     end
 
     def get_first_feature_starts_and_warn_if_max_num_is_exceeded(feature_type, file)
