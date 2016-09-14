@@ -174,8 +174,9 @@ function toggle_stats_depending_on_intron_checkbox() {
 };
 
 function bind_validate_to_input() {
-    var ensembl_maxsize = inputs.find("input[name*=ensembl]").attr('maxlength');
-    var ensembl_validation = inputs.find("input[name*=ensembl]").data('valid') || '^ENSG\d+(?:\.\d+)?$';
+    // 'input:text' being '[name="ensembl[gene_id]"]'
+    var ensembl_maxsize = inputs.find("input:text").attr('maxlength');
+    var ensembl_validation = inputs.find("input:text").data('valid') || '^ENSG\d+(?:\.\d+)?$';
 
     inputs.each(function() {
         $(this).validate({
@@ -195,7 +196,7 @@ function bind_validate_to_input() {
 };
 
 function bind_autocomplete_to_input() {
-    inputs.find('[name="ensembl[gene_id]"]').typeahead({
+    inputs.find("input:text").typeahead({
         source: function(query, process) {
             return $.ajax({
                 url: "/enhancers/ensembl_autocomplete",
