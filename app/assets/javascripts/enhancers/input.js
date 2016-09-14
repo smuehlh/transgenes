@@ -42,6 +42,7 @@ function disable_form_elements() {
 function bind_eventhandlers_to_input_elements() {
     bind_to_input_textarea();
     bind_to_input_file();
+    bind_to_input_text();
     bind_to_save_button();
     bind_to_reset_button();
     // NOTE: do not bind to_select_list here, since the element will be created later
@@ -88,6 +89,14 @@ function bind_to_input_file() {
         thisform.find("input:text").val('');
         thisform.find("input[type=hidden][name*=commit]").val("Save");
         thisform.submit();
+    });
+};
+
+function bind_to_input_text() {
+    inputs.find("input:text").on('change', function() {
+        var thisform = $(this).closest("form");
+        thisform.find("textarea").val('');
+        thisform.find("input:file").val('');
     });
 };
 
