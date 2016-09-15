@@ -54,7 +54,7 @@ function bind_eventhandlers_to_preview_elements() {
 
 function bind_eventhandlers_to_params_elements() {
     bind_to_checkbox_change();
-}
+};
 
 function bind_to_input_textarea() {
     inputs.find("textarea").on('input', function() {
