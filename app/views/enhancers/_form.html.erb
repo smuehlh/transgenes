@@ -22,11 +22,11 @@
     <%= f.hidden_field :name, value: resource_name %>
     <%= f.hidden_field :commit, value: "" %>
 
-    <div class="panel-group" id="accordion">
+    <div class="panel-group" id="accordion-<%= id %>">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#textarea-<%= id %>">Enter Genebank or FASTA sequence</a>
+                    <a data-toggle="collapse" data-parent="#accordion-<%= id %>" href="#textarea-<%= id %>">Enter Genebank or FASTA sequence</a>
                 </h4>
             </div>
             <div id="textarea-<%= id %>" class="panel-collapse collapse in">
@@ -44,7 +44,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#fileinput-<%= id %>">Or, upload Genebank or FASTA file</a>
+                    <a data-toggle="collapse" data-parent="#accordion-<%= id %>" href="#fileinput-<%= id %>">Or, upload Genebank or FASTA file</a>
                 </h4>
             </div>
             <div id="fileinput-<%= id %>" class="panel-collapse collapse">
@@ -57,7 +57,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#textinput-<%= id %>">Or, enter Ensembl gene ID</a>
+                    <a data-toggle="collapse" data-parent="#accordion-<%= id %>" href="#textinput-<%= id %>">Or, enter Ensembl gene ID</a>
                 </h4>
             </div>
             <div id="textinput-<%= id %>" class="panel-collapse collapse">
