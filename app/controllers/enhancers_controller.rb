@@ -85,7 +85,7 @@ class EnhancersController < ApplicationController
     end
 
     def ensembl_params
-        params.require(:ensembl).permit(:gene_id)
+        params.fetch(:ensembl, {}).permit(:gene_id)
     end
 
     def init_gene_enhancers
