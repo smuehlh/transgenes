@@ -23,4 +23,8 @@ module EnhancersHelper
         when "3'UTR" then "three"
         end
     end
+
+    def is_input_resource_via_ensembl(name)
+        name == "CDS"
+    end
 end

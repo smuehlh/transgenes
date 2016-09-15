@@ -4,6 +4,12 @@
     ).join(",")
 
     id = html_compatible_enhancer_name(resource_name)
+    legend =
+        if is_input_resource_via_ensembl(resource_name)
+            "Please enter or upload a sequence, or provide a gene ID."
+        else
+            "Please enter or upload a sequence."
+        end
 
     maxlength_textinput = 2000
 %>
@@ -12,7 +18,7 @@
 
     <div class="row">
         <div class="col-sm-10">
-            <legend class="text-primary">Please input or upload a sequence, or provide a gene ID.</legend>
+            <legend class="text-primary"><%= legend %></legend>
         </div>
         <div class="col-sm-2">
             <div class="pull-right control-group">
@@ -74,20 +80,22 @@
             </div>
         </div>
 
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <!-- Initialize title and glyphicon for a collapsed element -->
-                    <a data-toggle="collapse" data-parent="#accordion-<%= id %>" href="#textinput-<%= id %>"><span data-toggle="tooltip" title="Click to expand">Or, enter Ensembl gene ID <span class="glyphicon glyphicon-collapse-down"></span></span></a>
-                </h4>
-            </div>
-            <div id="textinput-<%= id %>" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <%= text_field :ensembl, :gene_id, maxlength: EnsemblGene::MAX_LENGTH_GENEID, class: "form-control", data: {valid: EnsemblGene::FORMAT_GENEID_WEB, provide: "typeahead"}, autocomplete: "off" %>
-                    <small class="form-text text-muted">Input a human Ensembl gene ID, starting with "ENSG" followed by a series of digits, e.g. ENSG00000254647</small>
+        <% if is_input_resource_via_ensembl(resource_name) %>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <!-- Initialize title and glyphicon for a collapsed element -->
+                        <a data-toggle="collapse" data-parent="#accordion-<%= id %>" href="#textinput-<%= id %>"><span data-toggle="tooltip" title="Click to expand">Or, enter Ensembl gene ID <span class="glyphicon glyphicon-collapse-down"></span></span></a>
+                    </h4>
+                </div>
+                <div id="textinput-<%= id %>" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <%= text_field :ensembl, :gene_id, maxlength: EnsemblGene::MAX_LENGTH_GENEID, class: "form-control", data: {valid: EnsemblGene::FORMAT_GENEID_WEB, provide: "typeahead"}, autocomplete: "off" %>
+                        <small class="form-text text-muted">Input a human Ensembl gene ID, starting with "ENSG" followed by a series of digits, e.g. ENSG00000254647</small>
+                    </div>
                 </div>
             </div>
-        </div>
+        <% end %>
     </div>
 
     <div id="multigene-info-container-<%= id %>"></div>
