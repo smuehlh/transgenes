@@ -7,11 +7,18 @@
 %>
 
 <%= form_for Enhancer.new, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
-    <div class="pull-right control-group">
-        <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"}, disabled: true %>
-        <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"}, disabled: true %>
+
+    <div class="row">
+        <div class="col-sm-10">
+            <legend class="text-primary">Please input or upload a sequence, or provide a gene ID.</legend>
+        </div>
+        <div class="col-sm-2">
+            <div class="pull-right control-group">
+                <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"}, disabled: true %>
+                <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"}, disabled: true %>
+            </div>
+        </div>
     </div>
-    <legend>Please input or upload a sequence, or provide a gene ID.</legend>
 
     <div id="error-alert-<%= id %>" class="alert alert-danger" role="alert" style="display: none;">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>

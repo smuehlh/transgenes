@@ -7,23 +7,30 @@
     </p>
 
 <h3>Enter your sequence</h3>
-    <ul class="nav nav-tabs" data-tabs="tabs">
-        <li class="active"><a href="#input-tab-cds" data-toggle="tab">CDS</a></li>
-        <li><a href="#input-tab-five" data-toggle="tab">5'UTR</a></li>
-        <li><a href="#input-tab-three" data-toggle="tab">3'UTR</a></li>
-    </ul>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="nav nav-tabs" data-tabs="tabs">
+                    <li class="active"><a href="#input-tab-cds" data-toggle="tab">CDS</a></li>
+                    <li><a href="#input-tab-five" data-toggle="tab">5'UTR</a></li>
+                    <li><a href="#input-tab-three" data-toggle="tab">3'UTR</a></li>
+                </ul>
 
-    <div class="tab-content">
-        <div class="tab-pane active" id="input-tab-cds">
-            <%= render partial: "form", locals: {resource_name: "CDS"} %>
-        </div>
-        <div class="tab-pane" id="input-tab-five">
-            <%= render partial: "form", locals: {resource_name: "5'UTR"} %>
-        </div>
-        <div class="tab-pane" id="input-tab-three">
-            <%= render partial: "form", locals: {resource_name: "3'UTR"} %>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="input-tab-cds">
+                        <%= render partial: "form", locals: {resource_name: "CDS"} %>
+                    </div>
+                    <div class="tab-pane" id="input-tab-five">
+                        <%= render partial: "form", locals: {resource_name: "5'UTR"} %>
+                    </div>
+                    <div class="tab-pane" id="input-tab-three">
+                        <%= render partial: "form", locals: {resource_name: "3'UTR"} %>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
 <h3>Enter ESE motifs <small>Optional</small></h3>
     <div id="input-tab-ese">
         <%= render partial: "ese_form" %>
