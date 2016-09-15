@@ -1,0 +1,4 @@
+$("#success-alert-<%= id %>").hide(); // default setting
+<% if flash.now[:success] %>
+    $("#success-alert-<%= id %>").show();
+<% end %>

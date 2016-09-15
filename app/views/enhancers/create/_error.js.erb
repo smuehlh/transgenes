@@ -1,8 +1,7 @@
-<% if flash.now[:error].blank? %>
-    $("#error-alert-<%= id %>").hide();
-<% else %>
+$("#error-alert-<%= id %>").hide(); // default setting
+
+<% if flash.now[:error] %>
     <% msg = patch_multiline_text_for_web(flash.now[:error]) %>
     $("#error-alert-<%= id %>").show();
-    // display warning only if no error occurred!
     $("#error-alert-text-<%= id %>").html("<%= msg %>");
 <% end %>

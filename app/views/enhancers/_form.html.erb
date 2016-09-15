@@ -25,6 +25,12 @@
         <span class="sr-only">Error:</span>
         <span id="error-alert-text-<%= id %>"></span>
     </div>
+    <div id="success-alert-<%= id %>" class="alert alert-success" role="alert" style="display: none;">
+        <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+        <span class="sr-only">Success:</span>
+        Successfully read <%= resource_name %> sequence.
+    </div>
+
 
     <%= f.hidden_field :name, value: resource_name %>
     <%= f.hidden_field :commit, value: "" %>
