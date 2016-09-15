@@ -47,9 +47,11 @@
                 <div class="panel-body">
                     <!-- omit div.form-group for optimal spacing in collapsible -->
                     <%= f.text_area :data, rows: 8, class: "form-control monospaced", placeholder: "Enter sequence", maxlength: 2000 %>
-                    <small class="form-text text-muted">Complete Genebank or FASTA entries of maximum 2,000 characters. Larger data has to be uploaded using the file upload menu below. Sample input:
-                    <br>>INS
-                    <br>ATGGCCCTGTGGATGCGCCTCCTGCCCC...
+                    <small class="form-text text-muted">Complete Genebank or FASTA entries of maximum 2,000 characters. FASTA entries must specify exons in upper case and introns in lower case. Sample FASTA input:
+                    <br>>gba
+                    <br>ATGGAGCTGAGTATGGGGCCCATCCAGGCTAATCACACGGGCACAGgtaac ...
+                    <br><br>
+                    (Data larger than 2,000 characters has to be uploaded using the file upload menu below. )
                     </small>
                 </div>
             </div>
