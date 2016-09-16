@@ -196,6 +196,7 @@ function bind_validate_to_input() {
 
     inputs.each(function() {
         $(this).validate({
+            ignore: [], // don't ignore hidden fields, i.e. in collapsed accordion panels
             rules: {
                 "ensembl[gene_id]": {
                     regex: ensembl_validation,

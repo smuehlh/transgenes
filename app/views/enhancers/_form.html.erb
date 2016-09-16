@@ -90,8 +90,11 @@
                 </div>
                 <div id="textinput-<%= id %>" class="panel-collapse collapse">
                     <div class="panel-body">
-                        <%= text_field :ensembl, :gene_id, maxlength: EnsemblGene::MAX_LENGTH_GENEID, class: "form-control", data: {valid: EnsemblGene::FORMAT_GENEID_WEB, provide: "typeahead"}, autocomplete: "off" %>
-                        <small class="form-text text-muted">Input a human Ensembl gene ID, starting with "ENSG" followed by a series of digits, e.g. ENSG00000254647</small>
+                    <!-- add div.form-group for jquery validation -->
+                        <div class="form-group">
+                            <%= text_field :ensembl, :gene_id, maxlength: EnsemblGene::MAX_LENGTH_GENEID, class: "form-control", data: {valid: EnsemblGene::FORMAT_GENEID_WEB, provide: "typeahead"}, autocomplete: "off" %>
+                            <small class="form-text text-muted">Input a human Ensembl gene ID, starting with "ENSG" followed by a series of digits, e.g. ENSG00000254647</small>
+                        </div>
                     </div>
                 </div>
             </div>
