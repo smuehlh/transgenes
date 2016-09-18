@@ -213,20 +213,25 @@ function bind_validate_to_input() {
 };
 
 function bind_autocomplete_to_input() {
+    var engine = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/enhancers/ensembl_autocomplete?query=%QUERY',
+            wildcard: '%QUERY',
+            transform: function(d){
+                engine.add(d);
+            }
+        }
+    });
+
+    var promise = engine.initialize();
+
+    // promise
+    // .done(function() { console.log('success!'); })
+    // .fail(function() { console.log('err!'); });
+
     inputs.find("input:text").typeahead({
-        source: function(query, process) {
-            return $.ajax({
-                url: "/enhancers/ensembl_autocomplete",
-                type: "post",
-                data: {query: query},
-                dataType: 'json',
-                success: function(result){
-                    return process(result);
-                }
-            });
-        },
-        autoSelect: true,
-        showHintOnFocus: true, // start suggesting as soon as input is focused ...
-        minLength: 1 // start suggesting as soon as "E" is typed in ...
+        source: engine.ttAdapter()
     });
 };
