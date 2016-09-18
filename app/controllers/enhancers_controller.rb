@@ -51,9 +51,7 @@ class EnhancersController < ApplicationController
     def ensembl_autocomplete
         # return gene_ids of first 10 matches
         suggestions = EnsemblGene.where("gene_id LIKE ?", "#{autocomplete_params[:query]}%").limit(10).pluck(:gene_id)
-        render json: suggestions.map do |gene|
-            { value: gene.gene_id }
-        end
+        render json: suggestions
     end
 
     private
