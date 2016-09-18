@@ -180,28 +180,24 @@ function bind_validate_to_input() {
 
 function bind_autocomplete_to_input() {
     var engine = new Bloodhound({
-        datumTokenizer: function(d) {
-            console.log(d);
-            // never gets executed.
-            return Bloodhound.tokenizers.whitespace(d.value);
-        },
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
             url: '/enhancers/ensembl_autocomplete?query=%QUERY',
-            wildcard: '%QUERY'
+            wildcard: '%QUERY',
+            transform: function(d){
+                engine.add(d);
+            }
         }
     });
 
     var promise = engine.initialize();
 
-    promise
-    .done(function() { console.log('success!'); })
-    .fail(function() { console.log('err!'); });
+    // promise
+    // .done(function() { console.log('success!'); })
+    // .fail(function() { console.log('err!'); });
 
     inputs.find('[name="ensembl[gene_id]"]').typeahead({
-        displayText: function(item) {
-            return item.value;
-        },
         source: engine.ttAdapter()
     });
 };
