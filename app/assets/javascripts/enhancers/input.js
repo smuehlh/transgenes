@@ -232,6 +232,8 @@ function bind_autocomplete_to_input() {
     // .fail(function() { console.log('err!'); });
 
     inputs.find("input:text").typeahead({
-        source: engine.ttAdapter()
+        source: engine.ttAdapter(),
+        showHintOnFocus: true,
+        autoSelect: true
     });
 };
