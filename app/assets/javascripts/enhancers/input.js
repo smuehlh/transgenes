@@ -62,13 +62,13 @@ function bind_to_accordion() {
         // display as collapsed panel
         var thispanelhead = $(this).prev();
         thispanelhead.find(".glyphicon").removeClass("glyphicon-collapse-up").addClass("glyphicon-collapse-down");
-        thispanelhead.find("[title]").attr('data-original-title', "Click to expand").tooltip("show");
+        thispanelhead.find("[title]").attr('data-original-title', "Click to expand").tooltip("hide");
     });
     inputs.find(".panel-collapse").on('show.bs.collapse', function() {
         // display as expanded panel
         var thispanelhead = $(this).prev();
         thispanelhead.find(".glyphicon").removeClass("glyphicon-collapse-down").addClass("glyphicon-collapse-up");
-        thispanelhead.find("[title]").attr('data-original-title', "Click to collapse").tooltip("show");
+        thispanelhead.find("[title]").attr('data-original-title', "Click to collapse").tooltip("hide");
     });
 };
 
