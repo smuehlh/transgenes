@@ -37,14 +37,14 @@ class GetEnsemblData
 
     def get_gene_ids
         # NOTE: no idea how to retrieve this information using the REST-API...
+        # instead: using an XML query generated with BioMart
 
         path = "http://www.ensembl.org/biomart/martservice?"
-        # request = "get_all_ensembl_geneids.xml"
         request = '\'query=<!DOCTYPE Query><Query  virtualSchemaName = "default" formatter = "CSV" header = "0" uniqueRows = "1" count = "" datasetConfigVersion = "0.6" ><Dataset name = "hsapiens_gene_ensembl" interface = "default" ><Attribute name = "ensembl_gene_id" /></Dataset></Query>\''
         response = %x[curl -s -d #{request} #{path}]
 
-        # filter: accepting only lines starting with an Ensembl gene Id (and hopefully containing nothing else...)
-        response.split("\n").select{|str| str.start_with?("ENSG")}
+        # filter: accepting only lines starting with an Ensembl gene Id (and hopefully containing nothing else...). enforce uniqueness
+        response.split("\n").select{|str| str.start_with?("ENSG")}.uniq
     end
 
     def get_gene_sequences
@@ -93,7 +93,6 @@ class GetEnsemblData
     end
 
     def is_logging_interval
-        # @progress % 10_000 == 0
-        @progress % 2 == 0
+        @progress % 10_000 == 0
     end
 end
