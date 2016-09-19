@@ -86,12 +86,12 @@ function bind_to_input_textarea() {
             thisform.find(":submit").prop('disabled', true);
         }
         if (thisinput_size >= thisinput_maxsize) {
-            thisform.find("[id^=error-alert] .alert-danger").show();
+            thisform.find("[id^=error-alert]").show();
             thisform.find("[id^=error-alert-text]").text("Reached maximum input size. Please use file upload instead.");
             thisform.find("textarea").val('');
             thisform.find(":submit").prop('disabled', true);
         } else {
-            thisform.find("[id^=error-alert] .alert-danger").hide();
+            thisform.find("[id^=error-alert]").hide();
         }
     });
 };
