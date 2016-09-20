@@ -3,5 +3,6 @@ $("#error-alert-<%= id %>").hide(); // default setting
 <% if flash.now[:error] %>
     <% msg = patch_multiline_text_for_web(flash.now[:error]) %>
     $("#error-alert-<%= id %>").show();
+    $("#error-alert-text-<%= id %>").show();
     $("#error-alert-text-<%= id %>").html("<%= msg %>");
 <% end %>
