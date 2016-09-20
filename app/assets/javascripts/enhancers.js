@@ -27,9 +27,19 @@ $.validator.setDefaults({
 $.validator.addMethod(
     "regex",
     function(value, element, regexp) {
-        var check = false;
         var re = new RegExp(regexp);
         return this.optional(element) || re.test(value);
     },
-    "Please enter only {0}"
+    "Please enter only {0}."
+);
+
+// mimic the original accept method, which checks file mimetype and extension
+$.validator.addMethod(
+    "laxAccept",
+    function(value, element, regexp) {
+        regexp = "\\.(" + regexp.replace(/\./g, "").replace(/,/g, "|") + ")$";
+        var re = new RegExp(regexp, "i");
+        return this.optional(element) || re.test(value);
+    },
+    "Please enter a file with a valid extension."
 );

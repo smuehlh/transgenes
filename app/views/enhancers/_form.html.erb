@@ -80,7 +80,9 @@
             </div>
             <div id="fileinput-<%= id %>" class="panel-collapse collapse">
               <div class="panel-body">
-                    <%= f.file_field :file, accept: valid_extensions %>
+                    <div class="form-group-validation">
+                        <%= f.file_field :file, accept: valid_extensions %>
+                    </div>
               </div>
             </div>
         </div>

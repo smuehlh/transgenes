@@ -192,6 +192,7 @@ function toggle_stats_depending_on_intron_checkbox() {
 function bind_validate_to_input() {
     var enhancer_maxsize = inputs.find("textarea").attr('maxlength');
     var enhancer_validation = inputs.find("textarea").data('valid');
+    var enhancer_extension = inputs.find("input:file").attr('accept') || 'gi,fas,fa,fasta';
 
     // 'input:text' being '[name="ensembl[gene_id]"]'
     var ensembl_maxsize = inputs.find("input:text").attr('maxlength');
@@ -209,6 +210,9 @@ function bind_validate_to_input() {
                     regex: enhancer_validation,
                     maxlength: enhancer_maxsize // just in case ... maxlength is already defined (and ensured) in input-field
                 },
+                "enhancer[file]": {
+                    laxAccept: enhancer_extension // just in case ... accepted fileextions are already defined in input-field
+                }
             },
             messages: {
                 "ensembl[gene_id]": {
@@ -216,6 +220,9 @@ function bind_validate_to_input() {
                 },
                 "enhancer[data]": {
                     regex: "Please enter a valid FASTA or Genebank."
+                },
+                "enhancer[file]": {
+                    laxAccept: "Please enter a file with a valid FASTA or Genebank extension."
                 }
             }
         });
