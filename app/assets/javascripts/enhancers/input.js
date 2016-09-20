@@ -80,6 +80,7 @@ function bind_to_input_textarea() {
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("input:file").val('');
         thisform.find("input:text").val('');
+        thisform.find("[id^=success-alert]").hide();
 
         var thisinput_size = $(this).val().length;
         var thisinput_maxsize = $(this).attr('maxlength');
@@ -102,6 +103,7 @@ function bind_to_input_file() {
         var thisform = $(this).closest("form");
         thisform.find(":submit[value=Reset]").prop('disabled', false);
         thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
+        thisform.find("[id^=success-alert]").hide();
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("textarea").val('');
         thisform.find("input:text").val('');
@@ -117,6 +119,7 @@ function bind_to_input_text() {
         thisform.find("input:file").val('');
         thisform.find(":submit[value=Reset]").prop('disabled', false);
         thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
+        thisform.find("[id^=success-alert]").hide();
         thisform.find("input[type=hidden][name*=commit]").val("Save");
         thisform.submit();
     });
