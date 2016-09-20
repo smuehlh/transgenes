@@ -75,7 +75,8 @@ function bind_to_accordion() {
 function bind_to_input_textarea() {
     inputs.find("textarea").on('input', function() {
         var thisform = $(this).closest("form");
-        thisform.find(":submit").prop('disabled', false);
+        thisform.find(":submit[value=Reset]").prop('disabled', false);
+        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("input:file").val('');
         thisform.find("input:text").val('');
@@ -84,14 +85,14 @@ function bind_to_input_textarea() {
         var thisinput_maxsize = $(this).attr('maxlength');
         if (thisinput_size === 0) {
             thisform.find(":submit").prop('disabled', true);
+        } else {
+            thisform.find("[id^=error-alert]").hide();
         }
         if (thisinput_size >= thisinput_maxsize) {
             thisform.find("[id^=error-alert]").show();
             thisform.find("[id^=error-alert-text]").text("Reached maximum input size. Please use file upload instead.");
             thisform.find("textarea").val('');
             thisform.find(":submit").prop('disabled', true);
-        } else {
-            thisform.find("[id^=error-alert]").hide();
         }
     });
 };
@@ -99,7 +100,8 @@ function bind_to_input_textarea() {
 function bind_to_input_file() {
     inputs.find("input:file").on('change', function() {
         var thisform = $(this).closest("form");
-        thisform.find(":submit").prop('disabled', false);
+        thisform.find(":submit[value=Reset]").prop('disabled', false);
+        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
         thisform.find("[id^=multigene-options]").empty();
         thisform.find("textarea").val('');
         thisform.find("input:text").val('');
@@ -113,7 +115,8 @@ function bind_to_input_text() {
         var thisform = $(this).closest("form");
         thisform.find("textarea").val('');
         thisform.find("input:file").val('');
-        thisform.find(":submit").prop('disabled', false);
+        thisform.find(":submit[value=Reset]").prop('disabled', false);
+        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
         thisform.find("input[type=hidden][name*=commit]").val("Save");
         thisform.submit();
     });
