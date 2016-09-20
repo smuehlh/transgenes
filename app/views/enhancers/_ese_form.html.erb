@@ -15,8 +15,8 @@
         <%= f.hidden_field :commit, value: "" %>
         <%= f.label :data, "Enter ESE motifs", class:"control-label" %>
         <div class="pull-right control-group">
-            <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save data", data: {toggle: "tooltip"}, disabled: true %>
-            <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete data", data: {toggle: "tooltip"}, disabled: true %>
+            <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save ESE data", data: {toggle: "tooltip"}, disabled: true %>
+            <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete ESE data", data: {toggle: "tooltip"}, disabled: true %>
         </div>
         <%= f.text_area :data, rows: 5, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 1000 %>
         <small class="form-text text-muted">DNA sequence motifs of 6 bases, one motif per line.</small>
