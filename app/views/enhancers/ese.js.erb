@@ -1,6 +1,2 @@
 <%= render partial: 'enhancers/create/error', locals: {id: "ese"} %>
-<% if @ese.data.any? %>
-    $("#params-ese-alert").show();
-<% else %>
-    $("#params-ese-alert").hide();
-<% end %>
+<%= render partial: 'enhancers/create/success', locals: {id: "ese"} %>
