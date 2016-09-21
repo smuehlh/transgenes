@@ -1,0 +1,15 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Basic statistics</h3>
+    </div>
+    <div class="panel-body">
+        <dl class="row">
+            <dt class="col-sm-2">Number of exons</dt>
+            <dd class="col-sm-10"><%= statistics[:n_exons]%></dd>
+
+            <dt class="col-sm-2">Total mRNA size</dt>
+            <dd id="stats-without-first-intron" class="col-sm-10"><%= statistics[:sequence_length_without_first_intron]%></dd>
+            <dd id="stats-with-first-intron" class="col-sm-10"><%= statistics[:sequence_length_with_first_intron]%></dd>
+        </dl>
+    </div>
+</div>

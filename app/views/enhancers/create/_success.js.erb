@@ -6,5 +6,8 @@ $("#success-alert-<%= id %>").hide(); // default setting
         "<%= escape_javascript(render partial: 'enhancers/create/sequence_modal', locals: {enhancer: @enhancer, id: id} ) %>"
     );
 
+    $("#input-view-stats").html("<%= escape_javascript(render partial: 'enhancers/create/stats', locals: {statistics: statistics} ) %>");
+
     enable_params_partial();
+    toggle_stats_depending_on_intron_checkbox();
 <% end %>

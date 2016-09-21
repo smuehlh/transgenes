@@ -29,6 +29,10 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div id="input-view-stats" class="col-sm-12">
+            </div>
+        </div>
     </div>
 
 <h3>Enter ESE motifs <small>Optional</small></h3>
@@ -42,9 +46,6 @@
         <%= render partial: "enhancers/submit/parameter_selection_fields", locals: {f: submit_form} %>
 
 <h3>Submit your job</h3>
-    <div id="input-view-stats">
-    </div>
-
-<!-- close the submit-form -->
+    <!-- close the submit-form -->
         <%= render partial: "enhancers/submit/parameter_selection_actions", locals: {f: submit_form} %>
     <% end %>
