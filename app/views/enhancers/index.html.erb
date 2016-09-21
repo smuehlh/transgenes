@@ -42,21 +42,6 @@
         <%= render partial: "enhancers/submit/parameter_selection_fields", locals: {f: submit_form} %>
 
 <h3>Submit your job</h3>
-    <div id="input-view-alert" class="alert alert-info" role="alert" style="display: none;">
-        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-        <span class="sr-only">Info:</span>
-        Exons are displayed in upper case, introns in lower case.
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-    </div>
-    <div id="input-view-five">
-        <%= render partial: "viewer", locals: {enhancer: @five_enhancer} %>
-    </div>
-    <div id="input-view-cds">
-        <%= render partial: "viewer", locals: {enhancer: @cds_enhancer} %>
-    </div>
-    <div id="input-view-three">
-        <%= render partial: "viewer", locals: {enhancer: @three_enhancer} %>
-    </div>
     <div id="input-view-stats">
     </div>
 
