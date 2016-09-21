@@ -2,8 +2,9 @@ $("#success-alert-<%= id %>").hide(); // default setting
 <% if flash.now[:success] %>
     $("#success-alert-<%= id %>").show();
     $("#success-alert-text-<%= id %>").show();
-
     $("#success-alert-text-<%= id %>").html(
         "<%= escape_javascript(render partial: 'enhancers/create/sequence_modal', locals: {enhancer: @enhancer, id: id} ) %>"
     );
+
+    enable_params_partial();
 <% end %>

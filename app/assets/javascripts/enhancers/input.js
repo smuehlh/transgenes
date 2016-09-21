@@ -1,6 +1,5 @@
 $(document).ready(function() {
     inputs = $("[id^=input-tab]>form");
-    previews = $("[id^=input-view]");
     params = $("#new_enhanced_gene .params-form");
 
     clear_forms();
@@ -8,7 +7,6 @@ $(document).ready(function() {
     disable_form_elements();
 
     bind_eventhandlers_to_input_elements();
-    bind_eventhandlers_to_preview_elements();
     bind_eventhandlers_to_params_elements();
 
     bind_validate_to_input();
@@ -30,12 +28,10 @@ function clear_forms() {
 
 function hide_alerts() {
     inputs.find(".alert").hide();
-    previews.filter(".alert").hide();
 };
 
 function disable_form_elements() {
     inputs.find(":submit").prop('disabled', true);
-    previews.find(":button").prop('disabled', true);
     init_params_partial();
 };
 
@@ -47,10 +43,6 @@ function bind_eventhandlers_to_input_elements() {
     bind_to_save_button();
     bind_to_reset_button();
     // NOTE: do not bind to_select_list here, since the element will be created later
-};
-
-function bind_eventhandlers_to_preview_elements() {
-    bind_to_content_change();
 };
 
 function bind_eventhandlers_to_params_elements() {
@@ -150,20 +142,6 @@ function bind_to_select_list() {
         var thisform = $(this).closest("form");
         thisform.find("input[type=hidden][name*=commit]").val("Line");
         thisform.submit();
-    });
-};
-
-function bind_to_content_change() {
-    previews.on('contentchange', function() {
-        var thiscontent = $(this).find(".modal-body").text();
-        if (thiscontent.match("Not specified")) {
-            previews.filter(".alert").hide();
-            init_params_partial();
-        } else {
-            previews.filter(".alert").show();
-            $(this).find(":button").prop('disabled', false);
-            enable_params_partial();
-        }
     });
 };
 

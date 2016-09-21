@@ -1,3 +1,5 @@
+init_params_partial(); // order does matter. init first, enable later (in success partial)
+
 <% id = html_compatible_enhancer_name(@enhancer.name) %>
 // show errors and info messages (if there is need to is handled in the partial)
 <%= render partial: 'enhancers/create/error', locals: {id: id} %>
