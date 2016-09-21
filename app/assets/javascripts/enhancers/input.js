@@ -206,25 +206,31 @@ function bind_validate_to_input() {
 
     var ese_validation = inputs.find("textarea[name='ese[data]']").data('valid');
     var ese_maxsize = inputs.find("textarea[name='ese[data]']").attr('maxlength');
+    var ese_extension = inputs.find("input[name='ese[file]']").attr('accept') || 'txt';
 
     inputs.each(function() {
         $(this).validate({
             ignore: [], // don't ignore hidden fields, i.e. in collapsed accordion panels
+            // NOTE
+            // maxlenght and accepted extensions are already enforced by HTML5 input field attributes. the rules here provide a mere fallback.
             rules: {
                 "ensembl[gene_id]": {
                     regex: ensembl_validation,
-                    maxlength: ensembl_maxsize // just in case ... maxlength is already defined (and ensured) in input-field
+                    maxlength: ensembl_maxsize
                 },
                 "enhancer[data]": {
                     regex: enhancer_validation,
-                    maxlength: enhancer_maxsize // just in case ... maxlength is already defined (and ensured) in input-field
+                    maxlength: enhancer_maxsize
                 },
                 "enhancer[file]": {
-                    laxAccept: enhancer_extension // just in case ... accepted fileextions are already defined in input-field
+                    laxAccept: enhancer_extension
                 },
                 "ese[data]": {
                     regex: ese_validation,
-                    maxlength: ese_maxsize // just in case ...
+                    maxlength: ese_maxsize
+                },
+                "ese[file]": {
+                    laxAccept: ese_extension
                 }
             },
             messages: {
@@ -235,10 +241,13 @@ function bind_validate_to_input() {
                     regex: "Please enter a valid FASTA or Genebank."
                 },
                 "enhancer[file]": {
-                    laxAccept: "Please enter a file with a valid FASTA or Genebank extension."
+                    laxAccept: "Please enter a plain text file with a valid FASTA or Genebank extension."
                 },
                 "ese[data]": {
                     regex: "Please enter a valid ESE motif."
+                },
+                "ese[file]": {
+                    laxAccept: "Please enter a plain text file with a '.txt' extension."
                 }
             }
         });

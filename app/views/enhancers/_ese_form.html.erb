@@ -26,7 +26,7 @@
         <%= f.text_area :data, rows: 5, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 1000, data: {valid: valid_textinput} %>
         <small class="form-text text-muted">DNA sequence motifs of 6 bases, one motif per line.</small>
     </div>
-    <div class="form-group">
+    <div class="form-group form-group-validation">
         <%= f.label :file, "Or, upload file", class: "control-label" %>
         <%= f.file_field :file, accept: ".txt" %>
     </div>
