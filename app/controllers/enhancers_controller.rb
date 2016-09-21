@@ -167,7 +167,7 @@ class EnhancersController < ApplicationController
         ese_parser = WebinputToEse.new(ese_params,remotipart_submitted?)
         list = ese_parser.get_ese_motifs
         @ese.update_attribute(:data, list)
-        flash.now[:error] = ese_parser.error
+        flash.now[:error] = ese_parser.error unless ese_parser.error.blank?
     end
 
     def get_wanted_record
