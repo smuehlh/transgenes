@@ -1,0 +1,19 @@
+<%
+    data = word_wrap_breaking_single_word(enhancer.data, 80)
+%>
+
+<a data-toggle="modal" href="#view-modal-<%= id %>" class="alert-link">Click to inspect parsed sequence.</a>
+<div id="view-modal-<%= id %>" class="modal" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"> <%= enhancer.name %> </h4>
+                <small class="text-muted"><i>Exons are displayed in upper case, introns in lower case.</i></small>
+            </div>
+            <div class="modal-body">
+                <pre class="text-muted input-view-text"><%= data %></pre>
+            </div>
+        </div>
+    </div>
+</div>
