@@ -1,3 +1,9 @@
+<%
+    valid_chars = Dna.valid_nucleotides
+    valid_chars = valid_chars.map{|c| [c.upcase, c.downcase]}.flatten.join("")
+    valid_textinput = "^(?:[#{valid_chars}]{6}[\\n\\r]{0,2})+$" # ensure each line contains exactly 6 nucleotides
+%>
+
 <%= form_for Ese.new, :url => {:action => "ese"}, remote: true, html: { style: "display:inline;", role: "form", multipart: true } do |f| %>
     <div id="error-alert-ese" class="alert alert-danger" role="alert" style="display: none;">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -10,14 +16,14 @@
         Successfully read ESE motifs.
     </div>
 
-    <div class="form-group">
+    <div class="form-group form-group-validation">
         <%= f.hidden_field :commit, value: "" %>
         <%= f.label :data, "Enter ESE motifs", class:"control-label" %>
         <div class="pull-right control-group">
             <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save ESE data", data: {toggle: "tooltip"}, disabled: true %>
             <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete ESE data", data: {toggle: "tooltip"}, disabled: true %>
         </div>
-        <%= f.text_area :data, rows: 5, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 1000 %>
+        <%= f.text_area :data, rows: 5, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 1000, data: {valid: valid_textinput} %>
         <small class="form-text text-muted">DNA sequence motifs of 6 bases, one motif per line.</small>
     </div>
     <div class="form-group">

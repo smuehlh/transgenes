@@ -204,6 +204,9 @@ function bind_validate_to_input() {
     var ensembl_maxsize = inputs.find("input:text").attr('maxlength');
     var ensembl_validation = inputs.find("input:text").data('valid') || '^ENSG\d+(?:\.\d+)?$';
 
+    var ese_validation = inputs.find("textarea[name='ese[data]']").data('valid');
+    var ese_maxsize = inputs.find("textarea[name='ese[data]']").attr('maxlength');
+
     inputs.each(function() {
         $(this).validate({
             ignore: [], // don't ignore hidden fields, i.e. in collapsed accordion panels
@@ -218,6 +221,10 @@ function bind_validate_to_input() {
                 },
                 "enhancer[file]": {
                     laxAccept: enhancer_extension // just in case ... accepted fileextions are already defined in input-field
+                },
+                "ese[data]": {
+                    regex: ese_validation,
+                    maxlength: ese_maxsize // just in case ...
                 }
             },
             messages: {
@@ -229,6 +236,9 @@ function bind_validate_to_input() {
                 },
                 "enhancer[file]": {
                     laxAccept: "Please enter a file with a valid FASTA or Genebank extension."
+                },
+                "ese[data]": {
+                    regex: "Please enter a valid ESE motif."
                 }
             }
         });
