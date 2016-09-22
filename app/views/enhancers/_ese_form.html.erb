@@ -24,17 +24,36 @@
 
     <%= f.hidden_field :commit, value: "" %>
 
-    <div class="form-group">
-        <%= f.label :data, "Enter ESE motifs", class: "control-label" %>
-        <div class="form-group-validation">
-            <%= f.text_area :data, rows: 5, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 1000, data: {valid: valid_textinput} %>
-            <small class="form-text text-muted">DNA sequence motifs of 6 bases, one motif per line.</small>
+    <div class="panel-group" id="accordion-ese">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-ese" href="#textarea-ese"><span data-toggle="tooltip" title="Click to collapse">Enter ESE motifs <span class="glyphicon glyphicon-collapse-up"></span> </span></a>
+                </h4>
+            </div>
+            <div id="textarea-ese" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <div class="form-group-validation">
+                        <%= f.text_area :data, rows: 5, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 1000, data: {valid: valid_textinput} %>
+                        <small class="form-text text-muted">DNA sequence motifs of 6 bases, one motif per line.</small>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <%= f.label :file, "Or, upload file", class: "control-label" %>
-        <div class="form-group-validation">
-            <%= f.file_field :file, accept: ".txt" %>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-ese" href="#fileinput-ese"><span data-toggle="tooltip" title="Click to expand">Or, upload file <span class="glyphicon glyphicon-collapse-down"></span></span></a>
+                </h4>
+            </div>
+            <div id="fileinput-ese" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="form-group-validation">
+                        <%= f.file_field :file, accept: ".txt" %>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 <% end %>
