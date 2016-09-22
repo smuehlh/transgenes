@@ -1,0 +1,13 @@
+$("#warning-alert-all-input").hide(); // default setting
+<% if flash.now[:success] %>
+    $("#success-alert-text-<%= id %>").show();
+    $("#success-alert-text-<%= id %>").html(
+        "<%= escape_javascript(render partial: 'enhancers/create/sequence_modal', locals: {enhancer: @enhancer, id: id, statistics: statistics} ) %>"
+    );
+
+    $("#warning-alert-all-input").show();
+    $("#warning-alert-text-all-input").show();
+    $("#warning-alert-text-all-input").html("<%= escape_javascript(render partial: 'enhancers/create/all_sequences', locals: {statistics: statistics} ) %>");
+
+    enable_params_partial();
+<% end %>
