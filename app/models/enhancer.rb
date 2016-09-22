@@ -7,10 +7,10 @@ class Enhancer < ActiveRecord::Base
 
     def reset
         self.update_attributes(
-            data: "",
-            exons: [],
-            introns: [],
-            gene_name: ""
+            data: nil,
+            exons: nil,
+            introns: nil,
+            gene_name: nil
         )
     end
 

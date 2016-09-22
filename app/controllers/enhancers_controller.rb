@@ -187,7 +187,7 @@ class EnhancersController < ApplicationController
     def generate_gene_statistics
         stats = SequenceOptimizerForWeb.gene_statistics(prepare_gene_enhancers_for_sequence_optimizer
         )
-        uploaded_resources = get_gene_enhancers.collect{|e| e.name if e.data && ! e.data.blank? }.compact
+        uploaded_resources = get_gene_enhancers.collect{|e| e.name if e.data}.compact
 
         @statistics = {
             n_exons: stats.n_exons,
