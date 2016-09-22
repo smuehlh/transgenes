@@ -1,0 +1,15 @@
+<%
+    pluralized_words =
+        if statistics[:uploaded_resources].size == 1
+            "sequence adds"
+        else
+            "sequences add"
+        end
+    is_cds_uploaded = statistics[:uploaded_resources].any? {|name| is_cds_resource(name) }
+%>
+
+Entered <%= pluralized_words %> up to a total mRNA size of <%= number_with_delimiter(statistics[:size_w_first_intron]) %> nucleotides
+<% if is_cds_uploaded %>
+    if all introns in CDS but the first are removed <i>(<%= number_with_delimiter(statistics[:size_wo_first_intron]) %> nucleotides if all introns in CDS including the first are removed)</i>
+<% end %>
+.

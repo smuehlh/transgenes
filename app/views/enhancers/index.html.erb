@@ -7,6 +7,11 @@
     </p>
 
 <h3>Enter your sequence</h3>
+    <div id="warning-alert-all-input" class="alert alert-warning" role="alert" style="display: none;">
+        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        <span class="sr-only">Info:</span>
+        <span id="warning-alert-text-all-input"></span>
+    </div>
     <ul class="nav nav-tabs" data-tabs="tabs">
         <li class="active"><a href="#input-tab-cds" data-toggle="tab">CDS</a></li>
         <li><a href="#input-tab-five" data-toggle="tab">5'UTR</a></li>
@@ -23,9 +28,6 @@
         <div class="tab-pane" id="input-tab-three">
             <%= render partial: "form", locals: {resource_name: "3'UTR"} %>
         </div>
-    </div>
-
-    <div id="input-view-stats">
     </div>
 
 <h3>Enter ESE motifs <small>Optional</small></h3>
