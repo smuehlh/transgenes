@@ -10,6 +10,7 @@ class EnhancersController < ApplicationController
     end
 
     def create
+        flash.clear
         @enhancer = get_gene_enhancer_by_name(enhancer_params[:name])
         if enhancer_params[:commit] == "Save"
             reset_active_enhancer_and_associated_records
@@ -23,6 +24,7 @@ class EnhancersController < ApplicationController
     end
 
     def ese
+        flash.clear
         @ese = get_ese
         if ese_params[:commit] == "Save"
             update_ese
@@ -127,7 +129,6 @@ class EnhancersController < ApplicationController
         # records associated with previous input (if any) are invalid.
         @enhancer.reset
         @enhancer.records.delete_all
-        flash.delete(:error)
     end
 
     def reset_enhanced_gene
