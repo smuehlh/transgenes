@@ -5,7 +5,7 @@
 
     id = html_compatible_enhancer_name(resource_name)
     legend =
-        if is_input_resource_via_ensembl(resource_name)
+        if is_cds_resource(resource_name)
             "Please enter or upload a sequence, or provide a gene ID."
         else
             "Please enter or upload a sequence."
@@ -88,7 +88,7 @@
             </div>
         </div>
 
-        <% if is_input_resource_via_ensembl(resource_name) %>
+        <% if is_cds_resource(resource_name) %>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">

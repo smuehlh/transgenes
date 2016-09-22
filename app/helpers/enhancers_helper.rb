@@ -24,7 +24,7 @@ module EnhancersHelper
         end
     end
 
-    def is_input_resource_via_ensembl(name)
+    def is_cds_resource(name)
         name == "CDS"
     end
 end
