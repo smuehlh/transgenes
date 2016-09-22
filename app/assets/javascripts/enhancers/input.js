@@ -7,8 +7,6 @@ $(document).ready(function() {
     disable_form_elements();
 
     bind_eventhandlers_to_input_elements();
-    bind_eventhandlers_to_params_elements();
-
     bind_validate_to_input();
     bind_autocomplete_to_input();
 });
@@ -43,10 +41,6 @@ function bind_eventhandlers_to_input_elements() {
     bind_to_save_button();
     bind_to_reset_button();
     // NOTE: do not bind to_select_list here, since the element will be created later
-};
-
-function bind_eventhandlers_to_params_elements() {
-    bind_to_checkbox_change();
 };
 
 function bind_to_accordion() {
@@ -145,12 +139,6 @@ function bind_to_select_list() {
     });
 };
 
-function bind_to_checkbox_change() {
-    params.filter("#enhanced_gene_keep_first_intron").on('click', function() {
-        toggle_stats_depending_on_intron_checkbox();
-    });
-}
-
 function init_params_partial() {
     params.filter(":input[type=checkbox]").removeAttr('checked');
     params.filter(":input").prop("disabled", true);
@@ -161,16 +149,6 @@ function init_params_partial() {
 
 function enable_params_partial() {
     params.filter(":input").prop("disabled", false);
-};
-
-function toggle_stats_depending_on_intron_checkbox() {
-    if (params.filter("#enhanced_gene_keep_first_intron").prop('checked')) {
-        $("#stats-with-first-intron").show();
-        $("#stats-without-first-intron").hide();
-    } else {
-        $("#stats-with-first-intron").hide();
-        $("#stats-without-first-intron").show();
-    }
 };
 
 function bind_validate_to_input() {
