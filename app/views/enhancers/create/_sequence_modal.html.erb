@@ -1,5 +1,7 @@
 <%
+    length = number_with_delimiter(enhancer.data.size)
     data = word_wrap_breaking_single_word(enhancer.data, 80)
+    n_exons = statistics[:n_exons]
 %>
 
 <a data-toggle="modal" href="#view-modal-<%= id %>" class="alert-link">Click to inspect parsed sequence.</a>
@@ -9,7 +11,23 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title"> <%= enhancer.name %> </h4>
-                <small class="text-muted"><i>Exons are displayed in upper case, introns in lower case.</i></small>
+                <small class="text-muted">
+                    <i>Exons are displayed in upper case, introns in lower case.</i>
+                    <table class="padding-between-cols">
+                        <tbody>
+                            <tr>
+                                <th scope="row"><i>Sequence size</i></th>
+                                <td><%= length %> nucleotides</td>
+                            </tr>
+                            <% if is_cds_resource(enhancer.name) %>
+                                <tr>
+                                    <th scope="row"><i>Number of exons</i></th>
+                                    <td><%= n_exons %></td>
+                                </tr>
+                            <% end %>
+                        </tbody>
+                    </table>
+                </small>
             </div>
             <div class="modal-body">
                 <pre class="text-muted input-view-text"><%= data %></pre>

@@ -3,7 +3,7 @@ $("#success-alert-<%= id %>").hide(); // default setting
     $("#success-alert-<%= id %>").show();
     $("#success-alert-text-<%= id %>").show();
     $("#success-alert-text-<%= id %>").html(
-        "<%= escape_javascript(render partial: 'enhancers/create/sequence_modal', locals: {enhancer: @enhancer, id: id} ) %>"
+        "<%= escape_javascript(render partial: 'enhancers/create/sequence_modal', locals: {enhancer: @enhancer, id: id, statistics: statistics} ) %>"
     );
 
     $("#input-view-stats").html("<%= escape_javascript(render partial: 'enhancers/create/stats', locals: {statistics: statistics} ) %>");
