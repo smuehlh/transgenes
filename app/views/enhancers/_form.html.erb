@@ -83,6 +83,7 @@
               <div class="panel-body">
                     <div class="form-group-validation">
                         <%= f.file_field :file, accept: valid_extensions %>
+                        <small class="form-text text-muted">Genebank or FASTA file. FASTA entries must specify exons in upper case and introns in lower case.</small>
                     </div>
               </div>
             </div>
