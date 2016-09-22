@@ -20,17 +20,11 @@
 
 <%= form_for Enhancer.new, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
 
-    <div class="row">
-        <div class="col-sm-10">
-            <legend class="text-primary"><%= legend %></legend>
-        </div>
-        <div class="col-sm-2">
-            <div class="pull-right control-group">
-                <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save #{resource_name} data", data: {toggle: "tooltip"}, disabled: true %>
-                <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete #{resource_name} data", data: {toggle: "tooltip"}, disabled: true %>
-            </div>
-        </div>
+    <div class="pull-right control-group">
+        <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save #{resource_name} data", data: {toggle: "tooltip"}, disabled: true %>
+        <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete #{resource_name} data", data: {toggle: "tooltip"}, disabled: true %>
     </div>
+    <legend class="text-primary"><%= legend %></legend>
 
     <div id="error-alert-<%= id %>" class="alert alert-danger" role="alert" style="display: none;">
         <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
