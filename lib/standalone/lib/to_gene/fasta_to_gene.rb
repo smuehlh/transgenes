@@ -9,6 +9,7 @@ class ToGene
 
         def initialize(file)
             @file = file
+            $logger.info("Treating input as FASTA.\nExpecting to find FASTA headers.")
         end
 
         def split_file_into_single_genes
@@ -66,6 +67,7 @@ class ToGene
 
         def update_current_gene_start(line_number)
             @current_gene_start = line_number
+            $logger.info("Identified line #{@current_gene_start} as FASTA header.\nWill treat following lines as FASTA sequence.") 
         end
 
         def save_gene_record(line)

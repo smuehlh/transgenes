@@ -10,6 +10,7 @@ class ToGene
         def initialize(file, use_subfeature)
             @file = file
             @use_subfeature = set_subfeature_to_collect(use_subfeature)
+            $logger.info("Treating input as GeneBank.\nExpecting to find #{@use_subfeature} features.")
         end
 
         def split_file_into_single_genes
@@ -27,7 +28,7 @@ class ToGene
                 update_current_feature(line)
                 update_current_gene_start(line_number) if is_new_gene(line)
                 save_gene_record(line) if is_gene_record
-                save_gene_sequence(line) if is_gene_sequence
+                save_gene_sequence(line, line_number) if is_gene_sequence
             end
             @gene_records_by_gene_starts
         end
@@ -91,6 +92,7 @@ class ToGene
 
         def update_current_gene_start(line_number)
             @current_gene_start = line_number
+            $logger.info("Identified line #{@current_gene_start} as feature line.")
         end
 
         def save_gene_record(line)
@@ -100,10 +102,14 @@ class ToGene
             @gene_records_by_gene_starts[@current_gene_start].push(line.chomp)
         end
 
-        def save_gene_sequence(line)
+        def save_gene_sequence(line, line_number)
             line.strip!
             sequence = extract_sequence(line)
-            @gene_sequence += sequence unless line == "ORIGIN"
+            if line == "ORIGIN"
+                $logger.info("Identified line #{line_number} as ORIGIN.\nWill treat all following lines as sequence.")
+            else
+                @gene_sequence += sequence
+            end
         end
 
         def update_current_feature(line)

@@ -9,6 +9,7 @@ class ToGene
     end
 
     def initialize(use_feature)
+        # parse genes. be verbose.
         @gene_name = ""
         @exons = []
         @introns = []
@@ -102,6 +103,7 @@ class ToGene
         record = get_wanted_feature_record(use_feature_starting_in_line)
         @file_to_gene_obj.parse_gene_record(record)
         save_features
+        log_features
     end
 
     def init_file_to_gene_obj
@@ -194,7 +196,10 @@ class ToGene
     end
 
     def are_codons_valid
-        GeneticCode.are_only_valid_codons(@exons.join(""))
+        invalid_codons = GeneticCode.find_invalid_codons(@exons.join(""))
+        no_invalid_codons = invalid_codons.empty?
+        $logger.info("Invalid codon(s): #{invalid_codons.join(", ")}") unless no_invalid_codons
+        no_invalid_codons
     end
 
     def format_list_with_feature_starts
@@ -219,5 +224,17 @@ class ToGene
         else
             first_feature_record
         end
+    end
+
+    def log_features
+        msg = prepare_sequence_for_log(@exons)
+        $logger.info("Identified exons:\n#{msg}")
+        msg = prepare_sequence_for_log(@introns)
+        $logger.info("Identified introns:\n#{msg}")
+    end
+
+    def prepare_sequence_for_log(arr)
+        counter = (1..arr.size).to_a.map{|n| "(#{n})"}
+        counter.zip(arr).map{|a| a.join(" ")}.join("\n")
     end
 end

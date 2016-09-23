@@ -82,9 +82,9 @@ module GeneticCode
         cdna.scan(/.{1,3}/)
     end
 
-    def are_only_valid_codons(cdna)
+    def find_invalid_codons(cdna)
         codons = split_cdna_into_codons(cdna)
-        (codons - valid_codons).empty?
+        codons - valid_codons
     end
 
     def delete_trailing_stopcodon_if_present(codons)
