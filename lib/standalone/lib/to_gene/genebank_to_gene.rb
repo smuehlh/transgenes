@@ -46,7 +46,6 @@ class ToGene
 
             @exon_positions = ""
             @is_gene_on_minus_strand = false
-            is_line_containing_exon_positions = true
             gene_record.each do |line|
                 if is_line_containing_gene_name(line)
                     save_gene_name(line)
