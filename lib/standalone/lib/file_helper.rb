@@ -10,6 +10,11 @@ module FileHelper
         abort "Failed to open: #{path}" unless file_exist?(path)
     end
 
+    def file_empty?(file)
+        # file is empty or does not exist
+        ! File.size?(file)
+    end
+
     def get_file_extension(path)
         split_filename_and_extension(path).last.downcase
     end

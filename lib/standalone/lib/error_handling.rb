@@ -26,6 +26,8 @@ module ErrorHandling
         case code
         when "invalid_file_format"
             "Unrecognized format. Input has to be either a GeneBank record or a FASTA file."
+        when "empty_file"
+            "Input may not be empty."
         when "invalid_codons"
             "Found invalid codon(s)"
         when "invalid_ese_format"
@@ -50,6 +52,8 @@ module ErrorHandling
             )
         when "invalid_file_format"
             "Unrecognized file format or feature: #{additional_error_message}.\nInput has to be either a GeneBank record or a FASTA file. Also, it has to specify the requested gene record."
+        when "empty_file"
+            "Unrecognized file format: #{additional_error_message}.\nInput may not be empty."
         when "invalid_gene_start"
             error_message_with_reference_to_valid_gene_starts(
                 "Invalid", additional_error_message

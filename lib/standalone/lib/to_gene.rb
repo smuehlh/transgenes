@@ -53,9 +53,20 @@ class ToGene
     end
 
     def ensure_file_format_is_valid(file)
+        ensure_file_extension_is_valid(file)
+        ensure_file_is_not_empty(file)
+    end
+
+    def ensure_file_extension_is_valid(file)
         ErrorHandling.abort_with_error_message(
             "invalid_file_format", "ToGene", @file_info
         ) unless is_valid_file_extension(file)
+    end
+
+    def ensure_file_is_not_empty(file)
+        ErrorHandling.abort_with_error_message(
+            "empty_file", "ToGene", @file_info
+        ) if FileHelper.file_empty?(file)
     end
 
     def split_file_into_single_features_or_die

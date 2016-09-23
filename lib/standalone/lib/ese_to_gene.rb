@@ -14,6 +14,7 @@ class EseToGene
 
     def parse_file_or_die(file)
         @file_info = "#{file} (Attempting to parse ESEs)"
+        ensure_file_is_not_empty(file)
         parse_eses_and_ensure_ese_format(file)
 
     rescue StandardError => exp
@@ -24,6 +25,12 @@ class EseToGene
     end
 
     private
+
+    def ensure_file_is_not_empty(file)
+        ErrorHandling.abort_with_error_message(
+            "empty_file", "ToGene", @file_info
+        ) if FileHelper.file_empty?(file)
+    end
 
     def parse_eses_and_ensure_ese_format(file)
         parse_eses(file)
