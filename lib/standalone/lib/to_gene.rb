@@ -228,9 +228,9 @@ class ToGene
 
     def log_features
         msg = prepare_sequence_for_log(@exons)
-        $logger.debug("Identified exons:\n#{msg}")
+        $logger.debug msg.empty? ? "Identified exons: -" : "Identified exons:\n#{msg}"
         msg = prepare_sequence_for_log(@introns)
-        $logger.debug("Identified introns:\n#{msg}")
+        $logger.debug msg.empty? ? "Identified introns: -" : "Identified introns:\n#{msg}"
     end
 
     def prepare_sequence_for_log(arr)
