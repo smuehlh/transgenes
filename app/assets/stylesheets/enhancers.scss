@@ -27,3 +27,9 @@ textarea {
 {
     padding:0 0 0 10px;
 }
+
+// display button with outline only
+.btn-primary {
+    background-color: transparent;
+    color: $brand-primary;
+}
