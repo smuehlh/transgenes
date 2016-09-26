@@ -204,7 +204,7 @@ class ToGene
 
     def format_list_with_feature_starts
         @feature_records_by_feature_starts.map do |start, full_record|
-            "\t#{start}#{truncate_record(full_record)}"
+            "\t#{start} #{truncate_record(full_record)}"
         end.join("\n")
     end
 
