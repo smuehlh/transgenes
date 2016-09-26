@@ -1,8 +1,9 @@
-$("#error-alert-<%= id %>").hide(); // default setting
-
-<% if flash.now[:error] && ! flash.now[:error].blank? %>
-    <% msg = patch_multiline_text_for_web(flash.now[:error]) %>
+<% if flash.now[:error] %>
     $("#error-alert-<%= id %>").show();
     $("#error-alert-text-<%= id %>").show();
-    $("#error-alert-text-<%= id %>").html("<%= msg %>");
+    $("#error-alert-text-<%= id %>").html(
+        "<%= escape_javascript(render partial: 'enhancers/create/debuginfo_modal', locals: {id: id, error: flash.now[:error], debug_info: flash.now[:debug_info]} ) %>"
+    );
+<% else %>
+    $("#error-alert-<%= id %>").hide();
 <% end %>
