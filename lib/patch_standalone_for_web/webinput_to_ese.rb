@@ -22,6 +22,10 @@ class WebinputToEse
         @ese_motifs.any? ? @ese_motifs : []
     end
 
+    def was_success?
+        @error.blank?
+    end
+
     private
 
     def get_fileupload_path_or_save_textinput_to_file(params, is_fileupload_input)

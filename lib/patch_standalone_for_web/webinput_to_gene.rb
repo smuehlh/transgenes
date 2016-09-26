@@ -28,6 +28,10 @@ class WebinputToGene
         @gene_records.any? ? @gene_records : {}
     end
 
+    def was_success?
+        @error.blank?
+    end
+
     private
 
     def get_fileupload_path_or_save_textinput_to_file(params, is_fileupload_input)

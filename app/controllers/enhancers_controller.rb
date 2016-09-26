@@ -141,18 +141,21 @@ class EnhancersController < ApplicationController
 
     def update_records_associated_with_active_enhancer
         gene_parser = WebinputToGene.new(enhancer_params,remotipart_submitted?)
-        gene_parser.get_records.each do |line, gene_record|
-            record = Record.new(
-                data: gene_record[:sequence],
-                line: line,
-                exons: gene_record[:exons],
-                introns: gene_record[:introns],
-                gene_name: gene_record[:description]
-                )
-            @enhancer.records.push(record)
+        if gene_parser.was_success?
+            gene_parser.get_records.each do |line, gene_record|
+                record = Record.new(
+                    data: gene_record[:sequence],
+                    line: line,
+                    exons: gene_record[:exons],
+                    introns: gene_record[:introns],
+                    gene_name: gene_record[:description]
+                    )
+                @enhancer.records.push(record)
+            end
+        else
+            flash.now[:error] = gene_parser.error
+            flash.now[:debug_info] = gene_parser.log
         end
-
-        flash.now[:error] = gene_parser.error unless gene_parser.error.blank?
     end
 
     def update_active_enhancer_and_generate_gene_statistics
@@ -167,11 +170,12 @@ class EnhancersController < ApplicationController
     def update_ese
         ese_parser = WebinputToEse.new(ese_params,remotipart_submitted?)
         list = ese_parser.get_ese_motifs
-        if ese_parser.error.blank?
+        if ese_parser.was_success?
             @ese.update_attribute(:data, list)
             flash.now[:success] = true
         else
             flash.now[:error] = ese_parser.error
+            flash.now[:debug_info] = ese_parser.log
         end
     end
 
