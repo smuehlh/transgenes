@@ -3,12 +3,13 @@ class WebinputToGene
     ToGene.include CoreExtensions::FileParsing
     include CoreExtensions::FileHelper
 
-    attr_reader :error
+    attr_reader :error, :log
 
     def initialize(enhancer_params, is_fileupload_input)
         @error = "" # NOTE: use @error instead of log-content to customize error messages.
+        @log = "" # NOTE: use @log to debug file-parsing
         @gene_records = {}
-        CoreExtensions::Settings.setup
+        CoreExtensions::Settings.setup_for_debugging
 
         feature_type = enhancer_params[:name]
         file = get_fileupload_path_or_save_textinput_to_file(
@@ -19,6 +20,8 @@ class WebinputToGene
 
     rescue EnhancerError => exception
         @error = exception.to_s
+    ensure
+        @log = CoreExtensions::Settings.get_log_content
     end
 
     def get_records
@@ -72,6 +75,8 @@ class WebinputToGene
         feature_starts = get_first_feature_starts_and_warn_if_max_num_is_exceeded(
                 feature_type, file
             )
+        CoreExtensions::Settings.setup_for_debugging # HOTFIX: setup log again to reset it; otherwise it would contain logging-messages twice
+
         feature_starts.each do |line, teaser|
             gene = Gene.new
             begin

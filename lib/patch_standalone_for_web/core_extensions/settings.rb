@@ -8,6 +8,11 @@ module CoreExtensions
             setup_logger
         end
 
+        def setup_for_debugging
+            setup
+            $logger.level = Logger::DEBUG
+        end
+
         def get_log_content
             @file.rewind
             content = @file.read
