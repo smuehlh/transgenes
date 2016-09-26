@@ -198,7 +198,7 @@ class ToGene
     def are_codons_valid
         invalid_codons = GeneticCode.find_invalid_codons(@exons.join(""))
         no_invalid_codons = invalid_codons.empty?
-        $logger.info("Invalid codon(s): #{invalid_codons.join(", ")}") unless no_invalid_codons
+        $logger.debug("Invalid codon(s): #{invalid_codons.join(", ")}") unless no_invalid_codons
         no_invalid_codons
     end
 
@@ -228,9 +228,9 @@ class ToGene
 
     def log_features
         msg = prepare_sequence_for_log(@exons)
-        $logger.info("Identified exons:\n#{msg}")
+        $logger.debug("Identified exons:\n#{msg}")
         msg = prepare_sequence_for_log(@introns)
-        $logger.info("Identified introns:\n#{msg}")
+        $logger.debug("Identified introns:\n#{msg}")
     end
 
     def prepare_sequence_for_log(arr)

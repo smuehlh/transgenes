@@ -11,7 +11,7 @@ class EseToGene
     def initialize
         # parse ESEs. be verbose.
         @motifs = []
-        $logger.info("Parsing ESE input. Expecting to find motifs.")
+        $logger.debug("Parsing ESE input. Expecting to find motifs.")
     end
 
     def parse_file_or_die(file)
@@ -44,13 +44,13 @@ class EseToGene
             line = line.chomp
             @motifs.push line
         end
-        $logger.info("Identified #{@motifs.size} motifs.")
+        $logger.debug("Identified #{@motifs.size} motifs.")
     end
 
     def ensure_eses_are_parsed_successfully
         @motifs.each do |motif|
             unless is_valid_motif(motif)
-                $logger.info("Invalid motif: #{motif}")
+                $logger.debug("Invalid motif: #{motif}")
                 ErrorHandling.abort_with_error_message(
                     "invalid_ese_format", "EseToGene", @file_info
                 )
