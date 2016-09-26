@@ -38,9 +38,9 @@
 <h3>Select parameters</h3>
     <!-- open submit form -->
     <%= form_for EnhancedGene.new, :url => {:action => "submit"}, html: { style: "display:inline;", role: "form" } do |submit_form| %>
-        <%= render partial: "enhancers/submit/parameter_selection_fields", locals: {f: submit_form} %>
+        <%= render partial: "enhancers/index/parameter_selection_fields", locals: {f: submit_form} %>
 
 <h3>Submit your job</h3>
     <!-- close the submit-form -->
-        <%= render partial: "enhancers/submit/parameter_selection_actions", locals: {f: submit_form} %>
+        <%= render partial: "enhancers/index/parameter_selection_actions", locals: {f: submit_form} %>
     <% end %>
