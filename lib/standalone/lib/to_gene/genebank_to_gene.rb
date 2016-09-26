@@ -10,7 +10,7 @@ class ToGene
         def initialize(file, use_subfeature)
             @file = file
             @use_subfeature = set_subfeature_to_collect(use_subfeature)
-            $logger.debug("Treating input as GeneBank.\nExpecting to find #{@use_subfeature} features.")
+            $logger.debug("Treating input as GeneBank. Expecting to find #{@use_subfeature} features.")
         end
 
         def split_file_into_single_genes
@@ -106,7 +106,7 @@ class ToGene
             line.strip!
             sequence = extract_sequence(line)
             if line == "ORIGIN"
-                $logger.debug("Identified line #{line_number} as ORIGIN.\nWill treat all following lines as sequence.")
+                $logger.debug("Identified line #{line_number} as ORIGIN. Will treat all following lines as sequence.")
             else
                 @gene_sequence += sequence
             end
