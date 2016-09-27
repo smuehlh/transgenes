@@ -6,7 +6,8 @@ class CommandlineOptions
         :utr5prime, :utr3prime,
         :input_line, :utr5prime_line, :utr3prime_line,
         :remove_first_intron,
-        :ese
+        :ese,
+        :verbose
 
     def initialize(args)
         init_commandline_arguments(args)
@@ -47,6 +48,7 @@ class CommandlineOptions
             @utr5prime @utr5prime_line @utr3prime @utr3prime_line
             @remove_first_intron
             @ese
+            @verbose
         )
     end
 
@@ -121,12 +123,12 @@ class CommandlineOptions
                 "Starting line of gene description to read.") do |line|
                 @input_line = line
             end
-            opts.on("-u", "--utr-5 FILE",
+            opts.on("--utr-5 FILE",
                 "Path to 5' UTR file, in FASTA format.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @utr5prime = path
             end
-            opts.on("-v", "--utr-3 FILE",
+            opts.on("--utr-3 FILE",
                 "Path to 3' UTR file, in FASTA format.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @utr3prime = path
@@ -150,6 +152,9 @@ class CommandlineOptions
                 @ese = path
             end
             opts.separator ""
+            opts.on("-v", "--verbose", "Produce verbose log.") do |opt|
+                @verbose = true
+            end
             opts.on_tail("-h", "--help", "Show this message") do
                 puts opts
                 exit

@@ -10,6 +10,10 @@ module Logging
         [file_logger, stderr_logger]
     end
 
+    def switch_to_verbose_setup_commandline_tool
+        $logger.change_infolog_to_debug
+    end
+
     def build_logger(output, level, is_simplify=false)
         logger = initialize_logger(output, level)
         customize_output_format(logger, is_simplify)
