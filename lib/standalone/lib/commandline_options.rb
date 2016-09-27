@@ -92,7 +92,7 @@ class CommandlineOptions
             opts.banner = "Alter synonymous sites to enhance transgenes."
             opts.separator "Contact: Laurence Hurst (l.d.hurst@bath.ac.uk)"
             opts.separator ""
-            opts.separator "Usage: ruby sequence_optimiser.rb -i input -o output [options]"
+            opts.separator "Usage: ruby sequence_optimiser.rb -i input -o output -s strategy [options]"
 
             opts.on("-i", "--input FILE",
                 "Path to input file in one of the following formats:",
