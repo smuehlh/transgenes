@@ -1,0 +1,7 @@
+<% if flash.now[:success] %>
+    $("#warning-alert-all-input").show();
+    $("#warning-alert-text-all-input").show();
+    $("#warning-alert-text-all-input").html("<%= escape_javascript(render partial: 'enhancers/create/sequences_info', locals: {statistics: @statistics}) %>");
+<% else %>
+    $("#warning-alert-all-input").hide();
+<% end %>

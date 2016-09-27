@@ -5,14 +5,9 @@
         "<%= escape_javascript(render partial: 'enhancers/create/sequence_modal', locals: {enhancer: enhancer, id: id, statistics: statistics} ) %>"
     );
 
-    $("#warning-alert-all-input").show();
-    $("#warning-alert-text-all-input").show();
-    $("#warning-alert-text-all-input").html("<%= escape_javascript(render partial: 'enhancers/create/sequences_info', locals: {statistics: statistics} ) %>");
-
     <% if is_cds_resource(id) %>
         enable_params_partial();
     <% end %>
 <% else %>
     $("#success-alert-<%= id %>").hide();
-    $("#warning-alert-all-input").hide();
 <% end %>
