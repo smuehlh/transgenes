@@ -25,6 +25,6 @@ module EnhancersHelper
     end
 
     def is_cds_resource(name)
-        name == "CDS"
+        name == "CDS" || name == html_compatible_enhancer_name("CDS")
     end
 end

@@ -9,7 +9,9 @@
     $("#warning-alert-text-all-input").show();
     $("#warning-alert-text-all-input").html("<%= escape_javascript(render partial: 'enhancers/create/sequences_info', locals: {statistics: statistics} ) %>");
 
-    enable_params_partial();
+    <% if is_cds_resource(id) %>
+        enable_params_partial();
+    <% end %>
 <% else %>
     $("#success-alert-<%= id %>").hide();
     $("#warning-alert-all-input").hide();
