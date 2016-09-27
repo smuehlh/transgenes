@@ -2,7 +2,7 @@
     $("#error-alert-<%= id %>").show();
     $("#error-alert-text-<%= id %>").show();
     $("#error-alert-text-<%= id %>").html(
-        "<%= escape_javascript(render partial: 'enhancers/create/debuginfo_modal', locals: {id: id, error: flash.now[:error], debug_info: flash.now[:debug_info]} ) %>"
+        "<%= escape_javascript(render partial: 'enhancers/create/debuginfo_modal', locals: {id: id} ) %>"
     );
 <% else %>
     $("#error-alert-<%= id %>").hide();

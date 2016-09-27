@@ -1,6 +1,6 @@
 <%
-    error_msg = patch_multiline_text_for_web(error)
-    debug_msg = patch_multiline_text_for_web(debug_info)
+    error_msg = patch_multiline_text_for_web(flash.now[:error])
+    debug_msg = patch_multiline_text_for_web(flash.now[:debug_info])
 %>
 
 <%= error_msg %>
