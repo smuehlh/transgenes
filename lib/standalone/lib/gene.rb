@@ -56,10 +56,9 @@ class Gene
         syn_sites = SynonymousSites.new(@exons, @introns)
 
         syn_sites.get_synonymous_sites_in_exons.each do |pos|
-            ranked_synonymous_codons = scorer.score_synonymous_codons_at(pos)
-            best_scoring_codon = ranked_synonymous_codons.first
+            best_scoring_codon = scorer.score_synonymous_codons_at(pos)
 
-            if scorer.is_codon_not_the_original(best_scoring_codon)
+            if scorer.is_bestscoring_codon_not_the_original_codon
                 replace_codon_at_pos(pos, best_scoring_codon)
                 @number_of_changed_sites += 1
                 $logger.info(scorer.log_changes)

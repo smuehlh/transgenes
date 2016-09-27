@@ -9,10 +9,11 @@ class ScoreSynonymousCodons
         init_vars_describing_codon_and_position(pos)
         score_synonymous_codons
         sort_synonymous_codons_by_score
+        select_bestscoring_codon
     end
 
-    def is_codon_not_the_original(codon)
-        @original_codon != codon
+    def is_bestscoring_codon_not_the_original_codon
+        @original_codon != @bestscoring_synonymous_codon
     end
 
     def log_changes
@@ -65,6 +66,10 @@ class ScoreSynonymousCodons
             @sorted_scores.push(score)
         end
         @sorted_synonymous_codons
+    end
+
+    def select_bestscoring_codon
+        @bestscoring_synonymous_codon = @sorted_synonymous_codons.first
     end
 
     def get_codon_at_pos
