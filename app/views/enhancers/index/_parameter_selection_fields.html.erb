@@ -1,10 +1,10 @@
-<%= f.label :keep_first_intron, "Select if first intron should be kept or removed" %>
+<legend class="text-primary">Select if first intron should be kept or removed</legend>
 <div class="checkbox form-group">
     <%= f.check_box :keep_first_intron, {checked: true, disabled: true, class: "params-form"}, "true", "false" %>
     <%= f.label :keep_first_intron, "Keep first intron" %>
 </div>
 
-<%= f.label :strategy_gc, "Select a strategy" %>
+<legend class="text-primary">Select a strategy</legend>
 <div class="radio form-group">
     <%= f.radio_button :strategy, 'gc', {disabled: true, class: "params-form"} %>
     <%= f.label :strategy_gc, content_tag(:strong, 'gc') + ' - Match GC content of 1- or 2-exon genes.' %>
