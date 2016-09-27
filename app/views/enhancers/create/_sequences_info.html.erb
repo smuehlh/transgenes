@@ -1,15 +1,10 @@
 <%
-    pluralized_words =
-        if @statistics[:uploaded_resources].size == 1
-            "sequence adds"
-        else
-            "sequences add"
-        end
-    is_cds_uploaded = @statistics[:uploaded_resources].any? {|name| is_cds_resource(name) }
-%>
+    resources = @statistics[:uploaded_resources]
+    text = "Provided #{resources.to_sentence} #{"sequence".pluralize(resources.size)}. The total mRNA size based on this input will be #{number_with_delimiter(@statistics[:size_w_first_intron])} nucleotides"
 
-Provided <%= pluralized_words %> up to a total mRNA size of <%= number_with_delimiter(@statistics[:size_w_first_intron]) %> nucleotides
-<% if is_cds_uploaded %>
-    if all introns in CDS but the first are removed <i>(<%= number_with_delimiter(@statistics[:size_wo_first_intron]) %> nucleotides if all introns in CDS including the first are removed)</i>
-<% end %>
-.
+    if resources.any? {|str| is_cds_resource(str)}
+        text += " if all but the first intron in CDS are removed, or #{number_with_delimiter(@statistics[:size_wo_first_intron])} nucleotides if all introns in CDS including the first are removed"
+    end
+    text += "."
+%>
+<%= text %>
