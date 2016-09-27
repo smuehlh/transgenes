@@ -145,10 +145,13 @@ function init_params_partial() {
 
     params.filter("#enhanced_gene_keep_first_intron").prop('checked', true);
     params.filter("#enhanced_gene_strategy_humanize").prop('checked', true);
+
+    $(".params-inactive").show();
 };
 
 function enable_params_partial() {
     params.filter(":input").prop("disabled", false);
+    $(".params-inactive").hide();
 };
 
 function bind_validate_to_input() {
