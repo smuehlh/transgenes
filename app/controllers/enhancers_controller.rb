@@ -15,12 +15,13 @@ class EnhancersController < ApplicationController
         if enhancer_params[:commit] == "Save"
             reset_active_enhancer_and_associated_records
             update_records_associated_with_active_enhancer
-            update_active_enhancer_and_generate_gene_statistics
+            update_active_enhancer
         elsif enhancer_params[:commit] == "Line"
-            update_active_enhancer_and_generate_gene_statistics
+            update_active_enhancer
         else
             reset_active_enhancer_and_associated_records
         end
+        @statistics = update_gene_statistics
     end
 
     def ese
@@ -158,11 +159,9 @@ class EnhancersController < ApplicationController
         end
     end
 
-    def update_active_enhancer_and_generate_gene_statistics
+    def update_active_enhancer
         if record = get_wanted_record
             @enhancer.update_with_record_data(record)
-            generate_gene_statistics
-
             flash.now[:success] = true
         end
     end
@@ -189,12 +188,12 @@ class EnhancersController < ApplicationController
         end
     end
 
-    def generate_gene_statistics
+    def update_gene_statistics
         stats = SequenceOptimizerForWeb.gene_statistics(prepare_gene_enhancers_for_sequence_optimizer
         )
         uploaded_resources = get_gene_enhancers.collect{|e| e.name if e.data}.compact
 
-        @statistics = {
+        {
             n_exons: stats.n_exons,
             uploaded_resources: uploaded_resources,
             size_w_first_intron: stats.len_w_first_intron,
