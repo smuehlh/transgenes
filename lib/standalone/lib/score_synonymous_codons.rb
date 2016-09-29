@@ -32,9 +32,8 @@ class ScoreSynonymousCodons
             case strategy
             when "raw" then RawSequenceScores.new
             when "humanize" then HumanMatchedSequenceScores.new
-            when "gc"
+            when "gc" then GcMatchedSequenceScores.new
             else
-                # hopefully this will be never executed.
                 ErrorHandling.abort_with_error_message(
                     "unknown_strategy", "ScoreSynonymousCodons"
                 )
