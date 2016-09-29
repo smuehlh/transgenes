@@ -6,7 +6,6 @@ class EnhancersController < ApplicationController
         init_gene_enhancers
         init_ese
         init_enhanced_gene
-        @five_enhancer, @cds_enhancer, @three_enhancer = get_gene_enhancers
     end
 
     def create
