@@ -4,7 +4,7 @@
     valid_textinput = "^(?:[#{valid_chars}]{6}[\\n\\r]{0,2})+$" # ensure each line contains exactly 6 nucleotides
 %>
 
-<%= form_for Ese.new, :url => {:action => "ese"}, remote: true, html: { style: "display:inline;", role: "form", multipart: true } do |f| %>
+<%= form_for Ese.new, :url => {action: "create_ese"}, remote: true, html: { style: "display:inline;", role: "form", multipart: true } do |f| %>
 
     <div class="pull-right control-group">
         <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save ESE data", data: {toggle: "tooltip"}, disabled: true %>

@@ -18,7 +18,7 @@
     # /^>\S+[\n\r][ATGCatgc\s]+$/ # validates entire fasta
 %>
 
-<%= form_for Enhancer.new, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
+<%= form_for Enhancer.new, :url => {action: "create_enhancer"}, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
 
     <div class="pull-right control-group">
         <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save #{resource_name} data", data: {toggle: "tooltip"}, disabled: true %>

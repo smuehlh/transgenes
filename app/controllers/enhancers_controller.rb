@@ -8,7 +8,7 @@ class EnhancersController < ApplicationController
         init_enhanced_gene
     end
 
-    def create
+    def create_enhancer
         flash.clear
         @enhancer = get_gene_enhancer_by_name(enhancer_params[:name])
         if enhancer_params[:commit] == "Save"
@@ -23,7 +23,7 @@ class EnhancersController < ApplicationController
         @statistics = update_gene_statistics
     end
 
-    def ese
+    def create_ese
         flash.clear
         @ese = get_ese
         if ese_params[:commit] == "Save"

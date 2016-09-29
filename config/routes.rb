@@ -6,8 +6,9 @@ Rails.application.routes.draw do
   get '/help' => 'pages#help'
   get '/privacy' => 'pages#privacy'
 
-  resources :enhancers, only: [:index, :create] do
-    post :ese, on: :collection
+  resources :enhancers, only: [:index] do
+    post :create_enhancer, on: :collection
+    post :create_ese, on: :collection
     post :submit, on: :collection
     get :download, on: :collection
     get :ensembl_autocomplete, on: :collection
