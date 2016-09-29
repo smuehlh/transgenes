@@ -3,14 +3,14 @@
     <% unless @selected_line %>
         <%#= display modal only first time multiple records are submitted. everything else is too much.  %>
         $("#multigene-info-container-<%= id %>").html(
-            "<%= escape_javascript(render 'enhancers/create/multigene_info') %>"
+            "<%= escape_javascript(render 'enhancers/create/enhancer/multigene_info') %>"
         );
         $("#multigene-modal-<%= id %>").modal('show');
     <% end %>
     $("#multigene-info-container-<%= id %> > a").hide();
 
     $("#multigene-options-<%= id %>").html(
-        "<%= escape_javascript(render 'enhancers/create/multigene_formelements') %>"
+        "<%= escape_javascript(render 'enhancers/create/enhancer/multigene_formelements') %>"
     );
     // bind event handlers to selection list
     bind_to_select_list();

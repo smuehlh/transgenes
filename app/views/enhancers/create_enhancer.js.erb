@@ -4,5 +4,5 @@ init_params_partial(); // order does matter. init first, enable later (in succes
 // show errors and info messages (if there is need to is handled in the partial)
 <%= render partial: 'enhancers/create/error', locals: {id: id} %>
 <%= render partial: 'enhancers/create/success', locals: {id: id} %>
-<%= render partial: 'enhancers/create/info', locals: {id: id} %>
-<%= render partial: 'enhancers/create/multigene' %>
+<%= render partial: 'enhancers/create/enhancer/info', locals: {id: id} %>
+<%= render partial: 'enhancers/create/enhancer/multigene' %>
