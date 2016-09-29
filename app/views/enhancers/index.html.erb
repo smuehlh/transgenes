@@ -20,27 +20,27 @@
 
     <div class="tab-content">
         <div class="tab-pane active" id="input-tab-cds">
-            <%= render partial: "form", locals: {resource_name: "CDS"} %>
+            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "CDS"} %>
         </div>
         <div class="tab-pane" id="input-tab-five">
-            <%= render partial: "form", locals: {resource_name: "5'UTR"} %>
+            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "5'UTR"} %>
         </div>
         <div class="tab-pane" id="input-tab-three">
-            <%= render partial: "form", locals: {resource_name: "3'UTR"} %>
+            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "3'UTR"} %>
         </div>
     </div>
 
 <h3>Enter ESE motifs <small>Optional</small></h3>
     <div id="input-tab-ese">
-        <%= render partial: "ese_form" %>
+        <%= render partial: "enhancers/index/ese_form" %>
     </div>
 
 <h3>Select parameters <small class="params-inactive">Please provide a valid CDS sequence first</small></h3>
     <!-- open submit form -->
     <%= form_for EnhancedGene.new, :url => {:action => "submit"}, html: { style: "display:inline;", role: "form" } do |submit_form| %>
-        <%= render partial: "enhancers/index/parameter_selection_fields", locals: {f: submit_form} %>
+        <%= render partial: "enhancers/index/params_form_fields", locals: {f: submit_form} %>
 
 <h3>Submit your job <small class="params-inactive">Please provide a valid CDS sequence first</small></h3>
     <!-- close the submit-form -->
-        <%= render partial: "enhancers/index/parameter_selection_actions", locals: {f: submit_form} %>
+        <%= render partial: "enhancers/index/params_form_submit", locals: {f: submit_form} %>
     <% end %>
