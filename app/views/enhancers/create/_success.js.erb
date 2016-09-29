@@ -1,10 +1,5 @@
 <% if flash.now[:success] %>
     $("#success-alert-<%= id %>").show();
-    $("#success-alert-text-<%= id %>").show();
-    $("#success-alert-text-<%= id %>").html(
-        "<%= escape_javascript(render partial: 'enhancers/create/sequence_modal', locals: {id: id} ) %>"
-    );
-
     <% if is_cds_resource(id) %>
         enable_params_partial();
     <% end %>

@@ -1,0 +1,7 @@
+<% if flash.now[:success] %>
+    $("#success-alert-text-<%= id %>").show();
+    $("#success-alert-text-<%= id %>").html(
+        "<%= escape_javascript(render partial: 'enhancers/create/enhancer/sequence_modal', locals: {id: id} ) %>"
+    );
+// NOTE: compare success-partial. don't have to hide text on error, as the success-alert as whole will be hidden in that case.
+<% end %>
