@@ -1,7 +1,0 @@
-<% if @statistics[:uploaded_resources].any? %>
-    $("#warning-alert-all-input").show();
-    $("#warning-alert-text-all-input").show();
-    $("#warning-alert-text-all-input").html("<%= escape_javascript(render partial: 'enhancers/create/enhancer/sequences_info') %>");
-<% else %>
-    $("#warning-alert-all-input").hide();
-<% end %>
