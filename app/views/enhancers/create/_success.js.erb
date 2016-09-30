@@ -1,8 +1,5 @@
 <% if flash.now[:success] %>
     $("#success-alert-<%= id %>").show();
-    <% if is_cds_resource(id) %>
-        enable_params_partial();
-    <% end %>
 <% else %>
     $("#success-alert-<%= id %>").hide();
 <% end %>

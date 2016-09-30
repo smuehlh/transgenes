@@ -4,6 +4,7 @@ $(document).ready(function() {
 
     clear_forms();
     hide_alerts();
+    set_defaults_params_partial();
     disable_form_elements();
 
     bind_eventhandlers_to_input_elements();
@@ -14,6 +15,7 @@ $(document).ready(function() {
 $(document).on('page:load', function() {
     clear_forms();
     hide_alerts();
+    set_defaults_params_partial();
     disable_form_elements();
 });
 
@@ -30,7 +32,7 @@ function hide_alerts() {
 
 function disable_form_elements() {
     inputs.find(":submit").prop('disabled', true);
-    init_params_partial();
+    disable_params_partial();
 };
 
 function bind_eventhandlers_to_input_elements() {
@@ -139,15 +141,17 @@ function bind_to_select_list() {
     });
 };
 
-function init_params_partial() {
+function set_defaults_params_partial() {
     params.filter(":input[type=checkbox]").removeAttr('checked');
-    params.filter(":input").prop("disabled", true);
-
     params.filter("#enhanced_gene_keep_first_intron").prop('checked', true);
     params.filter("#enhanced_gene_strategy_humanize").prop('checked', true);
+};
 
+function disable_params_partial() {
+    params.filter(":input").prop("disabled", true);
     $(".params-inactive").show();
 };
+
 
 function enable_params_partial() {
     params.filter(":input").prop("disabled", false);
