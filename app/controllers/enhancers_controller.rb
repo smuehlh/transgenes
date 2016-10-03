@@ -20,7 +20,7 @@ class EnhancersController < ApplicationController
         else
             reset_active_enhancer_and_associated_records
         end
-        @statistics = update_gene_statistics
+        @statistics = update_statistics
     end
 
     def create_ese
@@ -31,6 +31,7 @@ class EnhancersController < ApplicationController
         else
             reset_ese
         end
+        @statistics = update_statistics
     end
 
     def submit
@@ -187,7 +188,11 @@ class EnhancersController < ApplicationController
         end
     end
 
-    def update_gene_statistics
+    def update_statistics
+        get_gene_statistics.merge(get_ese_statistics)
+    end
+
+    def get_gene_statistics
         stats = SequenceOptimizerForWeb.gene_statistics(prepare_gene_enhancers_for_sequence_optimizer
         )
         uploaded_resources = get_gene_enhancers.collect{|e| e.name if e.data}.compact
@@ -197,6 +202,13 @@ class EnhancersController < ApplicationController
             uploaded_resources: uploaded_resources,
             size_w_first_intron: stats.len_w_first_intron,
             size_wo_first_intron: stats.len_wo_first_intron
+        }
+    end
+
+    def get_ese_statistics
+        ese = get_ese
+        {
+            ese_motifs: ! ese.data.blank?
         }
     end
 

@@ -3,3 +3,12 @@
 <% else %>
     $("#success-alert-<%= id %>").hide();
 <% end %>
+
+// enable/disable params & submit
+<% if @statistics[:uploaded_resources].any?{|str| is_cds_resource(str)} %>
+    <% enable_value_raw_checkbox = @statistics[:ese_motifs] %>
+    enable_params_partial(<%= enable_value_raw_checkbox %>);
+<% else %>
+    set_defaults_params_partial();
+    disable_params_partial();
+<% end %>

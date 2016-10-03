@@ -144,7 +144,7 @@ function bind_to_select_list() {
 function set_defaults_params_partial() {
     params.filter(":input[type=checkbox]").removeAttr('checked');
     params.filter("#enhanced_gene_keep_first_intron").prop('checked', true);
-    params.filter("#enhanced_gene_strategy_humanize").prop('checked', true);
+    params.filter(":input[value='humanize']").prop('checked', true);
 };
 
 function disable_params_partial() {
@@ -153,8 +153,13 @@ function disable_params_partial() {
 };
 
 
-function enable_params_partial() {
+function enable_params_partial(enable_all_checkboxes = true) {
     params.filter(":input").prop("disabled", false);
+    if (! enable_all_checkboxes) {
+        params.filter(":input[value='humanize']").prop('checked', true);
+        params.filter(":input[value='raw']").prop("disabled", true);
+        $(".params-strategy-inactive").show();
+    }
     $(".params-inactive").hide();
 };
 

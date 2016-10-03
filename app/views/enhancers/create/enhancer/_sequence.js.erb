@@ -14,11 +14,3 @@
 <% else %>
     $("#warning-alert-all-input").hide();
 <% end %>
-
-// enable/disable params & submit
-<% if @statistics[:uploaded_resources].any?{|str| is_cds_resource(str)} %>
-    enable_params_partial();
-<% else %>
-    set_defaults_params_partial();
-    disable_params_partial();
-<% end %>
