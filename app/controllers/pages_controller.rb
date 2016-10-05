@@ -1,20 +1,20 @@
 class PagesController < ApplicationController
-  def about
-  end
+    def about
+    end
 
-  def contact
-  end
+    def contact
+    end
 
-  def help
-  end
+    def help
+    end
 
-  def privacy
-  end
+    def privacy
+    end
 
-  def download
-  end
+    def download
+    end
 
-  def get_standalone_tool
+    def get_standalone_tool
 
-  end
+    end
 end
