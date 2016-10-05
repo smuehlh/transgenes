@@ -10,4 +10,11 @@ class PagesController < ApplicationController
 
   def privacy
   end
+
+  def download
+  end
+
+  def get_standalone_tool
+
+  end
 end

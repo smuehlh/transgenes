@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   get '/contact' => 'pages#contact'
   get '/help' => 'pages#help'
   get '/privacy' => 'pages#privacy'
+  get '/download' => 'pages#download'
+  get '/standalone' => 'pages#get_standalone_tool'
 
   resources :enhancers, only: [:index] do
     post :create_enhancer, on: :collection
