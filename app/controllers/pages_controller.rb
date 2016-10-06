@@ -15,6 +15,8 @@ class PagesController < ApplicationController
     end
 
     def get_standalone_tool
-
+        data = ZipStandalone.zip
+        filename = Dir::Tmpname.make_tmpname ["sequenceOptimizer",".zip"], nil
+        send_data(data, type: 'application/zip', filename: filename)
     end
 end
