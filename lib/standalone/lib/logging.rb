@@ -5,7 +5,7 @@ module Logging
     extend self
 
     def default_setup_commandline_tool
-        file_logger = build_logger("optimiser.log", Logger::INFO)
+        file_logger = build_logger("optimizer.log", Logger::INFO)
         stderr_logger = build_logger(STDERR, Logger::WARN)
         [file_logger, stderr_logger]
     end

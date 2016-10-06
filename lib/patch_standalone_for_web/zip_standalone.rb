@@ -30,7 +30,7 @@ class ZipStandalone
     end
 
     def filename_main
-        "sequence_optimiser.rb"
+        "sequence_optimizer.rb"
     end
 
     def tmp_filename_main

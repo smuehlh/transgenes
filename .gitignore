@@ -35,4 +35,4 @@ Gemfile.lock
 .byebug_history
 
 # Ignore log-file created by standalone-tool
-optimiser.log
+optimizer.log
