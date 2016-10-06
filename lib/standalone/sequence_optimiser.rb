@@ -1,7 +1,6 @@
 # !/usr/bin/env ruby
 
-# FIXME
-require 'byebug'
+require 'byebug' # FIXME. Important: FIXME and require must be in same line in order to remove both from automatically generated zip-archive.
 
 # require .rb files in library (including all subfolders)
 Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
