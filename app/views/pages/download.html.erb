@@ -1,10 +1,11 @@
 <h1>Download</h1>
-    <p>Use you own version rather than this webinterface?
+    <p>
+        Use your own version rather than this website?
         <%= link_to "Click here to download the latest version.", standalone_path %>
     </p>
 <h3>Archive content</h3>
     <dl class="row">
-        <dt class="col-sm-2">sequence_optimiser.rb</dt>
+        <dt class="col-sm-2"><%= @main %></dt>
         <dd class="col-sm-10">Main script</dd>
         <dt class="col-sm-2">data (folder)</dt>
         <dd class="col-sm-10">Sample data (genes and ESE lists)</dd>
@@ -13,9 +14,12 @@
     </dl>
 
 <h3>Installation</h3>
-    <p>The SequenceOptimizer software is written in pure Ruby. You will need to have Ruby v.2.3 or higher installed. Other than that, no compliation is required.</p>
-    <p>To execute the SequenceOptimizer, simply enter in a command prompt
-    <pre>$ ruby sequence_optimiser.rb</pre>
+    <p>The <%= @archive.camelize %> software is written in pure Ruby. You will need to have Ruby v.2.3 or higher installed. Other than that, no compilation is required.</p>
+    <p>To unzip the archive, simply enter in a command prompt
+    <pre>$ unzip <%= @archive %>.zip -d <%= @archive %></pre>
+    </p>
+    <p>To execute <%= @archive.camelize %> and inspect all available options
+    <pre>$ cd <%= @archive %><br>$ ruby <%= @main %> -h</pre>
     </p>
 <h3>Restrictions and Licence</h3>
-    <p>SequenceOptimizer can be downloaded and used under a GNU General Public License.</p>
+    <p>The <%= @archive.camelize %> software can be downloaded and used under a GNU General Public License.</p>

@@ -7,6 +7,14 @@ class ZipStandalone
         obj.zip_data
     end
 
+    def self.get_main_filename_in_zip
+        "main.rb"
+    end
+
+    def self.get_archive_name
+        "sequenceOptimizer"
+    end
+
     def initialize
         # use wildcard '*' to not include hidden files in current dir
         # exclude log-files, hidden files in any dir and the original main file
@@ -26,6 +34,6 @@ class ZipStandalone
     end
 
     def tmp_filename_main
-        "main.rb"
+        self.class.get_main_filename_in_zip
     end
 end
