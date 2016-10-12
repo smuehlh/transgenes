@@ -95,6 +95,7 @@ class Gene
             if pos >= exon.size
                 pos -= exon.size
             else
+                # TODO: replace complete codon, not just last nt.
                 exon[pos] = new_codon.chars.last
                 break
             end

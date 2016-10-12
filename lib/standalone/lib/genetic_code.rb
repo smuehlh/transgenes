@@ -2,18 +2,17 @@ module GeneticCode
 
     extend self
 
-    # NOTE:
-    # distinguish between 2- and 4-codon subboxes of the 6-codon boxes
+    # NOTE: any changes - change reverse_table accordingly
     def table
         {
             "TTT" => "F", "TTC" => "F",
-            "TTA" => "l", "TTG" => "l", "CTT" => "L", "CTC" => "L",
+            "TTA" => "L", "TTG" => "L", "CTT" => "L", "CTC" => "L",
                 "CTA" => "L", "CTG" => "L",
             "ATT" => "I", "ATC" => "I", "ATA" => "I",
             "ATG" => "M",
             "GTT" => "V", "GTC" => "V", "GTA" => "V", "GTG" => "V",
             "TCT" => "S", "TCC" => "S", "TCA" => "S", "TCG" => "S",
-                "AGT" => "s", "AGC" => "s",
+                "AGT" => "S", "AGC" => "S",
             "CCT" => "P", "CCC" => "P", "CCA" => "P", "CCG" => "P",
             "ACT" => "T", "ACC" => "T", "ACA" => "T", "ACG" => "T",
             "TAT" => "Y", "TAC" => "Y",
@@ -27,7 +26,7 @@ module GeneticCode
             "TGT" => "C", "TGC" => "C",
             "TGG" => "W",
             "CGT" => "R", "CGC" => "R", "CGA" => "R", "CGG" => "R",
-                "AGA" => "r", "AGG" => "r",
+                "AGA" => "R", "AGG" => "R",
             "GGT" => "G", "GGC" => "G", "GGA" => "G", "GGG" => "G",
             "TAA" => "*", "TAG" => "*", "TGA" => "*"
         }
@@ -36,13 +35,11 @@ module GeneticCode
     def reverse_table
         {
             "F" => ["TTT", "TTC"],
-            "L" => ["CTT", "CTC", "CTA", "CTG"],
-            "l" => ["TTA", "TTG"],
+            "L" => ["CTT", "CTC", "CTA", "CTG", "TTA", "TTG"],
             "I" => ["ATT", "ATC", "ATA"],
             "M" => ["ATG"],
             "V" => ["GTT", "GTC", "GTA", "GTG"],
-            "S" => ["TCT", "TCC", "TCA", "TCG"],
-            "s" => ["AGT", "AGC"],
+            "S" => ["TCT", "TCC", "TCA", "TCG", "AGT", "AGC"],
             "P" => ["CCT", "CCC", "CCA", "CCG"],
             "T" => ["ACT", "ACC", "ACA", "ACG"],
             "Y" => ["TAT", "TAC"],
@@ -55,8 +52,7 @@ module GeneticCode
             "E" => ["GAA", "GAG"],
             "C" => ["TGT", "TGC"],
             "W" => ["TGG"],
-            "R" => ["CGT", "CGC", "CGA", "CGG"],
-            "r" => ["AGA", "AGG"],
+            "R" => ["CGT", "CGC", "CGA", "CGG", "AGA", "AGG"],
             "G" => ["GGT", "GGC", "GGA", "GGG"],
             "*" => ["TAA", "TAG", "TGA"]
         }
@@ -93,8 +89,13 @@ module GeneticCode
         end
     end
 
-    def get_synonymous_codon(codon)
+    def get_synonymous_codons(codon)
         transl = table.fetch(codon)
         reverse_table.fetch(transl, [])
+    end
+
+    def get_synonymous_codons_in_codon_box(codon)
+        syn_codons = get_synonymous_codons(codon)
+        syn_codons.select{ |syn_codon| syn_codon.start_with?(codon[0]) }
     end
 end
