@@ -98,4 +98,8 @@ module GeneticCode
         syn_codons = get_synonymous_codons(codon)
         syn_codons.select{ |syn_codon| syn_codon.start_with?(codon[0]) }
     end
+
+    def is_single_synonymous_codon(codon)
+        get_synonymous_codons(codon).size == 1
+    end
 end
