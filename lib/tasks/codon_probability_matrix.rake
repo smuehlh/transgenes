@@ -17,9 +17,12 @@ namespace :ensembl do
             EnsemblGene.find_each do |gene|
                 parsed_gene = parse_gene(gene)
                 next unless parsed_gene # parsing was unsuccessfull
-                # TODO: next if not a 1-exon gene
+                next unless parsed_gene[:exons].size == 1
 
-                codons = GeneticCode.split_cdna_into_codons(parsed_gene[:exons].join(""))
+                cds = parsed_gene[:exons].join("")
+                codons = GeneticCode.split_cdna_into_codons(cds)
+                next unless codons.first == "ATG"
+
                 codons.each_with_index do |codon, pos_in_gene|
                     next if GeneticCode.is_stopcodon(codon)
                     next if GeneticCode.is_single_synonymous_codon(codon)
@@ -82,5 +85,4 @@ namespace :ensembl do
             counts[codon_degeneracy][last_nt][pos_in_gene] += 1
         end
     end
-# TODO: warum faengt ENSG00000000003 nicht mit ATG an ???
 end
