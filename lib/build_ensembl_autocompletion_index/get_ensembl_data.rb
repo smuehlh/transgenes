@@ -29,9 +29,9 @@ class GetEnsemblData
         utrs_masked = get_sequences("utrs")
 
         puts "Parsing transcripts, determining exons, introns, utr regions ..."
-        @ids_with_sequences = parse_sequences(introns_masked, utrs_masked)
+        ids_with_sequences = parse_sequences(introns_masked, utrs_masked)
 
-        @ids_with_sequences
+        ids_with_sequences
     end
 
     private
@@ -83,8 +83,7 @@ class GetEnsemblData
         end
 
         response_type = 'text/plain'
-        # @ids.collect do |id| FIXME
-        @ids[0..100].collect do |id|
+        @ids.collect do |id|
             log_progress
 
             path = "/sequence/id/#{id}?mask_feature=1;type=#{request_type};"
@@ -95,28 +94,23 @@ class GetEnsemblData
     def parse_sequences(introns_masked, utrs_masked)
         parsed = {}
         @ids.each_with_index do |id, ind|
+            introns_masked_seq = introns_masked[ind]
+            utrs_masked_seq = utrs_masked[ind]
+            # verify sequences are present
+            next unless introns_masked_seq && utrs_masked_seq
 
             # NOTE: these exons contain 5' and 3' UTR (if annotated)
             # these utrs will not contain intronic sequence
-            exons, introns = get_exons_and_introns(introns_masked[ind])
-            utr5, utr3 = get_utrs(utrs_masked[ind])
+            exons, introns = get_exons_and_introns(introns_masked_seq)
+            utr5, utr3 = get_utrs(utrs_masked_seq)
 
             fiveprime_utr, unspliced_transcript, threeprime_utr =  adjust_to_own_definitions(exons, introns, utr5, utr3)
+            # NOTE: for some genes, the retrieved 3'UTR contains the last amino acid of the stop codon (it is displayed correctly on Ensembl)
+            # This does not seem to happen for the 5'UTR and the start codon
+            unless GeneticCode.is_stopcodon(unspliced_transcript.last(3))
+                unspliced_transcript, threeprime_utr = fix_stopcodon(unspliced_transcript, threeprime_utr)
+            end
 
-debugger if fiveprime_utr.is_lower? || threeprime_utr.is_lower?
-puts id
-# TODO
-# debug:
-# - utr contains an intron: -> is the utr seq. correct???
-    # test-case for intron in utr3: ENST00000627758
-    # test-case for intrin in utr5: ENST00000630425
-# - is gene starting with atg? ending with stopcodon?
-    # stopcodon :
-        # utr3[0] would make stopcodon complete (ENST00000628983)
-        # stopcodon is complete (ENST00000627423)
-
-
-# TODO: verify-method
             parsed[id] = {
                 fiveprime_utr: fiveprime_utr,
                 unspliced_transcript: unspliced_transcript,
@@ -178,10 +172,9 @@ puts id
                 utr5_cleaned += utr5
                 done = true
             else
-                # TODO - solange im code lassen bis einmal ueber alle transcripte gelaufen ohne in diesem else gelandet zu sein.
-                # gleiches gilt fuer TODO in utr3-schleife.
-                debugger
-                puts  "??"
+                # should never happen
+                puts "cannot adjust sequences: #{exons.first}, #{utr5}"
+                done = true
             end
         end
 
@@ -204,13 +197,23 @@ puts id
                 utr3_cleaned = utr3 + utr3_cleaned
                 done = true
             else
-                debugger
-                puts "??"
+                # should never happen
+                puts "cannot adjust sequences: #{exons.last}, #{utr3}"
+                done = true
             end
         end
 
         exons_introns_cleaned = exons.zip(introns).flatten.compact.join("")
         [utr5_cleaned, exons_introns_cleaned, utr3_cleaned]
+    end
+
+    def fix_stopcodon(unspliced_transcript, threeprime_utr)
+        last_codon_when_first_utr_nt_is_added = unspliced_transcript.last(2) + threeprime_utr.first
+        if GeneticCode.is_stopcodon(last_codon_when_first_utr_nt_is_added)
+            unspliced_transcript = unspliced_transcript + threeprime_utr.first
+            threeprime_utr = threeprime_utr[1..-1]
+        end
+        [unspliced_transcript, threeprime_utr]
     end
 
     def split_seq_by_case(seq)
@@ -219,16 +222,6 @@ puts id
         data = GeneToFasta.new("dummy", seq).fasta.lines.map{|line| line.chomp}
         to_gene_obj.parse_gene_record(data)
         [to_gene_obj.exons, to_gene_obj.introns]
-    end
-
-    def verify_transcripts
-# TODO
-# rewrite this. use keep_if on @ids_with_sequences. use multipel conditions.
-
-        # delete transcript_ids if corresponding gene_seq is false
-        @transcript_ids.keep_if.each_with_index{|str, ind| @transcript_seqs[ind] }
-        # delete transcript_seqs if no sequence exists (seq is not true)
-        @transcript_seqs.keep_if{|str| str }
     end
 
     # returns false if an error occured
