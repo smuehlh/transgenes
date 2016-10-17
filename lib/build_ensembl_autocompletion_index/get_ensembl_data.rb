@@ -85,6 +85,7 @@ class GetEnsemblData
         response_type = 'text/plain'
         @ids.collect do |id|
             log_progress
+            sleep(1/15.0) # don't send more than 15 requests per second ...
 
             path = "/sequence/id/#{id}?mask_feature=1;type=#{request_type};"
             request_from_ensembl_rest_server(path, response_type)
