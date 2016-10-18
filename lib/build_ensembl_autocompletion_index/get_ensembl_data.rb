@@ -125,11 +125,10 @@ class GetEnsemblData
         utr5_cleaned, exons_introns_cleaned, utr3_cleaned = "", "", ""
         done = false
         until done do
-            if utr5.blank?
+            if utr5.empty?
                 # no utr: nothing to do
                 done = true
-            elsif exons.first == utr5.first(exons.first.size)
-                # INFO: this compares exons.first with the first N chars of utr5
+            elsif exons.first == utr5[0..(exons.first.size-1)]
                 # exon is completely utr: update exons, introns, and cleaned utr
                 exon = exons.shift
                 intron = introns.shift
@@ -150,11 +149,10 @@ class GetEnsemblData
 
         done = false
         until done do
-            if utr3.blank?
+            if utr3.empty?
                 # no utr: nothing to do
                 done = true
-            elsif exons.last == utr3.last(exons.last.size)
-                # INFO: this compares exons.last with the last N chars of utr3
+            elsif exons.last == utr3[-exons.last.size..-1]
                 # exon is completely utr: update exons, introns, and cleaned utr
                 exon = exons.pop
                 intron = introns.pop
@@ -178,13 +176,13 @@ class GetEnsemblData
     end
 
     def fix_stopcodon_if_neccessary_and_possible(exons_introns, utr3)
-        if ! GeneticCode.is_stopcodon(exons_introns.last(3))
+        if ! GeneticCode.is_stopcodon(exons_introns[-3..-1])
             # it's neccessary
 
-            last_codon_when_fixed = exons_introns.last(2) + utr3.first
+            last_codon_when_fixed = exons_introns[-2..-1] + utr3[0]
             if GeneticCode.is_stopcodon(last_codon_when_fixed)
                 # it's possible
-                exons_introns = exons_introns + utr3.first
+                exons_introns = exons_introns + utr3[0]
                 utr3 = utr3[1..-1]
             end
         end
