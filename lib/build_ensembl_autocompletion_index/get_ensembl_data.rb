@@ -99,9 +99,9 @@ class GetEnsemblData
     def get_utrs(seq)
         # uppercase = cds, lowercase = utrs
         # first intron = 5'utr, second intron = 3'utr. BUT: one or both might be missing
-        to_gene_uppercase, to_gene_lowercase = split_seq_by_case(seq)
-        putative_utr5 = to_gene_lowercase.first
-        putative_utr3 = to_gene_lowercase.last
+        dummy, to_gene_utrs = split_seq_by_case(seq)
+        putative_utr5 = to_gene_utrs.first
+        putative_utr3 = to_gene_utrs.last
 
         utr5 =
             if putative_utr5 && seq.downcase.start_with?(putative_utr5)
