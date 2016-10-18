@@ -13,16 +13,19 @@ class GetEnsemblData
     end
 
     def get_transcripts
+        @fh = File.open(@file, "w")
+
         puts "Getting transcript ids ..."
         @ids = get_ids
 
         puts "Getting transcripts ..."
-        introns_masked = get_sequences("introns")
-        utrs_masked = get_sequences("utrs")
-
-        puts "Parsing transcripts, determining exons, introns, utr regions ..."
-        @fh = File.open(@file, "w")
-        parse_sequences(introns_masked, utrs_masked)
+        @ids.each do |id|
+            introns_masked = get_sequence("introns", id)
+            utrs_masked = get_sequence("utrs", id)
+            next unless introns_masked && utrs_masked
+            utr5, exons_introns, utr3 = parse_sequences(introns_masked, utrs_masked)
+            write_to_file(id, utr5, exons_introns, utr3)
+        end
         @fh.close
     end
 
@@ -61,45 +64,30 @@ class GetEnsemblData
         response.split("\n").select{|str| str.start_with?(prefix)}.uniq
     end
 
-    def get_sequences(type)
+    def get_sequence(type, id)
         log_progress
+        sleep(1/15.0) # don't send more than 15 requests per second ...
 
-        if type == "introns"
-            request_type = "genomic" # causes "mask_feature" to mask introns
-        else
-            # type == utrs!
-            request_type = "cdna" # causes "mask_feature" to mask utrs
-        end
-
+        # cause "mask_feature" to mask introns or utrs, respectively
+        request_type = type == "introns" ? "genomic" : "cdna"
         response_type = 'text/plain'
-        @ids.collect do |id|
-            log_progress
-            sleep(1/15.0) # don't send more than 15 requests per second ...
 
-            path = "/sequence/id/#{id}?mask_feature=1;type=#{request_type};"
-            request_from_ensembl_rest_server(path, response_type)
-        end
+        path = "/sequence/id/#{id}?mask_feature=1;type=#{request_type};"
+        request_from_ensembl_rest_server(path, response_type)
     end
 
     def parse_sequences(introns_masked, utrs_masked)
-        @ids.each_with_index do |id, ind|
-            introns_masked_seq = introns_masked[ind]
-            utrs_masked_seq = utrs_masked[ind]
-            # verify sequences are present
-            next unless introns_masked_seq && utrs_masked_seq
+        # NOTE: these exons contain 5' and 3' UTR (if annotated)
+        # these utrs will not contain intronic sequence
+        exons, introns = get_exons_and_introns(introns_masked)
+        utr5, utr3 = get_utrs(utrs_masked)
 
-            # NOTE: these exons contain 5' and 3' UTR (if annotated)
-            # these utrs will not contain intronic sequence
-            exons, introns = get_exons_and_introns(introns_masked_seq)
-            utr5, utr3 = get_utrs(utrs_masked_seq)
+        fiveprime_utr, unspliced_transcript, threeprime_utr =  adjust_to_own_definitions(exons, introns, utr5, utr3)
+        # NOTE: for some genes, the retrieved 3'UTR contains the last amino acid of the stop codon (it is displayed correctly on Ensembl)
+        # This does not seem to happen for the 5'UTR and the start codon
+        fix_stopcodon_if_neccessary_and_possible(unspliced_transcript, threeprime_utr)
 
-            fiveprime_utr, unspliced_transcript, threeprime_utr =  adjust_to_own_definitions(exons, introns, utr5, utr3)
-            # NOTE: for some genes, the retrieved 3'UTR contains the last amino acid of the stop codon (it is displayed correctly on Ensembl)
-            # This does not seem to happen for the 5'UTR and the start codon
-            fix_stopcodon_if_neccessary_and_possible(unspliced_transcript, threeprime_utr)
-
-            write_each_to_file(id, fiveprime_utr, unspliced_transcript, threeprime_utr)
-        end
+        [fiveprime_utr, unspliced_transcript, threeprime_utr]
     end
 
     def get_exons_and_introns(seq)
@@ -203,7 +191,7 @@ class GetEnsemblData
         [exons_introns, utr3]
     end
 
-    def write_each_to_file(id, utr5, exons_introns, utr3)
+    def write_to_file(id, utr5, exons_introns, utr3)
         @fh.puts GeneToFasta.new("#{id} 5'UTR", utr5).fasta
         @fh.puts GeneToFasta.new("#{id} CDS", exons_introns).fasta
         @fh.puts GeneToFasta.new("#{id} 3'UTR", utr3).fasta
