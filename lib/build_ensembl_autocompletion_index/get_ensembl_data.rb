@@ -27,8 +27,13 @@ class GetEnsemblData
         utrs_masked = get_sequences("utrs")
 
         puts "Parsing transcripts, determining exons, introns, utr regions ..."
-        # NOTE successfully parsed sequences are written to @file
+        @fh = File.open(@file, "w")
         parse_sequences(introns_masked, utrs_masked)
+        @fh.close
+    end
+
+    at_exit do
+        @fh.close if @fh
     end
 
     private
@@ -212,9 +217,9 @@ class GetEnsemblData
     end
 
     def write_each_to_file(id, utr5, exons_introns, utr3)
-        GeneToFasta.new("#{id} 5'UTR", utr5).write(@file)
-        GeneToFasta.new("#{id} CDS", exons_introns).write(@file)
-        GeneToFasta.new("#{id} 3'UTR", utr3).write(@file)
+        @fh.puts GeneToFasta.new("#{id} 5'UTR", utr5).fasta
+        @fh.puts GeneToFasta.new("#{id} CDS", exons_introns).fasta
+        @fh.puts GeneToFasta.new("#{id} 3'UTR", utr3).fasta
     end
 
     def split_seq_by_case(seq)
