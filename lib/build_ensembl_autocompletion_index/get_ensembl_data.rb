@@ -9,18 +9,12 @@ class GetEnsemblData
     def initialize(outfile)
         @file = outfile
         @release = get_release
-
-        @gene_prefix = "ENSG"
         @transcript_prefix = "ENST"
-    end
-
-    def get_genes
-# TODO
     end
 
     def get_transcripts
         puts "Getting transcript ids ..."
-        @ids = get_ids("transcript")
+        @ids = get_ids
 
         puts "Getting transcripts ..."
         introns_masked = get_sequences("introns")
@@ -51,20 +45,13 @@ class GetEnsemblData
         end
     end
 
-    def get_ids(kind)
+    def get_ids
         # NOTE: no idea how to retrieve this information using the REST-API...
         # instead: using an XML query generated with BioMart
 
-        if kind == "transcript"
-            filter = "transcript_biotype"
-            attribute = "ensembl_transcript_id"
-            prefix = @transcript_prefix
-        else
-            # kind == gene!
-            filter = "biotype"
-            attribute = "ensembl_gene_id"
-            prefix = @gene_prefix
-        end
+        filter = "transcript_biotype"
+        attribute = "ensembl_transcript_id"
+        prefix = @transcript_prefix
 
         path = "http://www.ensembl.org/biomart/martservice?"
         request = "\'query=<!DOCTYPE Query><Query  virtualSchemaName = \"default\" formatter = \"CSV\" header = \"0\" uniqueRows = \"1\" count = \"\" datasetConfigVersion = \"0.6\" ><Dataset name = \"hsapiens_gene_ensembl\" interface = \"default\" ><Filter name = \"#{filter}\" value = \"protein_coding\"/><Attribute name = \"#{attribute}\" /></Dataset></Query>\'"
