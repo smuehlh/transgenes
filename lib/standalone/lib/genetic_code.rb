@@ -63,7 +63,7 @@ module GeneticCode
     end
 
     def is_stopcodon(codon)
-        table.fetch(codon) == "*"
+        table.fetch(codon, "") == "*"
     end
 
     def translate(cdna)

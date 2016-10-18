@@ -182,7 +182,7 @@ class GetEnsemblData
             # it's neccessary
 
             last_codon_when_fixed = exons_introns.last(2) + utr3.first
-            if ! utr3.blank? && GeneticCode.is_stopcodon(last_codon_when_fixed)
+            if GeneticCode.is_stopcodon(last_codon_when_fixed)
                 # it's possible
                 exons_introns = exons_introns + utr3.first
                 utr3 = utr3[1..-1]
