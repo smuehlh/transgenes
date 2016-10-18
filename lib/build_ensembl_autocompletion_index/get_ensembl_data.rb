@@ -85,7 +85,7 @@ class GetEnsemblData
         fiveprime_utr, unspliced_transcript, threeprime_utr =  adjust_to_own_definitions(exons, introns, utr5, utr3)
         # NOTE: for some genes, the retrieved 3'UTR contains the last amino acid of the stop codon (it is displayed correctly on Ensembl)
         # This does not seem to happen for the 5'UTR and the start codon
-        fix_stopcodon_if_neccessary_and_possible(unspliced_transcript, threeprime_utr)
+        unspliced_transcript, threeprime_utr = fix_stopcodon_if_neccessary_and_possible(unspliced_transcript, threeprime_utr)
 
         [fiveprime_utr, unspliced_transcript, threeprime_utr]
     end
@@ -179,7 +179,8 @@ class GetEnsemblData
         if ! GeneticCode.is_stopcodon(exons_introns[-3..-1])
             # it's neccessary
 
-            last_codon_when_fixed = exons_introns[-2..-1] + utr3[0]
+            # NOTE - use utr3[0..0] instead of utr3[0] to always get a string back, even if utr3 is empty string
+            last_codon_when_fixed = exons_introns[-2..-1] + utr3[0..0]
             if GeneticCode.is_stopcodon(last_codon_when_fixed)
                 # it's possible
                 exons_introns = exons_introns + utr3[0]
