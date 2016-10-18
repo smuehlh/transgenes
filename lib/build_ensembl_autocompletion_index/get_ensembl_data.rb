@@ -4,8 +4,6 @@ class GetEnsemblData
     require 'uri'
     require 'json'
 
-    require 'byebug' # FIXME
-
     attr_reader :release
 
     def initialize(outfile)
@@ -29,9 +27,8 @@ class GetEnsemblData
         utrs_masked = get_sequences("utrs")
 
         puts "Parsing transcripts, determining exons, introns, utr regions ..."
-        ids_with_sequences = parse_sequences(introns_masked, utrs_masked)
-
-        ids_with_sequences
+        # NOTE successfully parsed sequences are written to @file
+        parse_sequences(introns_masked, utrs_masked)
     end
 
     private
@@ -93,7 +90,6 @@ class GetEnsemblData
     end
 
     def parse_sequences(introns_masked, utrs_masked)
-        parsed = {}
         @ids.each_with_index do |id, ind|
             introns_masked_seq = introns_masked[ind]
             utrs_masked_seq = utrs_masked[ind]
@@ -108,17 +104,10 @@ class GetEnsemblData
             fiveprime_utr, unspliced_transcript, threeprime_utr =  adjust_to_own_definitions(exons, introns, utr5, utr3)
             # NOTE: for some genes, the retrieved 3'UTR contains the last amino acid of the stop codon (it is displayed correctly on Ensembl)
             # This does not seem to happen for the 5'UTR and the start codon
-            unless GeneticCode.is_stopcodon(unspliced_transcript.last(3))
-                unspliced_transcript, threeprime_utr = fix_stopcodon(unspliced_transcript, threeprime_utr)
-            end
+            fix_stopcodon_if_neccessary_and_possible(unspliced_transcript, threeprime_utr)
 
-            parsed[id] = {
-                fiveprime_utr: fiveprime_utr,
-                unspliced_transcript: unspliced_transcript,
-                threeprime_utr: threeprime_utr
-            }
+            write_each_to_file(id, fiveprime_utr, unspliced_transcript, threeprime_utr)
         end
-        parsed
     end
 
     def get_exons_and_introns(seq)
@@ -208,13 +197,24 @@ class GetEnsemblData
         [utr5_cleaned, exons_introns_cleaned, utr3_cleaned]
     end
 
-    def fix_stopcodon(unspliced_transcript, threeprime_utr)
-        last_codon_when_first_utr_nt_is_added = unspliced_transcript.last(2) + threeprime_utr.first
-        if GeneticCode.is_stopcodon(last_codon_when_first_utr_nt_is_added)
-            unspliced_transcript = unspliced_transcript + threeprime_utr.first
-            threeprime_utr = threeprime_utr[1..-1]
+    def fix_stopcodon_if_neccessary_and_possible(exons_introns, utr3)
+        if ! GeneticCode.is_stopcodon(exons_introns.last(3))
+            # it's neccessary
+
+            last_codon_when_fixed = exons_introns.last(2) + utr3.first
+            if ! utr3.blank? && GeneticCode.is_stopcodon(last_codon_when_fixed)
+                # it's possible
+                exons_introns = exons_introns + utr3.first
+                utr3 = utr3[1..-1]
+            end
         end
-        [unspliced_transcript, threeprime_utr]
+        [exons_introns, utr3]
+    end
+
+    def write_each_to_file(id, utr5, exons_introns, utr3)
+        GeneToFasta.new("#{id} 5'UTR", utr5).write(@file)
+        GeneToFasta.new("#{id} CDS", exons_introns).write(@file)
+        GeneToFasta.new("#{id} 3'UTR", utr3).write(@file)
     end
 
     def split_seq_by_case(seq)
