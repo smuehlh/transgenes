@@ -11,10 +11,10 @@ namespace :ensembl do
 
         desc "Get Ensembl Transcripts"
         task transcripts: :environment do
-            file = File.join(basepath, "transcripts_#{DateTime.now}.txt")
+            today = Time.new.strftime("%Y%m%d")
+            file = File.join(basepath, "transcripts_#{today}.txt")
             api = GetEnsemblData.new(file)
             api.get_transcripts
-            # TODO: save to file!
         end
     end
 end
