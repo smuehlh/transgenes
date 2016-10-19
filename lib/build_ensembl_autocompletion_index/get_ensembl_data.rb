@@ -222,6 +222,8 @@ class GetEnsemblData
         end
 
         response.body
+    rescue Errno::ETIMEDOUT
+        false
     end
 
     def log_progress
