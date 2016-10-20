@@ -1,8 +1,8 @@
 namespace :ensembl do
-    namespace :codon_probabilities do
+    namespace :analyse do
 
-        desc "Calculate codon probability matrix for one-exon genes"
-        task one_exon_genes: :environment do
+        desc "Create matrix based on one-exon genes"
+        task third_sites: :environment do
             require File.join(Rails.root, 'lib', 'standalone', 'lib', 'genetic_code.rb')
 
             # init third-site counts

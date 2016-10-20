@@ -1,17 +1,17 @@
 namespace :ensembl do
-    namespace :autocompletion do
+    namespace :db do
 
-        desc "Update (= delete and setup) Ensembl Gene Ids for autocompletion"
-        task :update => [:delete, :setup] do
+        desc "Update EnsemblGene: download transcripts, import and clean up"
+        task :update => ["download:transcripts", "db:clear", "db:add", "download:clear"] do
         end
 
-        desc "Delete Ensembl Gene Id autocompletion records"
-        task delete: :environment do
+        desc "Clear records"
+        task clear: :environment do
             EnsemblGene.delete_all
         end
 
-        desc "Setup Ensembl Gene Id autocompletion records"
-        task setup: :environment do
+        desc "Import transcripts from tmp-file"
+        task add: :environment do
             require File.join(Rails.root, 'lib', 'build_ensembl_autocompletion_index', 'get_ensembl_data.rb')
             ensembl_data = GetEnsemblData.new
 
