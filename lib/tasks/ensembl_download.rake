@@ -14,7 +14,8 @@ namespace :ensembl do
 
         desc "Clear transcripts tmp-file"
         task clear: :environment do
-
+            file = File.join(basepath, "transcripts_*")
+            FileUtils.rm Dir.glob(file)
         end
     end
 end
