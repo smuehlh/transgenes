@@ -6,13 +6,12 @@ class GetEnsemblData
 
     attr_reader :release
 
-    def initialize(outfile)
-        @file = outfile
+    def initialize
         @release = get_release
         @transcript_prefix = "ENST"
     end
 
-    def get_transcripts
+    def get_transcripts(new_path_to_ensembl_download)
         @fh = File.open(@file, "w")
 
         puts "Getting transcript ids ..."
@@ -27,6 +26,14 @@ class GetEnsemblData
             write_to_file(id, utr5, exons_introns, utr3)
         end
         @fh.close
+    end
+
+    def self.split_fasta_header(header)
+        header.split(" ")
+    end
+
+    def build_fasta_header(id, kind)
+        "#{id} #{kind}"
     end
 
     at_exit do
@@ -191,9 +198,9 @@ class GetEnsemblData
     end
 
     def write_to_file(id, utr5, exons_introns, utr3)
-        @fh.puts GeneToFasta.new("#{id} 5'UTR", utr5).fasta
-        @fh.puts GeneToFasta.new("#{id} CDS", exons_introns).fasta
-        @fh.puts GeneToFasta.new("#{id} 3'UTR", utr3).fasta
+        @fh.puts GeneToFasta.new(build_fasta_header(id, "5'UTR"), utr5).fasta
+        @fh.puts GeneToFasta.new(build_fasta_header(id, "CDS"), exons_introns).fasta
+        @fh.puts GeneToFasta.new(build_fasta_header(id, "3'UTR"), utr3).fasta
     end
 
     def split_seq_by_case(seq)
