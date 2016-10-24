@@ -33,7 +33,7 @@ namespace :ensembl do
         end
 
         def basepath_ensembl_queries
-            File.join(Rails.root, 'lib', 'build_ensembl_autocompletion_index')
+            File.join(Rails.root, 'lib', 'build_ensembl')
         end
     end
 end
