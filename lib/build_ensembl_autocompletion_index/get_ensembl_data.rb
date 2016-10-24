@@ -27,7 +27,7 @@ class GetEnsemblData
     end
 
     def self.split_fasta_header(header)
-        header.split(" ")
+        header.delete(">").split(" ")
     end
 
     def build_fasta_header(id, kind)
