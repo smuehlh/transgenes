@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160914080638) do
+ActiveRecord::Schema.define(version: 20161024071146) do
 
   create_table "enhanced_genes", force: :cascade do |t|
     t.text     "gene_name"
@@ -46,6 +46,8 @@ ActiveRecord::Schema.define(version: 20160914080638) do
     t.string   "version"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text     "utr5"
+    t.text     "utr3"
   end
 
   add_index "ensembl_genes", ["gene_id"], name: "index_ensembl_genes_on_gene_id"
