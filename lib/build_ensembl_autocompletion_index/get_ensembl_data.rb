@@ -4,8 +4,6 @@ class GetEnsemblData
     require 'uri'
     require 'json'
 
-    attr_reader :release
-
     def initialize
         @release = get_release
         @transcript_prefix = "ENST"
@@ -33,7 +31,7 @@ class GetEnsemblData
     end
 
     def build_fasta_header(id, kind)
-        "#{id} #{kind}"
+        "#{id} #{kind} #{@release}"
     end
 
     at_exit do
