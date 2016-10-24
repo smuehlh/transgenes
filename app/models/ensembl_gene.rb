@@ -17,8 +17,15 @@ class EnsemblGene < ActiveRecord::Base
         create(gene_id: id, cds: seq, utr5: utr5, utr3: utr3, version: version)
     end
 
-    def to_fasta
-        to_fasta_obj = GeneToFasta.new(self.gene_id, self.cds)
+    def to_fasta(kind="CDS")
+        to_fasta_obj =
+            if kind == "5'UTR"
+                GeneToFasta.new(self.gene_id, self.utr5)
+            elsif kind == "3'UTR"
+                GeneToFasta.new(self.gene_id, self.utr3)
+            else
+                GeneToFasta.new(self.gene_id, self.cds)
+            end
         to_fasta_obj.fasta
     end
 end
