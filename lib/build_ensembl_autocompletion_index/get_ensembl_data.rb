@@ -9,8 +9,8 @@ class GetEnsemblData
         @transcript_prefix = "ENST"
     end
 
-    def get_transcripts(new_path_to_ensembl_download)
-        @fh = File.open(@file, "w")
+    def get_transcripts(file)
+        @fh = File.open(file, "w")
 
         puts "Getting transcript ids ..."
         @ids = get_ids
