@@ -170,7 +170,7 @@ function bind_validate_to_input() {
 
     // 'input:text' being '[name="ensembl[gene_id]"]'
     var ensembl_maxsize = inputs.find("input:text").attr('maxlength');
-    var ensembl_validation = inputs.find("input:text").data('valid') || '^ENSG\d+(?:\.\d+)?$';
+    var ensembl_validation = inputs.find("input:text").data('valid') || '^ENST\d+(?:\.\d+)?$';
 
     var ese_validation = inputs.find("textarea[name='ese[data]']").data('valid');
     var ese_maxsize = inputs.find("textarea[name='ese[data]']").attr('maxlength');
@@ -203,7 +203,7 @@ function bind_validate_to_input() {
             },
             messages: {
                 "ensembl[gene_id]": {
-                    regex: "Please enter a valid Ensemble gene ID."
+                    regex: "Please enter a valid Ensembl transcript ID."
                 },
                 "enhancer[data]": {
                     regex: "Please enter a valid FASTA or Genebank."
