@@ -90,16 +90,20 @@ class Gene
         exons.zip(introns).flatten.compact.join("")
     end
 
-    def replace_codon_at_pos(pos, new_codon)
+    def replace_codon_at_pos(third_site, new_codon)
+        replace_nt_at_pos(third_site-2, new_codon[0])
+        replace_nt_at_pos(third_site-1, new_codon[1])
+        replace_nt_at_pos(third_site, new_codon[2])
+    end
+
+    def replace_nt_at_pos(pos, new_nt)
         @exons.each do |exon|
             if pos >= exon.size
                 pos -= exon.size
             else
-                # TODO: replace complete codon, not just last nt.
-                exon[pos] = new_codon.chars.last
+                exon[pos] = new_nt
                 break
             end
-            exon
         end
     end
 end
