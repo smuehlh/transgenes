@@ -1,8 +1,10 @@
 class ScoreSynonymousCodons
 
-    def initialize(strategy, exons, ese_motifs)
+    def initialize(strategy, stay_in_subbox_for_6folds, exons, ese_motifs)
         @sequence = exons.join("")
-        init_scoring_objects(strategy, ese_motifs)
+        @strategy_scorer = init_strategy_scorer(strategy)
+        @ese_scorer = EseScores.new(ese_motifs)
+        @choose_synonymous_codons_for_6folds_from_subbox = stay_in_subbox_for_6folds
     end
 
     def score_synonymous_codons_at(pos)
@@ -27,18 +29,16 @@ class ScoreSynonymousCodons
 
     private
 
-    def init_scoring_objects(strategy, ese_motifs)
-        @strategy_scoring_obj =
-            case strategy
-            when "raw" then RawSequenceScores.new
-            when "humanize" then HumanMatchedSequenceScores.new
-            when "gc" then GcMatchedSequenceScores.new
-            else
-                ErrorHandling.abort_with_error_message(
-                    "unknown_strategy", "ScoreSynonymousCodons"
-                )
-            end
-        @ese_scoring_obj = EseScores.new(ese_motifs)
+    def init_strategy_scorer(strategy)
+        case strategy
+        when "raw" then RawSequenceScores.new
+        when "humanize" then HumanMatchedSequenceScores.new
+        when "gc" then GcMatchedSequenceScores.new
+        else
+            ErrorHandling.abort_with_error_message(
+                "unknown_strategy", "ScoreSynonymousCodons"
+            )
+        end
     end
 
     def init_vars_describing_codon_and_position(pos)
@@ -118,11 +118,11 @@ class ScoreSynonymousCodons
 
     def score_synonymous_codon(windows, synonymous_codon)
         strategy_score =
-            @strategy_scoring_obj.score_synonymous_codon_by_strategy(
+            @strategy_scorer.score_synonymous_codon_by_strategy(
                 synonymous_codon, @original_codon
             )
         ese_score =
-            @ese_scoring_obj.score_synonymous_codon_by_ese_resemblance(windows)
+            @ese_scorer.score_synonymous_codon_by_ese_resemblance(windows)
 
         combine_scores(strategy_score, ese_score)
     end

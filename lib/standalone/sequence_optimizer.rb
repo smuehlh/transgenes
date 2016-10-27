@@ -29,7 +29,7 @@ gene.remove_introns(options.remove_first_intron)
 gene.log_statistics
 
 # tweak sequence
-gene.tweak_sequence(options.strategy)
+gene.tweak_sequence(options.strategy, options.stay_in_subbox_for_6folds)
 gene.log_tweak_statistics
 
 # output sequence

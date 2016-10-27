@@ -51,8 +51,8 @@ class Gene
         $logger.info(str)
     end
 
-    def tweak_sequence(strategy)
-        scorer = ScoreSynonymousCodons.new(strategy, @exons, @ese_motifs)
+    def tweak_sequence(strategy, stay_in_subbox_for_6folds)
+        scorer = ScoreSynonymousCodons.new(strategy, stay_in_subbox_for_6folds, @exons, @ese_motifs)
         syn_sites = SynonymousSites.new(@exons, @introns)
 
         syn_sites.get_synonymous_sites_in_exons.each do |pos|
