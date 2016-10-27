@@ -7,7 +7,7 @@ class CommandlineOptions
         :input_line, :utr5prime_line, :utr3prime_line,
         :remove_first_intron,
         :ese,
-        :choose_sixfold_from_subbox,
+        :stay_in_subbox_for_6folds,
         :verbose
 
     def initialize(args)
@@ -49,7 +49,7 @@ class CommandlineOptions
             @utr5prime @utr5prime_line @utr3prime @utr3prime_line
             @remove_first_intron
             @ese
-            @choose_sixfold_from_subbox
+            @stay_in_subbox_for_6folds
             @verbose
         )
     end
@@ -155,7 +155,7 @@ class CommandlineOptions
             end
             opts.on("-c", "--stay-in-codon-box",
                 "6-fold degenerates: Stay in the respective (2- or 4-fold) codon box", "when selecting a synonymous codon.", "If not specified, all 6 codons are considered.") do |opt|
-                @choose_sixfold_from_subbox = true
+                @stay_in_subbox_for_6folds = true
             end
             opts.separator ""
             opts.on("-v", "--verbose", "Produce verbose log.") do |opt|
