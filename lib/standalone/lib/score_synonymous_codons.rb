@@ -76,8 +76,13 @@ class ScoreSynonymousCodons
     end
 
     def get_synonymous_codons
-        # including original codon, containing only codons of same codon box (relevant for 6-codon boxes only)
-        GeneticCode.get_synonymous_codons_in_codon_box(@original_codon)
+        # original codon always included
+        # codons will be restricted to codon subbox depending on option set (relevant for 6-codon boxes only)
+        if @choose_synonymous_codons_for_6folds_from_subbox
+            GeneticCode.get_synonymous_codons_in_codon_box(@original_codon)
+        else
+            GeneticCode.get_synonymous_codons(@original_codon)
+        end
     end
 
     def get_startpositions_of_snippets_containing_pos
