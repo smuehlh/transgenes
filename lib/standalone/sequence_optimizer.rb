@@ -22,13 +22,13 @@ gene.add_five_prime_utr(
 gene.add_three_prime_utr(
     *ToGene.init_and_parse("3'UTR", options.utr3prime, options.utr3prime_line)
 ) if options.utr3prime
+gene.add_ese_list(EseToGene.init_and_parse(options.ese)) if options.ese
 
 # remove unwanted introns
 gene.remove_introns(options.remove_first_intron)
 gene.log_statistics
 
 # tweak sequence
-gene.add_ese_list(EseToGene.init_and_parse(options.ese)) if options.ese
 gene.tweak_sequence(options.strategy)
 gene.log_tweak_statistics
 
