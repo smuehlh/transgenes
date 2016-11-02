@@ -102,6 +102,7 @@ class ScoreSynonymousCodons
     end
 
     def mutate_codon_to(new_codon)
+        # FIXME: replace complete codon, not just the third site.
         head = @sequence[0..@pos-1]
         mutation = new_codon.chars.last
         tail = @sequence[@pos+1..-1]
