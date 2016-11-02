@@ -52,7 +52,7 @@ class Gene
     end
 
     def tweak_sequence(strategy, stay_in_subbox_for_6folds)
-        scorer = ScoreSynonymousCodons.new(strategy, stay_in_subbox_for_6folds, @exons, @ese_motifs)
+        scorer = ScoreSynonymousCodons.new(strategy, stay_in_subbox_for_6folds, @ese_motifs, @exons.join(""))
         syn_sites = SynonymousSites.new(@exons, @introns)
 
         syn_sites.get_synonymous_sites_in_exons.each do |pos|

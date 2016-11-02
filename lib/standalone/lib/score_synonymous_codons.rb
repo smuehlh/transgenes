@@ -1,7 +1,7 @@
 class ScoreSynonymousCodons
 
-    def initialize(strategy, stay_in_subbox_for_6folds, exons, ese_motifs)
-        @sequence = exons.join("")
+    def initialize(strategy, stay_in_subbox_for_6folds, ese_motifs, cds)
+        @cds = cds
         @strategy_scorer = init_strategy_scorer(strategy)
         @ese_scorer = EseScores.new(ese_motifs)
         @choose_synonymous_codons_for_6folds_from_subbox = stay_in_subbox_for_6folds
