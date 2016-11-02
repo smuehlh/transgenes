@@ -45,14 +45,14 @@ class Gene
         str = "Number of exons: #{@exons.size}\n"
         first_intron_kept = @introns.size == 1
         str += "All introns " + (first_intron_kept ? "but" : "including") + " the first removed.\n"
-        n_aa = @exons.join("").size / 3
+        n_aa = cds.size / 3
         str += "Number of amino acids: #{n_aa}\n"
         str += "Total mRNA size: #{@sequence.size}"
         $logger.info(str)
     end
 
     def tweak_sequence(strategy, stay_in_subbox_for_6folds)
-        scorer = ScoreSynonymousCodons.new(strategy, stay_in_subbox_for_6folds, @ese_motifs, @exons.join(""))
+        scorer = ScoreSynonymousCodons.new(strategy, stay_in_subbox_for_6folds, @ese_motifs, cds)
         syn_sites = SynonymousSites.new(@exons, @introns)
 
         syn_sites.get_synonymous_sites_in_exons.each do |pos|
@@ -88,6 +88,10 @@ class Gene
 
     def combine_exons_and_introns(exons, introns)
         exons.zip(introns).flatten.compact.join("")
+    end
+
+    def cds
+        @exons.join("")
     end
 
     def replace_codon_at_pos(third_site, new_codon)
