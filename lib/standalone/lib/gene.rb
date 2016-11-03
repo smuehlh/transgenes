@@ -56,12 +56,13 @@ class Gene
         syn_sites = SynonymousSites.new(@exons, @introns)
 
         syn_sites.get_synonymous_sites_in_exons.each do |pos|
-            best_scoring_codon = scorer.score_synonymous_codons_at(pos)
+            bestscoring_codon = scorer.bestscoring_synonymous_codon_at(pos)
 
-            if scorer.is_bestscoring_codon_not_the_original_codon
-                replace_codon_at_pos(pos, best_scoring_codon)
-                @number_of_changed_sites += 1
-                $logger.info(scorer.log_changes)
+            if ! scorer.is_original_codon_scoring_best_at(pos, bestscoring_codon)
+                replace_codon_at_pos(pos, bestscoring_codon)
+                log_codon_replacement(
+                    scorer.log_bestscoring_codon_at(pos, bestscoring_codon)
+                )
             end
         end
 
@@ -109,5 +110,10 @@ class Gene
                 break
             end
         end
+    end
+
+    def log_codon_replacement(log)
+        @number_of_changed_sites += 1
+        $logger.info(log)
     end
 end

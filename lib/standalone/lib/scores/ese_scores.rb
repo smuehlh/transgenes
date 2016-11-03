@@ -4,8 +4,10 @@ class EseScores
         @ese_motifs = ese_motifs
     end
 
-    def score_synonymous_codon_by_ese_resemblance(windows)
-        actual_score(windows)/max_score(windows).to_f
+    def score(windows_for_all_syn_codons)
+        windows_for_all_syn_codons.collect do |windows|
+            actual_score(windows)/max_score(windows).to_f
+        end
     end
 
     private

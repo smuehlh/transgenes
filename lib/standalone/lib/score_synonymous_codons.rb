@@ -7,24 +7,21 @@ class ScoreSynonymousCodons
         @choose_synonymous_codons_for_6folds_from_subbox = stay_in_subbox_for_6folds
     end
 
-    def score_synonymous_codons_at(pos)
-        init_vars_describing_codon_and_position(pos)
-        score_synonymous_codons
-        sort_synonymous_codons_by_score
-        select_bestscoring_codon
+    def bestscoring_synonymous_codon_at(pos)
+        orig_codon = get_codon_at(pos)
+        syn_codons, scores = score_synonymous_codons_at(pos)
+        best_codon = find_bestscoring_codon(syn_codons, scores)
+        stick_to_orignal_codon_if_it_scores_equally_well(orig_codon, best_codon, syn_codons, scores)
     end
 
-    def is_bestscoring_codon_not_the_original_codon
-        @original_codon != @bestscoring_synonymous_codon
+    def is_original_codon_scoring_best_at(pos, best_codon)
+        orig_codon = get_codon_at(pos)
+        best_codon == orig_codon
     end
 
-    def log_changes
-        codons_with_scores =
-            @sorted_synonymous_codons.collect.each_with_index do |codon, ind|
-                score = -@sorted_scores[ind].round(2)
-                "#{codon}: #{score}"
-            end.join(", ")
-        "Pos #{@pos}: #{@original_codon} -> #{@sorted_synonymous_codons.first} (#{codons_with_scores})"
+    def log_bestscoring_codon_at(pos, best_codon)
+        orig_codon = get_codon_at(pos)
+        "Pos #{pos}: #{orig_codon} -> #{best_codon}"
     end
 
     private
@@ -41,100 +38,111 @@ class ScoreSynonymousCodons
         end
     end
 
-    def init_vars_describing_codon_and_position(pos)
-        @pos = pos
-        @original_codon = get_codon_at_pos
-        @synonymous_codons = get_synonymous_codons # including original codon
-        @snippet_starts = get_startpositions_of_snippets_containing_pos
+    def score_synonymous_codons_at(pos)
+        syn_codons = get_synonymous_codons_at(pos)
+        strategy_scores = score_by_strategy(syn_codons, pos)
+        ese_scores = score_by_ese(syn_codons, pos)
+        combined_scores = combine_weighted_scores(strategy_scores, ese_scores)
+
+        [syn_codons, combined_scores]
     end
 
-    def score_synonymous_codons
-        @scores = @synonymous_codons.collect do |codon|
-            windows = get_sequence_snippets(codon)
-            score_synonymous_codon(windows, codon)
+    def find_bestscoring_codon(syn_codons, scores)
+        highest_score_seen, codon_highest_score_seen = Float::MIN, nil
+        syn_codons.each_with_index do |codon, ind|
+            score = scores[ind]
+            if score >= highest_score_seen
+                highest_score_seen = score
+                codon_highest_score_seen = codon
+            end
+        end
+        codon_highest_score_seen
+    end
+
+    def stick_to_orignal_codon_if_it_scores_equally_well(orig_codon, best_codon, syn_codons, scores)
+        score_orig_codon = scores[syn_codons.index(orig_codon)]
+        score_best_codon = scores[syn_codons.index(best_codon)]
+
+        score_orig_codon == score_best_codon ? orig_codon : best_codon
+    end
+
+    def score_by_strategy(syn_codons, pos)
+        # NOTE: need orig_codon separately only because of raw-scorer
+        orig_codon = get_codon_at(pos)
+        @strategy_scorer.score(syn_codons, orig_codon)
+    end
+
+    def score_by_ese(syn_codons, pos)
+        windows_containing_syn_codons = syn_codons.collect do |codon|
+            seq_part = get_mutated_subsequence_covering_all_windows(pos, codon)
+            divide_into_windows(seq_part)
+        end
+
+        @ese_scorer.score(windows_containing_syn_codons)
+    end
+
+    def combine_weighted_scores(strategy_scores, ese_scores)
+        strategy_scores.collect.with_index do |strategy_score, ind|
+            ese_score = ese_scores[ind]
+            strategy_score + ese_score
         end
     end
 
-    def sort_synonymous_codons_by_score
-        indices = (0..@scores.size-1)
-        negative_scores_with_indices = @scores.map{ |x| -x }.zip(indices)
-        sorted_scores_with_original_index = negative_scores_with_indices.sort
-        @sorted_synonymous_codons, @sorted_scores = [], []
-        sorted_scores_with_original_index.collect do |score, ind|
-            @sorted_synonymous_codons.push(@synonymous_codons[ind])
-            @sorted_scores.push(score)
-        end
-        @sorted_synonymous_codons
+    def get_codon_at(pos)
+        @cds[pos-2..pos]
     end
 
-    def select_bestscoring_codon
-        @bestscoring_synonymous_codon = @sorted_synonymous_codons.first
-    end
-
-    def get_codon_at_pos
-        @sequence[@pos-2..@pos]
-    end
-
-    def get_synonymous_codons
+    def get_synonymous_codons(codon)
         # original codon always included
         # codons will be restricted to codon subbox depending on option set (relevant for 6-codon boxes only)
         if @choose_synonymous_codons_for_6folds_from_subbox
-            GeneticCode.get_synonymous_codons_in_codon_box(@original_codon)
+            GeneticCode.get_synonymous_codons_in_codon_box(codon)
         else
-            GeneticCode.get_synonymous_codons(@original_codon)
+            GeneticCode.get_synonymous_codons(codon)
         end
     end
 
-    def get_startpositions_of_snippets_containing_pos
-        snippet_starts = ((@pos-max_distance_in_sequence_snippets_to_pos)..@pos)
-        snippet_starts.reject do |startpos|
-            stoppos = startpos + max_distance_in_sequence_snippets_to_pos
-            startpos < 0 || stoppos >= @sequence.size
-        end
+    def get_synonymous_codons_at(pos)
+        orig_codon = get_codon_at(pos)
+        get_synonymous_codons(orig_codon)
     end
 
-    def get_sequence_snippets(codon)
-        mutated_sequence = @original_codon ? @sequence : mutate_codon_to(codon)
-        @snippet_starts.collect do |startpos|
-            stoppos = startpos + max_distance_in_sequence_snippets_to_pos
-            mutated_sequence[startpos..stoppos]
-        end
+    def get_mutated_subsequence_covering_all_windows(pos, codon)
+        mutated_cds = mutate_codon_at(pos, codon)
+
+        window_starts = get_startpositions_of_windows_containing_pos(pos)
+        first_window_start = window_starts.first
+        last_window_stop = window_starts.last + ind_last_pos_in_window
+
+        mutated_cds[first_window_start..last_window_stop]
     end
 
-    def mutate_codon_to(new_codon)
-        # FIXME: replace complete codon, not just the third site.
-        head = @sequence[0..@pos-1]
-        mutation = new_codon.chars.last
-        tail = @sequence[@pos+1..-1]
-        [head, mutation, tail].join("")
-    end
-
-    def mutate_sequence_snippets(new_codon)
-        pos = max_distance_in_sequence_snippets_to_pos
-        @original_sequence_snippets.collect do |window|
-            window[pos] = new_codon.chars.last
-            pos -= 1
-            window
+    def divide_into_windows(seq_part)
+        (0..seq_part.size-1).collect do |startpos|
+            stoppos = startpos + ind_last_pos_in_window
+            next if stoppos >= seq_part.size
+            seq_part[startpos..stoppos]
         end.compact
     end
 
-    def max_distance_in_sequence_snippets_to_pos
+    def mutate_codon_at(pos, new_codon)
+        tmp = String.new(@cds)
+        tmp[pos-2..pos] = new_codon
+        tmp
+    end
+
+    def get_startpositions_of_windows_containing_pos(pos)
+        # FIXME: need first two snippets only if codon at pos is 6-fold and option to choose from all 6 is set.
+        codonstart = pos - 2
+        codonstop = pos
+        snippet_starts = ((codonstart-ind_last_pos_in_window)..codonstop)
+        snippet_starts.reject do |startpos|
+            stoppos = startpos + ind_last_pos_in_window
+            startpos < 0 || stoppos >= @cds.size
+        end
+    end
+
+    def ind_last_pos_in_window
         Constants.window_size - 1
-    end
-
-    def score_synonymous_codon(windows, synonymous_codon)
-        strategy_score =
-            @strategy_scorer.score_synonymous_codon_by_strategy(
-                synonymous_codon, @original_codon
-            )
-        ese_score =
-            @ese_scorer.score_synonymous_codon_by_ese_resemblance(windows)
-
-        combine_scores(strategy_score, ese_score)
-    end
-
-    def combine_scores(strategy_score, ese_score)
-        # assume the scores are already weighted and just need to be combined!
-        strategy_score + ese_score
     end
 end
