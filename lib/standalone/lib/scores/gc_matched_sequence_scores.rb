@@ -5,7 +5,7 @@ class GcMatchedSequenceScores
 
     def score_synonymous_codon_by_strategy(synonymous_codons, dummy)
         synonymous_codons.collect do |synonymous_codon|
-            actual_score(synonymous_codon)/max_score.to_f
+            actual_score(synonymous_codon)/max_score(synonymous_codons).to_f
         end
     end
 
@@ -15,7 +15,7 @@ class GcMatchedSequenceScores
         # FIXME: retrieve from table
     end
 
-    def max_score
+    def max_score(synonymous_codons)
         # FIXME: sum of syn-codon scores
     end
 end

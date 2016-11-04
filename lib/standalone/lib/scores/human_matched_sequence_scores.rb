@@ -5,7 +5,7 @@ class HumanMatchedSequenceScores
 
     def score(synonymous_codons, dummy)
         synonymous_codons.collect do |synonymous_codon|
-            actual_score(synonymous_codon)/max_score.to_f
+            actual_score(synonymous_codon)/max_score(synonymous_codons).to_f
         end
     end
 
@@ -15,9 +15,8 @@ class HumanMatchedSequenceScores
         human_codon_usage[synonymous_codon]
     end
 
-    def max_score
-        # FIXME: should be sum of all syn-codon scores
-        1
+    def max_score(synonymous_codons)
+        synonymous_codons.inject(0){|sum, codon| sum + human_codon_usage[codon]}
     end
 
     def human_codon_usage
