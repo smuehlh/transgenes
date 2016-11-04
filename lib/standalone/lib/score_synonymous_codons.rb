@@ -132,14 +132,18 @@ class ScoreSynonymousCodons
     end
 
     def get_startpositions_of_windows_containing_pos(pos)
-        # FIXME: need first two snippets only if codon at pos is 6-fold and option to choose from all 6 is set.
-        codonstart = pos - 2
+        # need first two snippets only if codon at pos is 6-fold and option to choose from all 6 is set.
+        codonstart = is_pos_treated_as_sixfold_site(pos) ? pos - 2 : pos
         codonstop = pos
         snippet_starts = ((codonstart-ind_last_pos_in_window)..codonstop)
         snippet_starts.reject do |startpos|
             stoppos = startpos + ind_last_pos_in_window
             startpos < 0 || stoppos >= @cds.size
         end
+    end
+
+    def is_pos_treated_as_sixfold_site(pos)
+        get_synonymous_codons_at(pos).size == 6
     end
 
     def ind_last_pos_in_window
