@@ -1,6 +1,10 @@
 class GcMatchedSequenceScores
 
     def initialize
+        # ensure counts-matrix has been loaded
+        ErrorHandling.abort_with_error_message(
+            "missing_strategy_matrix", "GcMatchedSequenceScores"
+        ) unless defined?(Third_site_counts)
     end
 
     def score_synonymous_codon_by_strategy(synonymous_codons, dummy)

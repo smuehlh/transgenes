@@ -70,6 +70,8 @@ module ErrorHandling
             error_message_with_reference_to_commandline_option_help(
                 "Unknown strategy for altering the sequence."
             )
+        when "missing_strategy_matrix"
+            "Missing data: Cannot alter the sequence."
         else
             "An unknown error occured."
         end
