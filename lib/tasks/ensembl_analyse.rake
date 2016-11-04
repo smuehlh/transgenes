@@ -76,12 +76,7 @@ namespace :ensembl do
         end
 
         def update_counts(counts, codon_degeneracy, last_nt, pos_in_gene)
-            begin
             counts[codon_degeneracy][last_nt][pos_in_gene] = 0 unless counts[codon_degeneracy][last_nt][pos_in_gene]
-            rescue
-                debugger
-                puts "??"
-            end
             counts[codon_degeneracy][last_nt][pos_in_gene] += 1
         end
     end
