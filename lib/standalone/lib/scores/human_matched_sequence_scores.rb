@@ -3,7 +3,7 @@ class HumanMatchedSequenceScores
     def initialize
     end
 
-    def score(synonymous_codons, dummy)
+    def score(synonymous_codons, original_codon, pos)
         synonymous_codons.collect do |synonymous_codon|
             actual_score(synonymous_codon)/max_score(synonymous_codons).to_f
         end

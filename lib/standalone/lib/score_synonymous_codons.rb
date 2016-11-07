@@ -69,7 +69,7 @@ class ScoreSynonymousCodons
     def score_by_strategy(syn_codons, pos)
         # NOTE: need orig_codon separately only because of raw-scorer
         orig_codon = get_codon_at(pos)
-        @strategy_scorer.score(syn_codons, orig_codon)
+        @strategy_scorer.score(syn_codons, orig_codon, pos)
     end
 
     def score_by_ese(syn_codons, pos)

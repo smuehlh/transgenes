@@ -7,7 +7,7 @@ class GcMatchedSequenceScores
         ) unless defined?(Third_site_counts)
     end
 
-    def score(synonymous_codons, dummy, pos)
+    def score(synonymous_codons, original_codon, pos)
         synonymous_codons.collect do |synonymous_codon|
             actual_score(synonymous_codon, pos)/max_score(synonymous_codons, pos).to_f
         end

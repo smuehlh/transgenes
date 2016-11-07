@@ -3,7 +3,7 @@ class RawSequenceScores
     def initialize
     end
 
-    def score(synonymous_codons, original_codon)
+    def score(synonymous_codons, original_codon, dummy)
         synonymous_codons.collect do |synonymous_codon|
             actual_score(synonymous_codon, original_codon)/max_score.to_f
         end
