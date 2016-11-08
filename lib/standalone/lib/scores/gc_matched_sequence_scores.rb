@@ -14,13 +14,14 @@ class GcMatchedSequenceScores
     end
 
     private
+    # TODO: deal with missing counts.
 
+    # NOTE: matrix contains counts rather than frequencies
     def actual_score(synonymous_codon, pos)
-        # FIXME: convert to frequencies?
         Third_site_counts[synonymous_codon][pos]
     end
 
-    def max_score(synonymous_codons)
+    def max_score(synonymous_codons, pos)
         synonymous_codons.inject(0){|sum, codon| sum + Third_site_counts[codon][pos]}
     end
 end
