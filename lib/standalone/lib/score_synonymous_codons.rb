@@ -2,7 +2,7 @@ class ScoreSynonymousCodons
 
     def initialize(strategy, stay_in_subbox_for_6folds, ese_motifs, cds)
         @cds = cds
-        @strategy_scorer = init_strategy_scorer(strategy)
+        @strategy_scorer = StrategyScores.new(strategy)
         @ese_scorer = EseScores.new(ese_motifs)
         @choose_synonymous_codons_for_6folds_from_subbox = stay_in_subbox_for_6folds
     end
@@ -25,18 +25,6 @@ class ScoreSynonymousCodons
     end
 
     private
-
-    def init_strategy_scorer(strategy)
-        case strategy
-        when "raw" then RawSequenceScores.new
-        when "humanize" then HumanMatchedSequenceScores.new
-        when "gc" then GcMatchedSequenceScores.new
-        else
-            ErrorHandling.abort_with_error_message(
-                "unknown_strategy", "ScoreSynonymousCodons"
-            )
-        end
-    end
 
     def score_synonymous_codons_at(pos)
         syn_codons = get_synonymous_codons_at(pos)
@@ -69,7 +57,7 @@ class ScoreSynonymousCodons
     def score_by_strategy(syn_codons, pos)
         # NOTE: need orig_codon separately only because of raw-scorer
         orig_codon = get_codon_at(pos)
-        @strategy_scorer.score(syn_codons, orig_codon, pos)
+        @strategy_scorer.weighted_scores(syn_codons, orig_codon, pos)
     end
 
     def score_by_ese(syn_codons, pos)
@@ -78,7 +66,7 @@ class ScoreSynonymousCodons
             divide_into_windows(seq_part)
         end
 
-        @ese_scorer.score(windows_containing_syn_codons)
+        @ese_scorer.weighted_scores(windows_containing_syn_codons)
     end
 
     def combine_weighted_scores(strategy_scores, ese_scores)

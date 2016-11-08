@@ -4,7 +4,7 @@ class EseScores
         @ese_motifs = ese_motifs
     end
 
-    def score(windows_for_all_syn_codons)
+    def weighted_scores(windows_for_all_syn_codons)
         windows_for_all_syn_codons.collect do |windows|
             actual_score(windows)/max_score(windows).to_f
         end
