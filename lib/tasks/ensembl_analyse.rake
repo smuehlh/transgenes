@@ -6,13 +6,10 @@ namespace :ensembl do
             require File.join(Rails.root, 'lib', 'standalone', 'lib', 'genetic_code.rb')
 
             # init third-site counts
-            counts = {
-                two_fold_degenerate: { t: {}, c: {}, a: {}, g: {} },
-                three_fold_degenerate: { t: {}, c: {}, a: {} },
-                four_fold_degenerate: { t: {}, c: {}, a: {}, g: {} },
-                six_fold_twosub_degenerate: { t: {}, c: {}, a: {}, g: {} },
-                six_fold_foursub_degenerate: { t: {}, c: {}, a: {}, g: {} }
-            }
+            counts = {} # outer/inner hash: codon/ position in gene
+            GeneticCode.valid_codons.each do |codon|
+                counts[codon] = {}
+            end
 
             EnsemblGene.find_each do |gene|
                 parsed_gene = parse_gene(gene)
@@ -25,11 +22,9 @@ namespace :ensembl do
 
                 codons.each_with_index do |codon, pos_in_gene|
                     next if GeneticCode.is_stopcodon(codon)
-                    next if GeneticCode.is_single_synonymous_codon(codon)
 
-                    codon_degeneracy = select_codon_degeneracy(codon)
-                    last_nt = get_last_nucleotide(codon)
-                    update_counts(counts, codon_degeneracy, last_nt, pos_in_gene)
+                    related_codons = GeneticCode.get_codons_same_third_site_and_degeneracy(codon)
+                    counts = update_counts(counts, related_codons, pos_in_gene)
                 end
             end
 
@@ -53,31 +48,12 @@ namespace :ensembl do
             gene_parser.get_records.values.first
         end
 
-        def select_codon_degeneracy(codon)
-            n_syn_codons = GeneticCode.get_synonymous_codons(codon).size
-            if n_syn_codons == 2
-                :two_fold_degenerate
-            elsif n_syn_codons == 3
-                :three_fold_degenerate
-            elsif n_syn_codons == 4
-                :four_fold_degenerate
-            elsif n_syn_codons == 6
-                n_syn_codons_same_box = GeneticCode.get_synonymous_codons_in_codon_box(codon).size
-                if n_syn_codons_same_box == 2
-                    :six_fold_twosub_degenerate
-                else
-                    :six_fold_foursub_degenerate
-                end
+        def update_counts(counts, related_codons, pos)
+            related_codons.each do |codon|
+                counts[codon][pos] = 0 unless counts[codon][pos]
+                counts[codon][pos] += 1
             end
-        end
-
-        def get_last_nucleotide(codon)
-            codon.last.downcase.to_sym
-        end
-
-        def update_counts(counts, codon_degeneracy, last_nt, pos_in_gene)
-            counts[codon_degeneracy][last_nt][pos_in_gene] = 0 unless counts[codon_degeneracy][last_nt][pos_in_gene]
-            counts[codon_degeneracy][last_nt][pos_in_gene] += 1
+            counts
         end
     end
 end

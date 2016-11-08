@@ -99,7 +99,19 @@ module GeneticCode
         syn_codons.select{ |syn_codon| syn_codon.start_with?(codon[0]) }
     end
 
-    def is_single_synonymous_codon(codon)
-        get_synonymous_codons(codon).size == 1
+    def get_codons_same_third_site_and_degeneracy(codon)
+        if is_stopcodon(codon)
+            return [codon]
+        else
+            syn_codons = get_synonymous_codons(codon)
+            syn_codons_same_box = get_synonymous_codons_in_codon_box(codon)
+            valid_codons.collect do |other|
+                next if other[-1] != codon[-1]
+                next if get_synonymous_codons(other).size != syn_codons.size
+                next if get_synonymous_codons_in_codon_box(other).size != syn_codons_same_box.size
+
+                other
+            end.compact
+        end
     end
 end
