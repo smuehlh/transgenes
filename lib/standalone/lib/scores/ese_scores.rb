@@ -5,13 +5,19 @@ class EseScores
     end
 
     def weighted_scores(windows_for_all_syn_codons)
-        windows_for_all_syn_codons.collect do |windows|
-            ese_count(windows)/max_count(windows).to_f
+        if @ese_motifs.any?
+            # score windows accoring to their ese resemblance
+            windows_for_all_syn_codons.collect do |windows|
+                ese_count(windows)/max_count(windows).to_f
+            end
+        else
+            # set all scores to 0
+            Array.new(windows_for_all_syn_codons.size) {0}
         end
     end
 
     def max_score
-        1
+        @ese_motifs.any? ? 1 : 0
     end
 
     private
