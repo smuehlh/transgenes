@@ -70,9 +70,10 @@ class ScoreSynonymousCodons
     end
 
     def combine_weighted_scores(strategy_scores, ese_scores)
+        max_score = @strategy_scorer.max_score + @ese_scorer.max_score
         strategy_scores.collect.with_index do |strategy_score, ind|
             ese_score = ese_scores[ind]
-            strategy_score + ese_score
+            (strategy_score + ese_score)/max_score.to_f # normalize
         end
     end
 
