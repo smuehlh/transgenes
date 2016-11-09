@@ -53,12 +53,26 @@ class StrategyScores
     end
 
     def gc_score(synonymous_codon, pos)
-        Third_site_counts[synonymous_codon][pos]
+        if Third_site_counts[synonymous_codon].has_key?(pos)
+            Third_site_counts[synonymous_codon][pos]
+        else
+            average_over_nearest_pos(Third_site_counts[synonymous_codon], pos)
+        end
     end
 
     def summed_up_codon_scores(synonymous_codons, original_codon, pos)
         synonymous_codons.inject(0) do |sum, codon|
             sum + codon_score(codon, original_codon, pos)
         end
+    end
+
+    def average_over_nearest_pos(available_data, pos)
+        sorted = available_data.keys.sort_by{|other| (pos-other).abs }
+        nearest_pos = sorted.take(10)
+        counts_nearest_pos = nearest_pos.collect{|pos| available_data[pos] }
+        # calc average
+        sum = counts_nearest_pos.inject(:+)
+        len = counts_nearest_pos.size
+        sum/len.to_f
     end
 end
