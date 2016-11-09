@@ -11,7 +11,7 @@ class ScoreSynonymousCodons
         orig_codon = get_codon_at(pos)
         syn_codons, scores = score_synonymous_codons_at(pos)
         best_codon = find_bestscoring_codon(syn_codons, scores)
-        stick_to_orignal_codon_if_it_scores_equally_well(orig_codon, best_codon, syn_codons, scores)
+        stick_to_original_codon_if_it_scores_equally_well(orig_codon, best_codon, syn_codons, scores)
     end
 
     def is_original_codon_scoring_best_at(pos, best_codon)
@@ -47,7 +47,7 @@ class ScoreSynonymousCodons
         codon_highest_score_seen
     end
 
-    def stick_to_orignal_codon_if_it_scores_equally_well(orig_codon, best_codon, syn_codons, scores)
+    def stick_to_original_codon_if_it_scores_equally_well(orig_codon, best_codon, syn_codons, scores)
         score_orig_codon = scores[syn_codons.index(orig_codon)]
         score_best_codon = scores[syn_codons.index(best_codon)]
 
