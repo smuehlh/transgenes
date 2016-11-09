@@ -31,7 +31,7 @@ namespace :ensembl do
             # save counts
             fh = File.open(
                 File.join(
-                    Rails.root, 'lib', 'standalone', 'lib', 'scores', "third_site_counts-ensembl-v#{EnsemblGene.first.version}.rb"
+                    Rails.root, 'lib', 'standalone', 'lib', 'scores', 'codon_usage_data', "third_site_counts-ensembl-v#{EnsemblGene.first.version}.rb"
                 ), "w"
             )
             fh.print "Third_site_counts = "
