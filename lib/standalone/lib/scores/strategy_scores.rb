@@ -5,8 +5,9 @@ class StrategyScores
         ErrorHandling.abort_with_error_message(
             "unknown_strategy", "StrategyScores"
         ) unless is_known_strategy
-        # TODO
-        # ensure matrices are found.
+        ErrorHandling.abort_with_error_message(
+            "missing_strategy_matrix", "StrategyScores"
+        ) unless is_strategy_data_defined
     end
 
     def weighted_scores(synonymous_codons, original_codon, pos)
@@ -22,6 +23,14 @@ class StrategyScores
 
     def is_known_strategy
         ["raw", "humanize", "gc"].include?(@strategy)
+    end
+
+    def is_strategy_data_defined
+        case @strategy
+        when "raw" then true
+        when "humanize" then defined? Human_codon_counts
+        when "gc" then defined? Third_site_counts
+        end
     end
 
     def codon_score(synonymous_codon, original_codon, pos)

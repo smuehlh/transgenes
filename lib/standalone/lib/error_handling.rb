@@ -71,7 +71,7 @@ module ErrorHandling
                 "Unknown strategy for altering the sequence."
             )
         when "missing_strategy_matrix"
-            "Missing data: Cannot alter the sequence."
+            "Missing reference data to alter the sequence."
         else
             "An unknown error occured."
         end
