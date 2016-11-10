@@ -74,9 +74,6 @@ class StrategyScores
         sorted = available_data.keys.sort_by{|other| (pos-other).abs }
         nearest_pos = sorted.take(10)
         counts_nearest_pos = nearest_pos.collect{|pos| available_data[pos] }
-        # calc average
-        sum = counts_nearest_pos.inject(:+)
-        len = counts_nearest_pos.size
-        sum/len.to_f
+        Statistics.mean(counts_nearest_pos)
     end
 end
