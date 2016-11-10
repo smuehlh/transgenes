@@ -39,6 +39,29 @@ namespace :ensembl do
             fh.close
         end
 
+        desc "Calculate average GC content of 1- and 2-exon genes"
+        task gc: :environment do
+            gc_one_exon_genes = []
+            gc_two_exon_genes = []
+
+            EnsemblGene.find_each do |gene|
+                parsed_gene = parse_gene(gene)
+                next unless parsed_gene # parsing was unsuccessfull
+                n_exons = parsed_gene[:exons].size
+                gc = calc_gc(parsed_gene[:exons].join(""))
+                if n_exons == 1
+                    gc_one_exon_genes.push gc
+                elsif n_exons == 2
+                    gc_two_exon_genes.push gc
+                end
+            end
+
+            average_one_exon_genes = Statistics.mean(gc_one_exon_genes)
+            average_two_exon_genes = Statistics.mean(gc_two_exon_genes)
+            puts "Average GC (1 exon genes): #{average_one_exon_genes}"
+            puts "Average GC (1 exon genes): #{average_two_exon_genes}"
+        end
+
         def parse_gene(gene)
             gene_parser = WebinputToGene.new(
                 # mimic webinput
@@ -54,6 +77,10 @@ namespace :ensembl do
                 counts[codon][pos] += 1
             end
             counts
+        end
+
+        def calc_gc(cds)
+            (cds.count("G") + cds.count("C"))/cds.size.to_f
         end
     end
 end
