@@ -75,7 +75,7 @@ class ScoreSynonymousCodons
             divide_into_windows(seq_part)
         end
 
-        @ese_scorer.weighted_scores(windows_containing_syn_codons)
+        @ese_scorer.normalised_scores(windows_containing_syn_codons)
     end
 
     def combine_weighted_scores(strategy_scores, ese_scores)

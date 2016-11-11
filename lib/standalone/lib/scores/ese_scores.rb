@@ -4,13 +4,20 @@ class EseScores
         @ese_motifs = ese_motifs
     end
 
-    def weighted_scores(windows_for_all_syn_codons)
+    def normalised_scores(windows_for_all_syn_codons)
         if @ese_motifs.any?
             # score windows accoring to their ese resemblance
-            windows_for_all_syn_codons.collect do |windows|
-                ese_count(windows)/max_count(windows).to_f
+            counts = windows_for_all_syn_codons.collect do |windows|
+                count_non_eses(windows)
             end
-        else
+            sum = sum_up_counts(counts)
+            if sum == 0
+                # all syn_codons are equally (un-)likely. avoid diving by 0
+                equal_scores_for(windows_for_all_syn_codons.size)
+            else
+                normalise_counts(counts, sum)
+            end
+       else
             # set all scores to 0
             Array.new(windows_for_all_syn_codons.size) {0}
         end
@@ -22,11 +29,19 @@ class EseScores
 
     private
 
-    def ese_count(windows)
+    def count_non_eses(windows)
         (windows - @ese_motifs).size
     end
 
-    def max_count(windows)
-        windows.size
+    def sum_up_counts(counts)
+        counts.inject(:+)
+    end
+
+    def equal_scores_for(n)
+        Array.new(n) {1/n.to_f}
+    end
+
+    def normalise_counts(counts, sum)
+        counts.collect{|count| count/sum.to_f }
     end
 end
