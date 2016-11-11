@@ -14,12 +14,8 @@ class StrategyScores
         counts = synonymous_codons.collect do |synonymous_codon|
             codon_count(synonymous_codon, original_codon, pos)
         end
-        sum = sum_up_counts(counts)
-        normalise_counts(counts, sum)
-    end
-
-    def max_score
-        1
+        sum = Statistics.sum(counts)
+        Statistics.normalise(counts, sum)
     end
 
     private
@@ -61,14 +57,6 @@ class StrategyScores
         else
             average_over_nearest_pos(Third_site_counts[synonymous_codon], pos)
         end
-    end
-
-    def sum_up_counts(counts)
-        counts.inject(:+)
-    end
-
-    def normalise_counts(counts, sum)
-        counts.collect{|count| count/sum.to_f }
     end
 
     def average_over_nearest_pos(available_data, pos)

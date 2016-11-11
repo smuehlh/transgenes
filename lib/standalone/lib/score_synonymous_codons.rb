@@ -31,7 +31,7 @@ class ScoreSynonymousCodons
         syn_codons = get_synonymous_codons_at(pos)
         strategy_scores = score_by_strategy(syn_codons, pos)
         ese_scores = score_by_ese(syn_codons, pos)
-        combined_scores = combine_weighted_scores(strategy_scores, ese_scores)
+        combined_scores = combine_normalised_scores(strategy_scores, ese_scores)
 
         [syn_codons, combined_scores]
     end
@@ -78,12 +78,11 @@ class ScoreSynonymousCodons
         @ese_scorer.normalised_scores(windows_containing_syn_codons)
     end
 
-    def combine_weighted_scores(strategy_scores, ese_scores)
-        max_score = @strategy_scorer.max_score + @ese_scorer.max_score
-        strategy_scores.collect.with_index do |strategy_score, ind|
-            ese_score = ese_scores[ind]
-            (strategy_score + ese_score)/max_score.to_f # normalize
+    def combine_normalised_scores(strategy_scores, ese_scores)
+        combined_scores = strategy_scores.each_index do |ind|
+            strategy_scores[ind] * ese_scores[ind]
         end
+        Statistics.normalise(combined_scores)
     end
 
     def get_codon_at(pos)
