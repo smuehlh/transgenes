@@ -10,13 +10,12 @@ class StrategyScores
         ) unless is_strategy_data_defined
     end
 
-    def weighted_scores(synonymous_codons, original_codon, pos)
-        sum = sum_up_codon_counts(synonymous_codons, original_codon, pos)
-
-        synonymous_codons.collect do |synonymous_codon|
-            count = codon_count(synonymous_codon, original_codon, pos)
-            count/sum.to_f
+    def normalised_scores(synonymous_codons, original_codon, pos)
+        counts = synonymous_codons.collect do |synonymous_codon|
+            codon_count(synonymous_codon, original_codon, pos)
         end
+        sum = sum_up_counts(counts)
+        normalise_counts(counts, sum)
     end
 
     def max_score
@@ -64,10 +63,12 @@ class StrategyScores
         end
     end
 
-    def sum_up_codon_counts(synonymous_codons, original_codon, pos)
-        synonymous_codons.inject(0) do |sum, codon|
-            sum + codon_count(codon, original_codon, pos)
-        end
+    def sum_up_counts(counts)
+        counts.inject(:+)
+    end
+
+    def normalise_counts(counts, sum)
+        counts.collect{|count| count/sum.to_f }
     end
 
     def average_over_nearest_pos(available_data, pos)
