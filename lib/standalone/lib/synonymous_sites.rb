@@ -18,13 +18,12 @@ class SynonymousSites
         end.flatten.compact
     end
 
-    # keep as reference, not needed any more
-    # def all_synonymous_sites_in_cds
-    #     # synonymous sites (= 3. codon positions)
-    #     first_synonymous_site = 2
-    #     last_potential_site = @exons.join("").size - 1
-    #     (first_synonymous_site..last_potential_site).step(3)
-    # end
+    def get_synonymous_sites_in_cds
+        # = all third codon positions
+        first_synonymous_site = 2
+        last_potential_site = @exons.join("").size - 1
+        (first_synonymous_site..last_potential_site).step(3)
+    end
 
     private
 
