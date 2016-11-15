@@ -1,10 +1,15 @@
 class ScoreSynonymousCodons
 
-    def initialize(strategy, stay_in_subbox_for_6folds, ese_motifs, cds)
-        @cds = cds
+    def initialize(strategy, stay_in_subbox_for_6folds, ese_motifs, exons, introns)
+        @cds = exons.join("")
+        @synonymous_sites = SynonymousSites.new(exons, introns)
         @strategy_scorer = StrategyScores.new(strategy)
         @ese_scorer = EseScores.new(ese_motifs)
         @choose_synonymous_codons_for_6folds_from_subbox = stay_in_subbox_for_6folds
+    end
+
+    def synonymous_sites_in_cds
+        @synonymous_sites.get_synonymous_sites_in_cds
     end
 
     def bestscoring_synonymous_codon_at(pos)
@@ -30,10 +35,15 @@ class ScoreSynonymousCodons
     def score_synonymous_codons_at(pos)
         syn_codons = get_synonymous_codons_at(pos)
         strategy_scores = score_by_strategy(syn_codons, pos)
-        ese_scores = score_by_ese(syn_codons, pos)
-        combined_scores = combine_normalised_scores(strategy_scores, ese_scores)
-
-        [syn_codons, combined_scores]
+        if @synonymous_sites.is_in_proximity_to_deleted_intron(pos)
+            # additionally score by ese resemblance
+            ese_scores = score_by_ese(syn_codons, pos)
+            combined_scores = combine_normalised_scores(strategy_scores, ese_scores)
+            [syn_codons, combined_scores]
+        else
+            # pure strategy scores
+            [syn_codons, strategy_scores]
+        end
     end
 
     def find_bestscoring_codon(syn_codons, scores)
