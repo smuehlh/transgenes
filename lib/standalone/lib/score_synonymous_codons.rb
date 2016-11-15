@@ -79,7 +79,7 @@ class ScoreSynonymousCodons
     end
 
     def combine_normalised_scores(strategy_scores, ese_scores)
-        combined_scores = strategy_scores.each_index do |ind|
+        combined_scores = strategy_scores.each_index.collect do |ind|
             strategy_scores[ind] * ese_scores[ind]
         end
         Statistics.normalise(combined_scores)
