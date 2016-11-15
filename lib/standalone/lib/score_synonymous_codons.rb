@@ -35,8 +35,10 @@ class ScoreSynonymousCodons
     def score_synonymous_codons_at(pos)
         syn_codons = get_synonymous_codons_at(pos)
         strategy_scores = score_by_strategy(syn_codons, pos)
-        if @synonymous_sites.is_in_proximity_to_deleted_intron(pos)
+        if @synonymous_sites.is_in_proximity_to_deleted_intron(pos) &&
+            @ese_scorer.has_ese_motifs_to_score_by
             # additionally score by ese resemblance
+            # NOTE: ese's are optional input, that might has not been provided
             ese_scores = score_by_ese(syn_codons, pos)
             combined_scores = combine_normalised_scores(strategy_scores, ese_scores)
             [syn_codons, combined_scores]
