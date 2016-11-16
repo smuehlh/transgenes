@@ -56,33 +56,6 @@ class ScoreSynonymousCodons
         end
     end
 
-    def find_bestscoring_codon(syn_codons, scores)
-        highest_score_seen, codon_highest_score_seen = Float::MIN, nil
-        syn_codons.each_with_index do |codon, ind|
-            score = scores[ind]
-            if score >= highest_score_seen
-                highest_score_seen = score
-                codon_highest_score_seen = codon
-            end
-        end
-        codon_highest_score_seen
-    end
-
-    # TODO: method maybe not needed any more
-    def stick_to_original_codon_if_it_scores_equally_well(orig_codon, best_codon, syn_codons, scores)
-        score_orig_codon = scores[syn_codons.index(orig_codon)]
-        score_best_codon = scores[syn_codons.index(best_codon)]
-
-        score_orig_codon == score_best_codon ? orig_codon : best_codon
-    end
-
-    def stick_to_original_codon_if_best_codon_scores_higher_than_random_number(orig_codon, best_codon, syn_codons, scores)
-        score_best_codon = scores[syn_codons.index(best_codon)]
-        random_score = rand() # NOTE: assuming that scores are between 0 and 1
-
-        score_best_codon > random_score ? orig_codon : best_codon
-    end
-
     def score_by_strategy(syn_codons, pos)
         # NOTE: need orig_codon separately only because of raw-scorer
         orig_codon = get_codon_at(pos)
