@@ -8,8 +8,8 @@ class SynonymousSites
     def get_synonymous_sites_in_cds
         # = all third codon positions
         first_synonymous_site = 2
-        last_potential_site = @exons.join("").size - 1
-        (first_synonymous_site..last_potential_site).step(3)
+        last_synonymous_site = @exons.join("").size - 1
+        (first_synonymous_site..last_synonymous_site).step(3)
     end
 
     def is_in_proximity_to_deleted_intron(pos_in_cds)
