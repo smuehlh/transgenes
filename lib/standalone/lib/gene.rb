@@ -1,5 +1,5 @@
 class Gene
-    attr_reader :exons, :introns, :ese_motifs, :five_prime_utr, :three_prime_utr, :sequence, :description
+    attr_reader :exons, :introns, :ese_motifs, :five_prime_utr, :three_prime_utr, :description
 
     def initialize
         @description = ""
@@ -7,8 +7,6 @@ class Gene
         @introns = []
         @five_prime_utr = "" # exons and introns merged
         @three_prime_utr = "" # exons and introns merged
-
-        @sequence = "" # UTRs, exons and introns merged together
 
         @ese_motifs = []
         @number_of_changed_sites = 0
@@ -18,18 +16,14 @@ class Gene
         @exons = exons
         @introns = introns
         @description = gene_name
-
-        combine_features_to_sequence
     end
 
     def add_five_prime_utr(exons, introns, dummy)
         @five_prime_utr = combine_exons_and_introns(exons, introns)
-        combine_features_to_sequence
     end
 
     def add_three_prime_utr(exons, introns, dummy)
         @three_prime_utr = combine_exons_and_introns(exons, introns)
-        combine_features_to_sequence
     end
 
     def add_ese_list(ese_motifs)
@@ -38,7 +32,6 @@ class Gene
 
     def remove_introns(is_remove_first_intron)
         @introns = is_remove_first_intron ? [] : [@introns.first]
-        combine_features_to_sequence
     end
 
     def log_statistics
@@ -47,7 +40,7 @@ class Gene
         str += "All introns " + (first_intron_kept ? "but" : "including") + " the first removed.\n"
         n_aa = cds.size / 3
         str += "Number of amino acids: #{n_aa}\n"
-        str += "Total mRNA size: #{@sequence.size}"
+        str += "Total mRNA size: #{sequence.size}"
         $logger.info(str)
     end
 
@@ -62,8 +55,6 @@ class Gene
                 log_codon_replacement(scorer.log_selected_codon_at(pos, codon))
             end
         end
-
-        combine_features_to_sequence
     end
 
     def log_tweak_statistics
@@ -73,16 +64,11 @@ class Gene
         ) if @number_of_changed_sites == 0
     end
 
-    private
-
-    def combine_features_to_sequence
-        @sequence =
-            [
-                @five_prime_utr,
-                combine_exons_and_introns(@exons, @introns),
-                @three_prime_utr
-            ].join("")
+    def sequence
+        @five_prime_utr + combine_exons_and_introns(@exons, @introns) + @three_prime_utr
     end
+
+    private
 
     def combine_exons_and_introns(exons, introns)
         exons.zip(introns).flatten.compact.join("")
