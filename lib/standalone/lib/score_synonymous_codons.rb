@@ -12,17 +12,17 @@ class ScoreSynonymousCodons
         @synonymous_sites.get_synonymous_sites_in_cds
     end
 
-    def bestscoring_synonymous_codon_at(pos)
+    def select_synonymous_codon_at(pos)
         syn_codons, scores = score_synonymous_codons_at(pos)
         select_codon_matching_random_score(syn_codons, scores)
     end
 
-    def is_original_codon_scoring_best_at(pos, best_codon)
+    def is_original_codon_selected_at(pos, best_codon)
         orig_codon = get_codon_at(pos)
         best_codon == orig_codon
     end
 
-    def log_bestscoring_codon_at(pos, best_codon)
+    def log_selected_codon_at(pos, best_codon)
         orig_codon = get_codon_at(pos)
         "Pos #{pos}: #{orig_codon} -> #{best_codon}"
     end

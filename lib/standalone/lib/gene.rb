@@ -55,13 +55,11 @@ class Gene
         scorer = ScoreSynonymousCodons.new(strategy, stay_in_subbox_for_6folds, @ese_motifs, @exons, @introns)
 
         scorer.synonymous_sites_in_cds.each do |pos|
-            bestscoring_codon = scorer.bestscoring_synonymous_codon_at(pos)
+            codon = scorer.select_synonymous_codon_at(pos)
 
-            if ! scorer.is_original_codon_scoring_best_at(pos, bestscoring_codon)
-                replace_codon_at_pos(pos, bestscoring_codon)
-                log_codon_replacement(
-                    scorer.log_bestscoring_codon_at(pos, bestscoring_codon)
-                )
+            if ! scorer.is_original_codon_selected_at(pos, codon)
+                replace_codon_at_pos(pos, codon)
+                log_codon_replacement(scorer.log_selected_codon_at(pos, codon))
             end
         end
 
