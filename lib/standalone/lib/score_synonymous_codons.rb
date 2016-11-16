@@ -13,11 +13,8 @@ class ScoreSynonymousCodons
     end
 
     def bestscoring_synonymous_codon_at(pos)
-        orig_codon = get_codon_at(pos)
         syn_codons, scores = score_synonymous_codons_at(pos)
-        best_codon = find_bestscoring_codon(syn_codons, scores)
-        # stick_to_original_codon_if_it_scores_equally_well(orig_codon, best_codon, syn_codons, scores)
-        stick_to_original_codon_if_best_codon_scores_higher_than_random_number(orig_codon, best_codon, syn_codons, scores)
+        select_codon_matching_random_score(syn_codons, scores)
     end
 
     def is_original_codon_scoring_best_at(pos, best_codon)
@@ -45,6 +42,17 @@ class ScoreSynonymousCodons
         else
             # pure strategy scores
             [syn_codons, strategy_scores]
+        end
+    end
+
+    def select_codon_matching_random_score(syn_codons, scores)
+        # NOTE: assuming that scores are between 0 and 1
+        random_score = rand()
+        sum = 0
+        syn_codons.each_index do |ind|
+            codon = syn_codons[ind]
+            sum += scores[ind]
+            return codon if random_score <= sum
         end
     end
 
