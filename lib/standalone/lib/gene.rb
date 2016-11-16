@@ -3,7 +3,7 @@ class Gene
 
     def initialize
         @description = ""
-        @exons = []
+        @exons = [] # CDS only, excluding UTR's
         @introns = []
         @five_prime_utr = "" # exons and introns merged
         @three_prime_utr = "" # exons and introns merged
