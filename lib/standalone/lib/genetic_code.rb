@@ -106,7 +106,8 @@ module GeneticCode
             syn_codons = get_synonymous_codons(codon)
             syn_codons_same_box = get_synonymous_codons_in_codon_box(codon)
             valid_codons.collect do |other|
-                next if other[-1] != codon[-1]
+                next if other[-1] != codon[-1] # third sites are equal
+                next if is_stopcodon(other)
                 next if get_synonymous_codons(other).size != syn_codons.size
                 next if get_synonymous_codons_in_codon_box(other).size != syn_codons_same_box.size
 
