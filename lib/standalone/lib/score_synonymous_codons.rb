@@ -31,18 +31,22 @@ class ScoreSynonymousCodons
 
     def score_synonymous_codons_at(pos)
         syn_codons = get_synonymous_codons_at(pos)
-        strategy_scores = score_by_strategy(syn_codons, pos)
-        if @synonymous_sites.is_in_proximity_to_deleted_intron(pos) &&
-            @ese_scorer.has_ese_motifs_to_score_by
-            # additionally score by ese resemblance
-            # NOTE: ese's are optional input, that might has not been provided
-            ese_scores = score_by_ese(syn_codons, pos)
-            combined_scores = combine_normalised_scores(strategy_scores, ese_scores)
-            [syn_codons, combined_scores]
-        else
-            # pure strategy scores
-            [syn_codons, strategy_scores]
-        end
+        scores =
+            if is_stopcodon_at(pos)
+                score_stopcodons(syn_codons)
+            elsif @synonymous_sites.is_in_proximity_to_deleted_intron(pos) &&
+                @ese_scorer.has_ese_motifs_to_score_by
+                # additionally score by ese resemblance
+                # NOTE: ese input is optional and might have been omitted
+                strategy_scores = score_by_strategy(syn_codons, pos)
+                ese_scores = score_by_ese(syn_codons, pos)
+                combine_normalised_scores(strategy_scores, ese_scores)
+            else
+                # pure strategy scores
+                score_by_strategy(syn_codons, pos)
+            end
+
+        [syn_codons, scores]
     end
 
     def select_codon_matching_random_score(syn_codons, scores)
@@ -57,9 +61,13 @@ class ScoreSynonymousCodons
     end
 
     def score_by_strategy(syn_codons, pos)
-        # NOTE: need orig_codon separately only because of raw-scorer
+        # NOTE: score stopcodon separately
         orig_codon = get_codon_at(pos)
-        @strategy_scorer.normalised_scores(syn_codons, orig_codon, pos)
+        if GeneticCode.is_stopcodon(orig_codon)
+            normalised_stopcodon_scores(syn_codons)
+        else
+            @strategy_scorer.normalised_scores(syn_codons, orig_codon, pos)
+        end
     end
 
     def score_by_ese(syn_codons, pos)
@@ -69,6 +77,12 @@ class ScoreSynonymousCodons
         end
 
         @ese_scorer.normalised_scores(windows_containing_syn_codons)
+    end
+
+    def score_stopcodons(syn_codons)
+        syn_codons.collect do |codon|
+            codon == "TAA" ? 1 : 0
+        end
     end
 
     def combine_normalised_scores(strategy_scores, ese_scores)
@@ -95,6 +109,11 @@ class ScoreSynonymousCodons
     def get_synonymous_codons_at(pos)
         orig_codon = get_codon_at(pos)
         get_synonymous_codons(orig_codon)
+    end
+
+    def is_stopcodon_at(pos)
+        orig_codon = get_codon_at(pos)
+        GeneticCode.is_stopcodon(orig_codon)
     end
 
     def get_mutated_subsequence_covering_all_windows(pos, codon)
