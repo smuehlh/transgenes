@@ -7,11 +7,9 @@ Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
     require File.absolute_path(file)
 end
 # NOTE: setup logging first thing. do all the (possibly wrong-going) stuff afterwards
-ErrorHandling.is_commandline_tool = true
-$logger = MultiLogger.new(*Logging.default_setup_commandline_tool)
-
+Logging.setup
 options = CommandlineOptions.new(ARGV)
-Logging.switch_to_verbose_setup_commandline_tool if options.verbose
+Logging.switch_to_verbose if options.verbose
 
 # read in and parse data
 gene = Gene.new

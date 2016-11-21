@@ -4,13 +4,17 @@ module Logging
 
     extend self
 
-    def default_setup_commandline_tool
+    def setup
+        # error handling
+        ErrorHandling.is_commandline_tool = true
+
+        # setup logger
         file_logger = build_logger("optimizer.log", Logger::INFO)
         stderr_logger = build_logger(STDERR, Logger::WARN)
-        [file_logger, stderr_logger]
+        $logger = MultiLogger.new(file_logger, stderr_logger)
     end
 
-    def switch_to_verbose_setup_commandline_tool
+    def switch_to_verbose
         $logger.change_infolog_to_debug
     end
 
