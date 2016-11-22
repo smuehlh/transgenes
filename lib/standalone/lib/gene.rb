@@ -68,6 +68,10 @@ class Gene
         @five_prime_utr + combine_exons_and_introns(@exons, @introns) + @three_prime_utr
     end
 
+    def gc_content
+        (cds.count("C") + cds.count("G")) / cds.size.to_f
+    end
+
     private
 
     def combine_exons_and_introns(exons, introns)
