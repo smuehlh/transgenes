@@ -9,7 +9,6 @@ class Gene
         @three_prime_utr = "" # exons and introns merged
 
         @ese_motifs = []
-        @number_of_changed_sites = 0
     end
 
     def add_cds(exons, introns, gene_name)
@@ -46,6 +45,7 @@ class Gene
 
     def tweak_sequence(strategy, stay_in_subbox_for_6folds)
         scorer = ScoreSynonymousCodons.new(strategy, stay_in_subbox_for_6folds, @ese_motifs, @exons, @introns)
+        init_codon_replacement_log
 
         scorer.synonymous_sites_in_cds.each do |pos|
             codon = scorer.select_synonymous_codon_at(pos)
@@ -57,19 +57,16 @@ class Gene
         end
     end
 
-    def log_tweak_statistics
-        $logger.info("Changed #{@number_of_changed_sites} synonymous sites.")
-        ErrorHandling.warn_with_error_message(
-            "no_codons_replaced", "Gene"
-        ) if @number_of_changed_sites == 0
-    end
-
     def sequence
         @five_prime_utr + combine_exons_and_introns(@exons, @introns) + @three_prime_utr
     end
 
     def gc_content
         (cds.count("C") + cds.count("G")) / cds.size.to_f
+    end
+
+    def log_changed_sites
+        [@number_of_changed_sites, @changed_sites]
     end
 
     private
@@ -99,8 +96,13 @@ class Gene
         end
     end
 
+    def init_codon_replacement_log
+        @number_of_changed_sites = 0
+        @changed_sites = ""
+    end
+
     def log_codon_replacement(log)
         @number_of_changed_sites += 1
-        $logger.info(log)
+        @changed_sites += "#{log}\n"
     end
 end

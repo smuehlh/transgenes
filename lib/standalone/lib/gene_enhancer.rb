@@ -8,7 +8,8 @@ class GeneEnhancer
     end
 
     def generate_synonymous_genes(gene)
-        @enhanced_genes = 1000.times.collect do
+        @enhanced_genes = 1000.times.collect do |num|
+            @variant_number = Counting.ruby_to_human(num)
             generate_synonymous_variant(gene)
         end
     end
@@ -36,7 +37,18 @@ class GeneEnhancer
     def generate_synonymous_variant(gene)
         copy = Marshal.load(Marshal.dump(gene))
         copy.tweak_sequence(@strategy, @stay_in_subbox_for_6folds)
-        copy.log_tweak_statistics
+        log_generated_variant(copy)
+
         copy
     end
+
+    def log_generated_variant(gene)
+        gc = (gene.gc_content * 100).round(2)
+        n_mutated_sites, mutated_sites = gene.log_changed_sites
+        desc = "Variant #{@variant_number}: #{gc}% GC, #{n_mutated_sites} changed sites"
+
+        $logger.info GeneToFasta.new(desc, gene.sequence).fasta
+        $logger.debug mutated_sites
+    end
+
 end
