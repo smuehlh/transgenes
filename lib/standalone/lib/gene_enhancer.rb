@@ -8,11 +8,9 @@ class GeneEnhancer
     end
 
     def generate_synonymous_genes(gene)
-        copy = copy_gene(gene)
-
-        copy.tweak_sequence(@strategy, @stay_in_subbox_for_6folds)
-        copy.log_tweak_statistics
-        @enhanced_genes.push copy
+        @enhanced_genes = 1000.times.collect do
+            generate_synonymous_variant(gene)
+        end
     end
 
     def select_best_gene
@@ -21,7 +19,10 @@ class GeneEnhancer
 
     private
 
-    def copy_gene(gene)
-        Marshal.load(Marshal.dump(gene))
+    def generate_synonymous_variant(gene)
+        copy = Marshal.load(Marshal.dump(gene))
+        copy.tweak_sequence(@strategy, @stay_in_subbox_for_6folds)
+        copy.log_tweak_statistics
+        copy
     end
 end
