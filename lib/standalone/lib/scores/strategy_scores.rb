@@ -52,10 +52,12 @@ class StrategyScores
     end
 
     def gc_count(synonymous_codon, pos)
-        if Third_site_counts[synonymous_codon].has_key?(pos)
-            Third_site_counts[synonymous_codon][pos]
+        # NOTE pos is nucleotide pos in CDS whereas Third_site_counts are amino acid positions
+        aa_pos = pos/3
+        if Third_site_counts[synonymous_codon].has_key?(aa_pos)
+            Third_site_counts[synonymous_codon][aa_pos]
         else
-            average_over_nearest_pos(Third_site_counts[synonymous_codon], pos)
+            average_over_nearest_pos(Third_site_counts[synonymous_codon], aa_pos)
         end
     end
 
