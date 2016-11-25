@@ -1,10 +1,10 @@
 class WebinputToOptions
 
-    attr_reader :strategy, :remove_first_intron
+    attr_reader :strategy, :remove_first_intron, :stay_in_subbox_for_6folds
 
     def initialize(submit_params)
         @remove_first_intron = ! submit_params[:keep_first_intron]
-
+        @stay_in_subbox_for_6folds = submit_params[:stay_in_subbox]
         @strategy =
             case submit_params[:strategy]
             when "humanize" then "humanize"
