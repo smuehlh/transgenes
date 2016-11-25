@@ -15,10 +15,11 @@ module SequenceOptimizerForWeb
     def tweak_gene(web_genes, web_ese_motifs, web_params)
         options = WebinputToOptions.new(web_params)
         gene = init_gene_obj(web_genes, web_ese_motifs)
-        log = tweak_gene_verbosely(gene, options)
+        gene.remove_introns(options.remove_first_intron)
+        enhanced_gene, log = tweak_gene_verbosely(gene, options)
 
         info = combine_info_about_tweaked_gene(log, options)
-        [gene, info]
+        [enhanced_gene, info]
     end
 
     private
@@ -46,11 +47,13 @@ module SequenceOptimizerForWeb
     def tweak_gene_verbosely(gene, options)
         CoreExtensions::Settings.setup
 
-        gene.remove_introns(options.remove_first_intron)
-        gene.tweak_sequence(options.strategy)
-        gene.log_tweak_statistics
+        enhancer = GeneEnhancer.new(options.strategy, options.stay_in_subbox_for_6folds)
+        enhancer.generate_synonymous_genes(gene)
+        enhanced_gene = enhancer.select_best_gene
 
-        CoreExtensions::Settings.get_log_content
+        log = CoreExtensions::Settings.get_log_content
+
+        [enhanced_gene, log]
     end
 
     def combine_info_about_tweaked_gene(log, options)
