@@ -17,3 +17,9 @@
     <%= f.radio_button :strategy, 'raw', {disabled: true, class: "params-form"} %>
     <%= f.label :strategy_raw, content_tag(:strong, 'raw') +  ' - Leave the sequence as is. Only in combination with a list of ESE motifs to destroy.' %>
 </div>
+
+<legend class="text-primary">Select how 6-fold degenerate sites should be treated</legend>
+<div class="checkbox form-group">
+    <%= f.check_box :stay_in_subbox, {checked: false, disabled: true, class: "params-form"}, "true", "false" %>
+    <%= f.label :stay_in_subbox, "Stay in the respective (2- or 4-codon) sub-box rather than considering all 6 synonymous codons" %>
+</div>
