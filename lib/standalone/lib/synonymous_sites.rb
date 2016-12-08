@@ -36,6 +36,15 @@ class SynonymousSites
         )
     end
 
+    def get_nt_distance_to_intron(pos_in_cds)
+        pos_in_exon, exon_ind = map_cds_pos_onto_exon_pos_and_ind(pos_in_cds)
+        if is_at_exon_start(pos_in_exon, exon_ind)
+            pos_in_exon
+        else
+            -(@exons[exon_ind].size - pos_in_exon)
+        end
+    end
+
     private
 
     def map_cds_pos_onto_exon_pos_and_ind(pos)
