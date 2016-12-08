@@ -20,6 +20,7 @@ namespace :ensembl do
                 cds = parsed_gene[:exons].join("")
                 codons = GeneticCode.split_cdna_into_codons(cds)
                 next unless codons.first == "ATG"
+                next unless GeneticCode.is_stopcodon(codons.last)
 
                 codons.each_with_index do |codon, aa_pos|
                     # 1-exon gene: collect all positions
@@ -62,6 +63,7 @@ namespace :ensembl do
                 cds = parsed_gene[:exons].join("")
                 codons = GeneticCode.split_cdna_into_codons(cds)
                 next unless codons.first == "ATG"
+                next unless GeneticCode.is_stopcodon(codons.last)
 
                 codons.each_with_index do |codon, aa_pos|
                     # 2-exon gene: collect only pos that are in vincinity to the intron
