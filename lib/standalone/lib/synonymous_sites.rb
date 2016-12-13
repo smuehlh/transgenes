@@ -29,9 +29,11 @@ class SynonymousSites
         pos_in_exon, exon_ind = map_cds_pos_onto_exon_pos_and_ind(pos_in_cds)
         (
             is_succeeded_by_intron(exon_ind) &&
+            (! is_succeeding_intron_deleted(exon_ind)) &&
             is_at_exon_end(pos_in_exon, exon_ind)
         ) || (
             is_preceded_by_intron(exon_ind) &&
+            (! is_preceding_intron_deleted(exon_ind)) &&
             is_at_exon_start(pos_in_exon, exon_ind)
         )
     end
