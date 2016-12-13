@@ -28,7 +28,7 @@ class StrategyScores
         case @strategy
         when "raw" then true
         when "humanize" then defined? Human_codon_counts
-        when "gc" then defined? Third_site_counts
+        when "gc" then defined? Third_site_counts && defined? Third_site_counts_near_intron
         end
     end
 
