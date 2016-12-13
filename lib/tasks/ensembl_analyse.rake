@@ -82,7 +82,7 @@ namespace :ensembl do
                     Rails.root, 'lib', 'standalone', 'lib', 'scores', 'codon_usage_data', "third_site_counts_around_intron-ensembl-v#{EnsemblGene.first.version}.rb"
                 ), "w"
             )
-            fh.print "Third_site_counts = "
+            fh.print "Third_site_counts_near_intron = "
             fh.print counts
             fh.close
         end
