@@ -66,6 +66,12 @@ class ScoreSynonymousCodons
         if GeneticCode.is_stopcodon(orig_codon)
             normalised_stopcodon_scores(syn_codons)
         else
+            if @synonymous_sites.is_in_proximity_to_intron(pos)
+                pos = @synonymous_sites.get_nt_distance_to_intron(pos)
+                @strategy_scorer.is_near_intron = true
+            else
+                @strategy_scorer.is_near_intron = false
+            end
             @strategy_scorer.normalised_scores(syn_codons, orig_codon, pos)
         end
     end
