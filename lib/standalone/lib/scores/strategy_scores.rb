@@ -1,6 +1,8 @@
 class StrategyScores
+    attr_writer :is_near_intron
 
     def initialize(strategy)
+        @is_near_intron = false # re-set for each position to score
         @strategy = strategy
         ErrorHandling.abort_with_error_message(
             "unknown_strategy", "StrategyScores"
@@ -54,10 +56,16 @@ class StrategyScores
     def gc_count(synonymous_codon, pos)
         # NOTE pos is nucleotide pos in CDS whereas Third_site_counts are amino acid positions
         aa_pos = pos/3
-        if Third_site_counts[synonymous_codon].has_key?(aa_pos)
-            Third_site_counts[synonymous_codon][aa_pos]
+        data =
+            if @is_near_intron
+                Third_site_counts_near_intron[synonymous_codon]
+            else
+                Third_site_counts[synonymous_codon]
+            end
+        if data.has_key?(aa_pos)
+            data[aa_pos]
         else
-            average_over_nearest_pos(Third_site_counts[synonymous_codon], aa_pos)
+            average_over_nearest_pos(data, aa_pos)
         end
     end
 
