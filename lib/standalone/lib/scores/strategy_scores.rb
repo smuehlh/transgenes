@@ -30,7 +30,9 @@ class StrategyScores
         case @strategy
         when "raw" then true
         when "humanize" then defined? Human_codon_counts
-        when "gc" then defined? Third_site_counts && defined? Third_site_counts_near_intron
+        when "gc"
+            defined?(Third_site_frequencies) &&
+            defined?(Third_site_counts_near_intron)
         end
     end
 
@@ -54,25 +56,12 @@ class StrategyScores
     end
 
     def gc_count(synonymous_codon, pos)
-        # NOTE pos is nucleotide pos in CDS whereas Third_site_counts are amino acid positions
+        # NOTE pos is a nucleotide pos whereas Third_site_counts is in amino acid positions
         aa_pos = pos/3
-        data =
-            if @is_near_intron
-                Third_site_counts_near_intron[synonymous_codon]
-            else
-                Third_site_counts[synonymous_codon]
-            end
-        if data.has_key?(aa_pos)
-            data[aa_pos]
+        if @is_near_intron
+            Third_site_counts_near_intron[synonymous_codon][aa_pos]
         else
-            average_over_nearest_pos(data, aa_pos)
+            Third_site_frequencies[synonymous_codon].(aa_pos)
         end
-    end
-
-    def average_over_nearest_pos(available_data, pos)
-        sorted = available_data.keys.sort_by{|other| (pos-other).abs }
-        nearest_pos = sorted.take(10)
-        counts_nearest_pos = nearest_pos.collect{|pos| available_data[pos] }
-        Statistics.mean(counts_nearest_pos)
     end
 end
