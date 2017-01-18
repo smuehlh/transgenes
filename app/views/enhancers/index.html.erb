@@ -30,10 +30,18 @@
         </div>
     </div>
 
-<h3>Enter ESE motifs <small>Optional</small></h3>
-    <div id="input-tab-ese">
-        <%= render partial: "enhancers/index/ese_form" %>
-    </div>
+<div id="input-tab-ese">
+    <%= form_for Ese.new, :url => {action: "create_ese"}, remote: true, html: { style: "display:inline;", role: "form", multipart: true } do |f| %>
+        <h3>Enter ESE motifs
+            <small> Optional</small>
+            <div class="pull-right control-group">
+                <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save ESE data", data: {toggle: "tooltip"}, disabled: true %>
+                <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete ESE data", data: {toggle: "tooltip"}, disabled: true %>
+            </div>
+        </h3>
+            <%= render partial: "enhancers/index/ese_form", locals: {f: f} %>
+    <% end %>
+</div>
 
 <h3>Select parameters <small class="params-inactive">Please provide a valid CDS sequence first</small></h3>
     <!-- open submit form -->
