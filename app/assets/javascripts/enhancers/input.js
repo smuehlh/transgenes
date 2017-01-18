@@ -40,6 +40,7 @@ function bind_eventhandlers_to_input_elements() {
     bind_to_input_textarea();
     bind_to_input_file();
     bind_to_input_text();
+    bind_to_select();
     bind_to_save_button();
     bind_to_reset_button();
     // NOTE: do not bind to_select_list here, since the element will be created later
@@ -113,6 +114,19 @@ function bind_to_input_text() {
     });
 };
 
+function bind_to_select() {
+    inputs.find("select").on('change', function() {
+        var thisform = $(this).closest("form");
+        thisform.find("textarea").val('');
+        thisform.find("input:file").val('');
+        thisform.find(":submit[value=Reset]").prop('disabled', false);
+        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
+        thisform.find("[id^=success-alert]").hide();
+        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        thisform.submit();
+    });
+};
+
 function bind_to_save_button() {
     inputs.find(":submit[value=Save]").on('click', function() {
         var thisform = $(this).closest("form");
@@ -133,7 +147,7 @@ function bind_to_reset_button() {
     });
 }
 
-function bind_to_select_list() {
+function bind_to_selecting_lines_list() {
     inputs.find("#records_line").on('change', function() {
         var thisform = $(this).closest("form");
         thisform.find("input[type=hidden][name*=commit]").val("Line");

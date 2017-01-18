@@ -31,10 +31,12 @@ class WebinputToEse
     def get_fileupload_path_or_save_textinput_to_file(params, is_fileupload_input)
         if is_fileupload_input
             params[:file].path
-        else
+        elsif ! params[:data].empty?
             base = "gene"
             ext = ".txt"
             write_to_temp_file(base, ext, params[:data])
+        else
+            get_data_file_by_basename(params[:dataset])
         end
     end
 
