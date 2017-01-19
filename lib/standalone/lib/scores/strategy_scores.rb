@@ -10,9 +10,9 @@ class StrategyScores
         ) unless is_strategy_data_defined
     end
 
-    def normalised_scores(synonymous_codons, original_codon, pos)
+    def normalised_scores(synonymous_codons, original_codon, pos, is_near_intron, dist_to_intron)
         counts = synonymous_codons.collect do |synonymous_codon|
-            codon_count(synonymous_codon, original_codon, pos)
+            codon_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
         end
         sum = Statistics.sum(counts)
         Statistics.normalise(counts, sum)
@@ -28,18 +28,20 @@ class StrategyScores
         case @strategy
         when "raw" then true
         when "humanize" then defined? Human_codon_counts
-        when "gc" then defined? Third_site_counts
+        when "gc"
+            defined?(Third_site_frequencies) &&
+            defined?(Third_site_counts_near_intron)
         end
     end
 
-    def codon_count(synonymous_codon, original_codon, pos)
+    def codon_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
         case @strategy
         when "raw"
             raw_count(synonymous_codon, original_codon)
         when "humanize"
             humanize_count(synonymous_codon)
         when "gc"
-            gc_count(synonymous_codon, pos)
+            gc_count(synonymous_codon, pos, is_near_intron, dist_to_intron)
         end
     end
 
@@ -51,20 +53,15 @@ class StrategyScores
         Human_codon_counts[synonymous_codon]
     end
 
-    def gc_count(synonymous_codon, pos)
-        # NOTE pos is nucleotide pos in CDS whereas Third_site_counts are amino acid positions
-        aa_pos = pos/3
-        if Third_site_counts[synonymous_codon].has_key?(aa_pos)
-            Third_site_counts[synonymous_codon][aa_pos]
+    def gc_count(synonymous_codon, pos, is_near_intron, dist)
+        # NOTE pos is a nucleotide pos whereas Third_site_counts is in amino acid positions
+        if is_near_intron
+            # treat pos as distance to intron
+            aa_dist = dist/3
+            Third_site_counts_near_intron[synonymous_codon][aa_dist]
         else
-            average_over_nearest_pos(Third_site_counts[synonymous_codon], aa_pos)
+            aa_pos = pos/3
+            Third_site_frequencies[synonymous_codon].(aa_pos)
         end
-    end
-
-    def average_over_nearest_pos(available_data, pos)
-        sorted = available_data.keys.sort_by{|other| (pos-other).abs }
-        nearest_pos = sorted.take(10)
-        counts_nearest_pos = nearest_pos.collect{|pos| available_data[pos] }
-        Statistics.mean(counts_nearest_pos)
     end
 end
