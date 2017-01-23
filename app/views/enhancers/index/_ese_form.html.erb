@@ -5,7 +5,7 @@
 
 <%= f.hidden_field :commit, value: "" %>
 <div class="container-fluid">
-    <div class="row no-gutters">
+    <div class="row">
         <div id="error-alert-ese" class="alert alert-danger" role="alert" style="display: none;">
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
             <span class="sr-only">Error:</span>
@@ -18,7 +18,7 @@
             <span id="success-alert-text-ese"></span>
         </div>
     </div>
-    <div class="row no-gutters">
+    <div class="row">
         <div class="col-sm-6">
             <legend class="text-primary">Enter motifs</legend>
             <div class="form-group-validation">
@@ -27,14 +27,14 @@
             </div>
         </div>
         <div class="col-sm-6">
-            <div class="row no-gutters">
+            <div class="row">
                 <legend class="text-primary">Or, upload file</legend>
                 <div class="form-group-validation">
                     <%= f.file_field :file, accept: ".txt" %>
                     <small class="form-text text-muted">Plain text file containing one motif per line.</small>
                 </div>
             </div>
-            <div class="row no-gutters">
+            <div class="row">
                 <legend class="text-primary">Or, select dataset</legend>
                 <%= select :ese, :dataset, options_for_select(["INT3", "ESR", "Ke-ESE400", "PESE", "RESCUE-ESE"]), {}, {class: "form-control"} %>
             </div>

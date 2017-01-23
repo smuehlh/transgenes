@@ -31,7 +31,7 @@
     </h4>
 
     <div class="container-fluid">
-        <div class="row no-gutters">
+        <div class="row">
             <div id="error-alert-<%= id %>" class="alert alert-danger" role="alert" style="display: none;">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span class="sr-only">Error:</span>
@@ -44,7 +44,7 @@
                 <span id="success-alert-text-<%= id %>"></span>
             </div>
         </div>
-        <div class="row no-gutters">
+        <div class="row">
             <div class="col-sm-6">
                 <legend class="text-primary">Enter Genebank or FASTA sequence</legend>
                 <div class="form-group-validation">
@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="row no-gutters">
+                <div class="row">
                     <legend class="text-primary">Or, upload file</legend>
                     <div class="form-group-validation">
                         <%= f.file_field :file, accept: valid_extensions %>
@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 <% if is_cds_resource(resource_name) %>
-                    <div class="row no-gutters">
+                    <div class="row">
                         <legend class="text-primary">Or, enter Ensembl transcript ID</legend>
                         <div class="form-group-validation">
                             <%= text_field :ensembl, :gene_id, maxlength: EnsemblGene::MAX_LENGTH_GENEID, class: "form-control", placeholder: "ENST00000397262", data: {valid: EnsemblGene::FORMAT_GENEID_WEB, provide: "typeahead"}, autocomplete: "off" %>
