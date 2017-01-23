@@ -12,21 +12,30 @@
         <span class="sr-only">Info:</span>
         <span id="warning-alert-text-all-input"></span>
     </div>
-    <ul class="nav nav-tabs" data-tabs="tabs">
-        <li class="active"><a href="#input-tab-cds" data-toggle="tab">CDS</a></li>
-        <li><a href="#input-tab-five" data-toggle="tab">5'UTR</a></li>
-        <li><a href="#input-tab-three" data-toggle="tab">3'UTR</a></li>
-    </ul>
-
-    <div class="tab-content">
-        <div class="tab-pane active" id="input-tab-cds">
-            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "CDS"} %>
-        </div>
-        <div class="tab-pane" id="input-tab-five">
-            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "5'UTR"} %>
-        </div>
-        <div class="tab-pane" id="input-tab-three">
-            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "3'UTR"} %>
+    <div class="container-fluid">
+        <div class="row no-gutters">
+            <div class="col-sm-2">
+                <ul class="nav nav-pills nav-stacked" data-tabs="tabs">
+                    <li class="active"><a href="#input-tab-cds" data-toggle="pill">Enter CDS</a></li>
+                    <li><a href="#input-tab-five" data-toggle="pill">Enter 5'UTR</a></li>
+                    <li><a href="#input-tab-three" data-toggle="pill">Enter 3'UTR</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-10">
+                <div class="row no-gutters">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="input-tab-cds">
+                            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "CDS"} %>
+                        </div>
+                        <div class="tab-pane" id="input-tab-five">
+                            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "5'UTR"} %>
+                        </div>
+                        <div class="tab-pane" id="input-tab-three">
+                            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "3'UTR"} %>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
