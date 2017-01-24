@@ -15,8 +15,8 @@ class GeneEnhancer
     end
 
     def select_best_gene
-        gc_contents = @enhanced_genes.collect{|gene| gene.gc_content}
-        distances_to_target = gc_contents.collect{|gc| (gc - target_gc_content).abs}
+        gc3_contents = @enhanced_genes.collect{|gene| gene.gc3_content}
+        distances_to_target = gc3_contents.collect{|gc| (gc - target_gc_content).abs}
         ind_best_gene = distances_to_target.index(distances_to_target.min)
         log_selection(ind_best_gene)
 
@@ -44,9 +44,9 @@ class GeneEnhancer
     end
 
     def log_generated_variant(gene)
-        gc = to_pct(gene.gc_content)
+        gc = to_pct(gene.gc3_content)
         n_mutated_sites, mutated_sites = gene.log_changed_sites
-        desc = "Variant #{@variant_number}: #{gc}% GC, #{n_mutated_sites} changed sites"
+        desc = "Variant #{@variant_number}: #{gc}% GC3, #{n_mutated_sites} changed sites"
 
         $logger.info GeneToFasta.new(desc, gene.sequence).fasta
         $logger.debug mutated_sites
@@ -55,8 +55,8 @@ class GeneEnhancer
     def log_selection(variant_ind)
         variant_number = Counting.ruby_to_human(variant_ind)
         target = to_pct(target_gc_content)
-        selected = to_pct(@enhanced_genes[variant_ind].gc_content)
-        $logger.info "Target GC content: #{target}%"
+        selected = to_pct(@enhanced_genes[variant_ind].gc3_content)
+        $logger.info "Target GC3 content: #{target}%"
         $logger.info "Closest match: Variant #{variant_number} (#{selected})%"
     end
 

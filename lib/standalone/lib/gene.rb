@@ -61,8 +61,9 @@ class Gene
         @five_prime_utr + combine_exons_and_introns(@exons, @introns) + @three_prime_utr
     end
 
-    def gc_content
-        (cds.count("C") + cds.count("G")) / cds.size.to_f
+    def gc3_content
+        third_sites = synonymous_sites.collect{|ind| cds[ind]}
+        (third_sites.count("C") + third_sites.count("G")) / third_sites.size.to_f
     end
 
     def log_changed_sites
