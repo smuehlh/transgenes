@@ -47,7 +47,7 @@ class Gene
         scorer = ScoreSynonymousCodons.new(strategy, stay_in_subbox_for_6folds, @ese_motifs, @exons, @introns)
         init_codon_replacement_log
 
-        scorer.synonymous_sites_in_cds.each do |pos|
+        synonymous_sites.each do |pos|
             codon = scorer.select_synonymous_codon_at(pos)
 
             if ! scorer.is_original_codon_selected_at(pos, codon)
@@ -77,6 +77,13 @@ class Gene
 
     def cds
         @exons.join("")
+    end
+
+    def synonymous_sites
+        # = all third codon positions
+        first_synonymous_site = 2
+        last_synonymous_site = @exons.join("").size - 1
+        (first_synonymous_site..last_synonymous_site).step(3)
     end
 
     def replace_codon_at_pos(third_site, new_codon)
