@@ -72,7 +72,7 @@ class EnhancersController < ApplicationController
     end
 
     def ese_params
-        params.fetch(:ese).permit(:data, :file, :commit)
+        params.fetch(:ese).permit(:data, :file, :dataset, :commit)
     end
 
     def enhanced_gene_params

@@ -1,0 +1,7 @@
+// display info about current motifs
+<% if @ese.data %>
+    $("#success-alert-text-<%= id %>").show();
+    $("#success-alert-text-<%= id %>").html(
+        "<%= escape_javascript(render partial: 'enhancers/create/ese/sequence_modal') %>"
+    );
+<% end %>
