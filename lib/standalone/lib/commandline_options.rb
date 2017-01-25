@@ -3,6 +3,7 @@ require 'optparse'
 class CommandlineOptions
     attr_reader :input, :output, :strategy,
         # optional params
+        :select_by,
         :utr5prime, :utr3prime,
         :input_line, :utr5prime_line, :utr3prime_line,
         :remove_first_intron,
@@ -45,6 +46,7 @@ class CommandlineOptions
 
     def optional_arguments
         %w(
+            @select_by
             @input_line
             @utr5prime @utr5prime_line @utr3prime @utr3prime_line
             @remove_first_intron
@@ -157,6 +159,16 @@ class CommandlineOptions
                 "6-fold degenerates: Stay in the respective (2- or 4-fold) codon box", "when selecting a synonymous codon.", "If not specified, all 6 codons are considered.") do |opt|
                 @stay_in_subbox_for_6folds = true
             end
+            opts.on("-b", "--select-by STRATEGY", ["mean", "high", "low"],
+                "Strategy for selecting which of the generated variants is best.",
+                "Select one of: 'mean', 'high' or 'low'.",
+                "mean - Closest GC3 to the average human GC3 content.",
+                "high - Highest GC3 of all variants.",
+                "low - Lowest GC3 of all variants.",
+                "If not specified, the variant matching best the average human GC3", "is selected.") do |opt|
+                @select_by = opt
+            end
+
             opts.separator ""
             opts.on("-v", "--verbose", "Produce verbose log.") do |opt|
                 @verbose = true
