@@ -1,7 +1,8 @@
 class GeneEnhancer
 
-    def initialize(strategy, stay_in_subbox_for_6folds)
+    def initialize(strategy, select_best_by, stay_in_subbox_for_6folds)
         @strategy = strategy
+        @select_best_by = select_best_by
         @stay_in_subbox_for_6folds = stay_in_subbox_for_6folds
 
         @enhanced_genes = []
@@ -19,8 +20,7 @@ class GeneEnhancer
     end
 
     def select_best_gene
-        distances_to_target = @gc3_contents.collect{|gc| (gc - target_gc3).abs}
-        ind_best_gene = distances_to_target.index(distances_to_target.min)
+        ind_best_gene = find_index_of_best_gene
         log_selection(ind_best_gene)
 
         @enhanced_genes[ind_best_gene]
@@ -28,8 +28,8 @@ class GeneEnhancer
 
     private
 
-    def target_gc3
-        if @enhanced_genes.first.introns.size == 0
+    def mean_gc3
+        if is_one_exon_genes
             # aim for the average gc3-content of 1-exon genes
             0.6058148688792696
         else
@@ -58,13 +58,40 @@ class GeneEnhancer
 
     def log_selection(variant_ind)
         variant_number = Counting.ruby_to_human(variant_ind)
-        target = to_pct(target_gc3)
         selected = to_pct(@gc3_contents[variant_ind])
-        $logger.info "Target GC3 content: #{target}%"
-        $logger.info "Closest match: Variant #{variant_number} (#{selected})%"
+        $logger.info "Target GC3 content: #{target_description}"
+        $logger.info "Closest match: Variant #{variant_number} (#{selected}%)"
+    end
+
+    def find_index_of_best_gene
+        case @select_best_by
+        when "mean"
+            distances_to_mean = @gc3_contents.collect{|gc| (gc - mean_gc3).abs}
+            distances_to_mean.index(distances_to_mean.min)
+        when "high"
+            @gc3_contents.index(@gc3_contents.max)
+        when "low"
+            @gc3_contents.index(@gc3_contents.min)
+        end
+    end
+
+    def target_description
+        case @select_best_by
+        when "mean"
+            n_exons = is_one_exon_genes ? "1-exon" : "2-exon"
+            "mean GC3 of #{n_exons} genes (#{to_pct(mean_gc3)}%)"
+        when "high"
+            "highest"
+        when "low"
+            "lowest"
+        end
     end
 
     def to_pct(num)
         (num*100).round(2)
+    end
+
+    def is_one_exon_genes
+        @enhanced_genes.first.introns.size == 0
     end
 end
