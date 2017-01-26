@@ -29,7 +29,7 @@ class GeneEnhancer
     private
 
     def target_gc3
-        if @enhanced_genes.first.introns == 0
+        if @enhanced_genes.first.introns.size == 0
             # aim for the average gc3-content of 1-exon genes
             0.6058148688792696
         else
