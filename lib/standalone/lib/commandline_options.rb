@@ -36,7 +36,7 @@ class CommandlineOptions
 
     def init_optional_arguments
         optional_arguments.each do |arg|
-            instance_variable_set(arg, nil)
+            instance_variable_set(arg, optional_argument_defaults[arg])
         end
     end
 
@@ -54,6 +54,13 @@ class CommandlineOptions
             @stay_in_subbox_for_6folds
             @verbose
         )
+    end
+
+    def optional_argument_defaults
+        # specify only arguments with defaults other than nil
+        {
+            "@select_by" => "mean"
+        }
     end
 
     def is_argument_set(arg)
