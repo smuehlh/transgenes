@@ -201,6 +201,10 @@ class CommandlineOptions
             "invalid_argument_combination", "CommandlineOptions",
             "Nothing to do for the combination: 'raw'-strategy/ no ESEs"
         ) if strategy_raw_specified_without_ese_list
+        ErrorHandling.abort_with_error_message(
+            "invalid_argument_combination", "CommandlineOptions",
+            "'max-gc'-strategy/ '#{@select_by}'-select best variant.\n(Explicitly) set strategy to select best variant to 'high'"
+        ) if strategy_max_gc_specified_without_select_by_high
         ErrorHandling.warn_with_error_message(
             "unused_utr_line", "CommandlineOptions", "5'UTR"
         ) if utr_line_specified_without_file(@utr5prime, @utr5prime_line)
@@ -215,5 +219,9 @@ class CommandlineOptions
 
     def strategy_raw_specified_without_ese_list
         @strategy == "raw" && @ese.nil?
+    end
+
+    def strategy_max_gc_specified_without_select_by_high
+        @strategy == "max-gc" && @select_by != "high"
     end
 end
