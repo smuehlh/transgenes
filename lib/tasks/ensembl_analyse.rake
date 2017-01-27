@@ -28,7 +28,7 @@ namespace :ensembl do
                     next if GeneticCode.is_stopcodon(codon)
                     next if is_near_intron_border(aa_pos, parsed_gene)
 
-                    related_codons = GeneticCode.get_codons_same_third_site_site_and_degeneracy_group(codon)
+                    related_codons = GeneticCode.get_codons_same_third_site_and_degeneracy_group(codon)
                     counts = update_counts(counts, related_codons, aa_pos)
                 end
             end
@@ -70,7 +70,7 @@ namespace :ensembl do
                     next if GeneticCode.is_stopcodon(codon)
                     next unless is_near_intron_border(aa_pos, parsed_gene)
 
-                    related_codons = GeneticCode.get_codons_same_third_site_site_and_degeneracy_group(codon)
+                    related_codons = GeneticCode.get_codons_same_third_site_and_degeneracy_group(codon)
                     distance = distance_to_intron(aa_pos, parsed_gene)
                     counts = update_counts(counts, related_codons, distance)
                 end

@@ -111,7 +111,7 @@ module GeneticCode
         end.compact
     end
 
-    def get_codons_same_third_site_site_and_degeneracy_group(codon)
+    def get_codons_same_third_site_and_degeneracy_group(codon)
         if is_stopcodon(codon)
             return [codon]
         else
