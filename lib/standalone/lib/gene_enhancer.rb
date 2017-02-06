@@ -12,9 +12,9 @@ class GeneEnhancer
     def generate_synonymous_genes(gene)
         1000.times do |num|
             @variant_number = Counting.ruby_to_human(num)
-            gene, gc3 = generate_synonymous_variant(gene)
+            variant, gc3 = generate_synonymous_variant(gene)
 
-            @enhanced_genes.push gene
+            @enhanced_genes.push variant
             @gc3_contents.push gc3
         end
     end
