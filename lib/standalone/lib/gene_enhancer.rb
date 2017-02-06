@@ -41,7 +41,7 @@ class GeneEnhancer
     def generate_synonymous_variant(gene)
         copy = Marshal.load(Marshal.dump(gene))
         copy.tweak_sequence(@strategy, @stay_in_subbox_for_6folds)
-        gc3 = gene.gc3_content
+        gc3 = copy.gc3_content
         log_generated_variant(copy, gc3)
 
         [copy, gc3]
