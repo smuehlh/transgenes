@@ -86,7 +86,7 @@ class ScoreSynonymousCodons
         combined_scores = strategy_scores.each_index.collect do |ind|
             strategy_scores[ind] * ese_scores[ind]
         end
-        Statistics.normalise(combined_scores)
+        Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(combined_scores)
     end
 
     def get_codon_at(pos)
