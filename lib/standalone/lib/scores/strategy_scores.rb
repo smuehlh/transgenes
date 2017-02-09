@@ -14,8 +14,7 @@ class StrategyScores
         counts = synonymous_codons.collect do |synonymous_codon|
             codon_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
         end
-        sum = Statistics.sum(counts)
-        Statistics.normalise(counts, sum)
+        Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(counts)
     end
 
     private
