@@ -36,8 +36,12 @@ class CommandlineOptions
 
     def init_optional_arguments
         optional_arguments.each do |arg|
-            instance_variable_set(arg, optional_argument_defaults[arg])
+            instance_variable_set(arg, nil)
         end
+    end
+
+    def default_for_select_by_depending_on_strategy
+        @strategy == "max-gc" ? "high" : "mean"
     end
 
     def mandatory_arguments
@@ -54,13 +58,6 @@ class CommandlineOptions
             @stay_in_subbox_for_6folds
             @verbose
         )
-    end
-
-    def optional_argument_defaults
-        # specify only arguments with defaults other than nil
-        {
-            "@select_by" => "mean"
-        }
     end
 
     def is_argument_set(arg)
@@ -85,6 +82,7 @@ class CommandlineOptions
         opt_parser = argument_specification
         opt_parser.parse(@args)
 
+        set_defaults_for_unset_optional_arguments_that_cant_remain_unset
         ensure_mandatory_arguments_are_set
         ensure_dependencies_are_met
 
@@ -98,6 +96,13 @@ class CommandlineOptions
             ErrorHandling.abort_with_error_message(
                 "argument_error", "CommandlineOptions", exception_str
             )
+    end
+
+    def set_defaults_for_unset_optional_arguments_that_cant_remain_unset
+        unless @select_by
+            @select_by = default_for_select_by_depending_on_strategy
+            $logger.warn("Set select-by to #{@select_by}")
+        end
     end
 
     def argument_specification
@@ -124,7 +129,7 @@ class CommandlineOptions
                 "raw - Leave the sequence as is.", "May be specified only in combination with an ESE list (--ese).",
                 "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
                 "gc - Match position-dependent GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.",
-                "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.") do |opt|
+                "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.") do |opt|
                 @strategy = opt
             end
 
@@ -173,7 +178,7 @@ class CommandlineOptions
                 "mean - Closest GC3 to the average human GC3 content.",
                 "high - Highest GC3 of all variants.",
                 "low - Lowest GC3 of all variants.",
-                "If not specified, the variant matching best the average human GC3", "is selected.") do |opt|
+                "If not specified, defaults to 'mean' ('high' if strategy is set to 'max-gc').") do |opt|
                 @select_by = opt
             end
 
@@ -203,8 +208,8 @@ class CommandlineOptions
         ) if strategy_raw_specified_without_ese_list
         ErrorHandling.abort_with_error_message(
             "invalid_argument_combination", "CommandlineOptions",
-            "'max-gc'-strategy/ '#{@select_by}'-select best variant.\n(Explicitly) set strategy to select best variant to 'high'"
-        ) if strategy_max_gc_specified_without_select_by_high
+            "'max-gc'-strategy/ '#{@select_by}'-select best variant.\nSet strategy to select best variant to 'high'"
+        ) if strategy_max_gc_specified_without_select_by_set_to_high
         ErrorHandling.warn_with_error_message(
             "unused_utr_line", "CommandlineOptions", "5'UTR"
         ) if utr_line_specified_without_file(@utr5prime, @utr5prime_line)
@@ -221,7 +226,7 @@ class CommandlineOptions
         @strategy == "raw" && @ese.nil?
     end
 
-    def strategy_max_gc_specified_without_select_by_high
+    def strategy_max_gc_specified_without_select_by_set_to_high
         @strategy == "max-gc" && @select_by != "high"
     end
 end
