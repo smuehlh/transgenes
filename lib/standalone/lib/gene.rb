@@ -62,8 +62,12 @@ class Gene
     end
 
     def gc3_content
-        third_sites = synonymous_sites.collect{|ind| cds[ind]}
-        (third_sites.count("C") + third_sites.count("G")) / third_sites.size.to_f
+        gc3_per_pos = gc3_content_at_synonymous_sites
+        Statistics.sum(gc3_per_pos)/gc3_per_pos.size.to_f
+    end
+
+    def gc3_content_at_synonymous_sites
+        synonymous_sites.collect{|ind| cds[ind].count("GC")}
     end
 
     def log_changed_sites
