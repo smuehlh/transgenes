@@ -47,7 +47,7 @@ module SequenceOptimizerForWeb
     end
 
     def tweak_gene_verbosely(gene, options)
-        enhancer = GeneEnhancer.new(options.strategy, options.stay_in_subbox_for_6folds)
+        enhancer = GeneEnhancer.new(options.strategy, options.select_by, options.stay_in_subbox_for_6folds)
         enhancer.generate_synonymous_genes(gene)
         enhanced_gene = enhancer.select_best_gene
 

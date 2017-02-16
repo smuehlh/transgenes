@@ -1,6 +1,6 @@
 class WebinputToOptions
 
-    attr_reader :strategy, :remove_first_intron, :stay_in_subbox_for_6folds
+    attr_reader :strategy, :select_by, :remove_first_intron, :stay_in_subbox_for_6folds
 
     def initialize(submit_params)
         @remove_first_intron = ! submit_params[:keep_first_intron]
@@ -12,9 +12,10 @@ class WebinputToOptions
             when "raw" then "raw"
             else
                 # this should never happen. 'raw' seems to be a good fall-back, though.
-                $logger.warn "Passed an invalid strategy. Will use strategy 'raw' instead."
+                $logger.warn "Passed an invalid strategy. Use strategy 'raw' instead."
                 "raw"
             end
+        @select_by = submit_params[:select_by]
     end
 
     def is_keep_first_intron
