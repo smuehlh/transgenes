@@ -10,6 +10,7 @@ class WebinputToOptions
             when "humanize" then "humanize"
             when "gc" then "gc"
             when "raw" then "raw"
+            when "max_gc" then "max-gc"
             else
                 # this should never happen. 'raw' seems to be a good fall-back, though.
                 $logger.warn "Passed an invalid strategy. Use strategy 'raw' instead."
