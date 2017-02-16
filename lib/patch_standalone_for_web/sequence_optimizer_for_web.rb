@@ -13,6 +13,8 @@ module SequenceOptimizerForWeb
     end
 
     def tweak_gene(web_genes, web_ese_motifs, web_params)
+        CoreExtensions::Settings.setup
+
         options = WebinputToOptions.new(web_params)
         gene = init_gene_obj(web_genes, web_ese_motifs)
         gene.remove_introns(options.remove_first_intron)
@@ -45,8 +47,6 @@ module SequenceOptimizerForWeb
     end
 
     def tweak_gene_verbosely(gene, options)
-        CoreExtensions::Settings.setup
-
         enhancer = GeneEnhancer.new(options.strategy, options.stay_in_subbox_for_6folds)
         enhancer.generate_synonymous_genes(gene)
         enhanced_gene = enhancer.select_best_gene
