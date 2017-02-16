@@ -1,22 +1,27 @@
 class GeneEnhancer
 
     def initialize(strategy, select_best_by, stay_in_subbox_for_6folds)
+        @n_variants = 1000
+
         @strategy = strategy
         @select_best_by = select_best_by
         @stay_in_subbox_for_6folds = stay_in_subbox_for_6folds
 
         @enhanced_genes = []
-        @gc3_contents = []
+        @gc3_contents = [] # per gene
+        @cross_variant_gc3_per_pos = []
     end
 
     def generate_synonymous_genes(gene)
-        1000.times do |num|
+        @n_variants.times do |num|
             @variant_number = Counting.ruby_to_human(num)
-            variant, gc3 = generate_synonymous_variant(gene)
+            variant, gc3, gc3_per_pos = generate_synonymous_variant(gene)
 
             @enhanced_genes.push variant
             @gc3_contents.push gc3
+            update_cross_variant_gc3(gc3_per_pos)
         end
+        log_cross_variant_gc3
     end
 
     def select_best_gene
@@ -41,10 +46,18 @@ class GeneEnhancer
     def generate_synonymous_variant(gene)
         copy = Marshal.load(Marshal.dump(gene))
         copy.tweak_sequence(@strategy, @stay_in_subbox_for_6folds)
-        gc3 = copy.gc3_content
-        log_generated_variant(copy, gc3)
+        overall_gc3 = copy.gc3_content
+        gc3_per_pos = copy.gc3_content_at_synonymous_sites
+        log_generated_variant(copy, overall_gc3)
 
-        [copy, gc3]
+        [copy, overall_gc3, gc3_per_pos]
+    end
+
+    def update_cross_variant_gc3(gc3_per_pos)
+        gc3_per_pos.each_with_index do |val, ind|
+            @cross_variant_gc3_per_pos[ind] = 0 unless @cross_variant_gc3_per_pos[ind]
+            @cross_variant_gc3_per_pos[ind] += val/@n_variants.to_f
+        end
     end
 
     def log_generated_variant(gene, gc3)
@@ -54,6 +67,11 @@ class GeneEnhancer
 
         $logger.info GeneToFasta.new(desc, gene.sequence).fasta
         $logger.debug mutated_sites
+    end
+
+    def log_cross_variant_gc3
+        $logger.debug "GC3 per position, across all variants:"
+        $logger.debug @cross_variant_gc3_per_pos.collect{|num| to_pct(num)}.join("\t")
     end
 
     def log_selection(variant_ind)
