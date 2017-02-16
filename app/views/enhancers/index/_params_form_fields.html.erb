@@ -7,7 +7,7 @@
 <legend class="text-primary">Select a strategy</legend>
 <div class="radio form-group">
     <%= f.radio_button :strategy, 'gc', {disabled: true, class: "params-form"} %>
-    <%= f.label :strategy_gc, content_tag(:strong, 'gc') + ' - Match GC content of 1- or 2-exon genes.' %>
+    <%= f.label :strategy_gc, content_tag(:strong, 'gc') + ' - Match position-dependend GC content of 1- or 2-exon genes.' %>
 </div>
 <div class="radio form-group">
     <%= f.radio_button :strategy, 'humanize', {:checked => true, disabled: true, class: "params-form"} %>
@@ -16,6 +16,20 @@
 <div class="radio form-group">
     <%= f.radio_button :strategy, 'raw', {disabled: true, class: "params-form"} %>
     <%= f.label :strategy_raw, content_tag(:strong, 'raw') +  ' - Leave the sequence as is. Only in combination with a list of ESE motifs to destroy.' %>
+</div>
+
+<legend class="text-primary">Select a strategy to select the 'best' generated variant by its GC3 content</legend>
+<div class="radio form-group">
+    <%= f.radio_button :select_by, 'high', {disabled: true, class: "params-form"} %>
+    <%= f.label :select_by_high, content_tag(:strong, 'high') + ' - Highest GC3 content.' %>
+</div>
+<div class="radio form-group">
+    <%= f.radio_button :select_by, 'mean', {:checked => true, disabled: true, class: "params-form"} %>
+    <%= f.label :select_by_mean, content_tag(:strong, 'mean') + ' - Closest match to the average human GC3 content.' %>
+</div>
+<div class="radio form-group">
+    <%= f.radio_button :select_by, 'low', {disabled: true, class: "params-form"} %>
+    <%= f.label :select_by_low, content_tag(:strong, 'low') +  ' - Lowest GC3 content.' %>
 </div>
 
 <legend class="text-primary">Select how 6-fold degenerate sites should be treated</legend>
