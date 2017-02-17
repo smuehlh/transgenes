@@ -10,6 +10,7 @@ $(document).ready(function() {
     bind_eventhandlers_to_input_elements();
     bind_validate_to_input();
     bind_autocomplete_to_input();
+    bind_eventhandlers_to_params_elements();
 });
 
 $(document).on('page:load', function() {
@@ -44,6 +45,10 @@ function bind_eventhandlers_to_input_elements() {
     bind_to_save_button();
     bind_to_reset_button();
     // NOTE: do not bind to_select_list here, since the element will be created later
+};
+
+function bind_eventhandlers_to_params_elements() {
+    bind_to_select_by_radios();
 };
 
 function bind_to_accordion() {
@@ -175,6 +180,20 @@ function enable_params_partial(enable_all_checkboxes = true) {
         $(".params-strategy-inactive").show();
     }
     $(".params-inactive").hide();
+};
+
+function bind_to_select_by_radios() {
+    params.find("#records_line").on('change', function() {
+    });
+    params.filter(":input[name='enhanced_gene[strategy]']").on('change', function() {
+        var checked = params.filter(":input[name='enhanced_gene[strategy]']:checked").val();
+        if (checked == "max_gc") {
+            params.filter(":input[name='enhanced_gene[select_by]']").prop('disabled', true);
+            params.filter("#enhanced_gene_select_by_high").prop("disabled", false).prop("checked", true);
+        } else {
+            params.filter(":input[name='enhanced_gene[select_by]']").prop('disabled', false);
+        }
+    });
 };
 
 function bind_validate_to_input() {
