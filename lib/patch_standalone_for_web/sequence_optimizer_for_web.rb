@@ -18,9 +18,9 @@ module SequenceOptimizerForWeb
         options = WebinputToOptions.new(web_params)
         gene = init_gene_obj(web_genes, web_ese_motifs)
         gene.remove_introns(options.remove_first_intron)
-        enhanced_gene, log = tweak_gene_verbosely(gene, options)
+        enhanced_gene, overall_gc3, log = tweak_gene_verbosely(gene, options)
 
-        info = combine_info_about_tweaked_gene(log, options)
+        info = combine_info_about_tweaked_gene(log, overall_gc3, options)
         [enhanced_gene, info]
     end
 
@@ -51,13 +51,14 @@ module SequenceOptimizerForWeb
         enhancer.generate_synonymous_genes(gene)
         enhanced_gene = enhancer.select_best_gene
 
+        gc3_across_all_synonymous_genes = enhancer.cross_variant_gc3_per_pos
         log = CoreExtensions::Settings.get_log_content
 
-        [enhanced_gene, log]
+        [enhanced_gene, gc3_across_all_synonymous_genes, log]
     end
 
-    def combine_info_about_tweaked_gene(log, options)
-        Struct.new("Info", :log, :strategy, :keep_first_intron)
-        Struct::Info.new(log, options.strategy, options.is_keep_first_intron)
+    def combine_info_about_tweaked_gene(log, overall_gc3, options)
+        Struct.new("Info", :log, :overall_gc3, :strategy, :keep_first_intron)
+        Struct::Info.new(log, overall_gc3, options.strategy, options.is_keep_first_intron)
     end
 end
