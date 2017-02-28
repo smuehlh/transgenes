@@ -58,7 +58,7 @@ class GeneEnhancer
     def update_cross_variant_gc3(gc3_per_pos)
         gc3_per_pos.each_with_index do |val, ind|
             @cross_variant_gc3_per_pos[ind] = 0 unless @cross_variant_gc3_per_pos[ind]
-            @cross_variant_gc3_per_pos[ind] += val/@n_variants.to_f
+            @cross_variant_gc3_per_pos[ind] += val/@n_variants.to_f * 100
         end
     end
 
@@ -73,7 +73,7 @@ class GeneEnhancer
 
     def log_cross_variant_gc3
         $logger.debug "GC3 per position, across all variants:"
-        $logger.debug @cross_variant_gc3_per_pos.collect{|num| to_pct(num)}.join("\t")
+        $logger.debug @cross_variant_gc3_per_pos.map{|n| n.round(2)}.join("\t")
     end
 
     def log_selection(variant_ind)
