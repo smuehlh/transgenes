@@ -1,0 +1,23 @@
+Maximal_gc3 = {
+    "TTT"=>0, "TTC"=>1,
+    "CTT"=>0, "CTC"=>1, "CTA"=>0, "CTG"=>1, "TTA"=>0, "TTG"=>1,
+    "ATT"=>0, "ATC"=>1, "ATA"=>0,
+    "ATG"=>1,
+    "GTT"=>0, "GTC"=>1, "GTA"=>0, "GTG"=>1,
+    "TCT"=>0, "TCC"=>1, "TCA"=>0, "TCG"=>1, "AGT"=>0, "AGC"=>1,
+    "CCT"=>0, "CCC"=>1, "CCA"=>0, "CCG"=>1,
+    "ACT"=>0, "ACC"=>1, "ACA"=>0, "ACG"=>1,
+    "TAT"=>0, "TAC"=>1,
+    "GCT"=>0, "GCC"=>1, "GCA"=>0, "GCG"=>1,
+    "CAT"=>0, "CAC"=>1,
+    "CAA"=>0, "CAG"=>1,
+    "AAT"=>0, "AAC"=>1,
+    "AAA"=>0, "AAG"=>1,
+    "GAT"=>0, "GAC"=>1,
+    "GAA"=>0, "GAG"=>1,
+    "TGT"=>0, "TGC"=>1,
+    "TGG"=>1, "CGT"=>0,
+    "CGC"=>1, "CGA"=>0, "CGG"=>1, "AGA"=>0, "AGG"=>1,
+    "GGT"=>0, "GGC"=>1, "GGA"=>0, "GGG"=>1,
+    "TAA"=>0, "TAG"=>1, "TGA"=>0
+}

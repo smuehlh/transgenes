@@ -6,6 +6,7 @@ class EnhancedGene < ActiveRecord::Base
             data: "",
             log: "",
             strategy: "",
+            select_by: "",
             keep_first_intron: false
         )
     end

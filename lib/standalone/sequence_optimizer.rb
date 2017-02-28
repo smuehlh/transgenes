@@ -27,7 +27,7 @@ gene.remove_introns(options.remove_first_intron)
 gene.log_statistics
 
 # tweak sequence
-enhancer = GeneEnhancer.new(options.strategy, options.stay_in_subbox_for_6folds)
+enhancer = GeneEnhancer.new(options.strategy, options.select_by, options.stay_in_subbox_for_6folds)
 enhancer.generate_synonymous_genes(gene)
 enhanced_gene = enhancer.select_best_gene
 

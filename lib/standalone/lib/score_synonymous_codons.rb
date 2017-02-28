@@ -8,10 +8,6 @@ class ScoreSynonymousCodons
         @choose_synonymous_codons_for_6folds_from_subbox = stay_in_subbox_for_6folds
     end
 
-    def synonymous_sites_in_cds
-        @synonymous_sites.get_synonymous_sites_in_cds
-    end
-
     def select_synonymous_codon_at(pos)
         syn_codons, scores = score_synonymous_codons_at(pos)
         select_codon_matching_random_score(syn_codons, scores)

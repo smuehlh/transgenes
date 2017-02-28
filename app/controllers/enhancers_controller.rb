@@ -76,7 +76,7 @@ class EnhancersController < ApplicationController
     end
 
     def enhanced_gene_params
-        params.require(:enhanced_gene).permit(:strategy, :keep_first_intron, :ese, :stay_in_subbox)
+        params.require(:enhanced_gene).permit(:strategy, :select_by, :keep_first_intron, :ese, :stay_in_subbox)
     end
 
     def download_params
@@ -240,5 +240,6 @@ class EnhancersController < ApplicationController
             keep_first_intron: info.keep_first_intron,
             destroy_ese_motifs: gene.ese_motifs.any?
         )
+        @gc3_across_synonymous_variants = info.overall_gc3
     end
 end
