@@ -74,16 +74,19 @@
     </dl>
 </dl>
 <%
-    mydat = @gc3_across_synonymous_variants.collect.with_index do |gc3, ind|
-        {x: ind+1, y: gc3}
-    end.to_json
+    points = @gc3_across_synonymous_variants
+    labels = (1..points.size).to_a
 %>
 <script>
     var ctx = $("#gc3Plot");
     var scatterChart = new Chart(ctx, {
-        type: 'bubble',
-        data: { datasets: [{ data: <%= raw mydat %>}] },
+        type: 'line',
+        data: {
+            labels: <%= raw labels %>,
+            datasets: [{ data: <%= raw points %>}]
+        },
         options: chartOptions
     });
 </script>
+
 <!-- TODO: submit form via ajax to stay on same page... -->
