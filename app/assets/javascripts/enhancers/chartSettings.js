@@ -20,6 +20,10 @@ var chartOptions = {
                 display: false,
                 color: "rgba(0, 0, 0, 0.5)"
             },
+            ticks: {
+                suggestedMin: 0,
+                suggestedMax: 100,
+            },
             scaleLabel: {
                 display: true,
                 labelString: '% GC3'
