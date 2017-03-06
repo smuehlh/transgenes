@@ -4,6 +4,7 @@ class EnhancedGene < ActiveRecord::Base
         self.update_attributes(
             gene_name: "",
             data: "",
+            gene_variants: "",
             log: "",
             strategy: "",
             select_by: "",
