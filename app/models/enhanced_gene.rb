@@ -11,8 +11,8 @@ class EnhancedGene < ActiveRecord::Base
         )
     end
 
-    def to_fasta
-        to_fasta_obj = GeneToFasta.new(self.gene_name, self.data)
+    def to_fasta(is_split_seq=true)
+        to_fasta_obj = GeneToFasta.new(self.gene_name, self.data, is_split_seq)
         to_fasta_obj.fasta
     end
 end

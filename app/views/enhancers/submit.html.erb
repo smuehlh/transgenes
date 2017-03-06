@@ -2,8 +2,10 @@
 <legend class="text-primary">Enhanced Gene</legend>
     <div class="well well-sm clearfix">
         <%= content_tag(:span,
-            patch_multiline_text_for_web(@enhanced_gene.to_fasta),
-            class: "text-muted monospaced"
+            patch_multiline_text_for_web(
+                @enhanced_gene.to_fasta(split_seq_at_80_chars=false)
+            ),
+            class: "text-muted monospaced text-wrap"
         ) %>
     </div>
 <div class="container-fluid">
