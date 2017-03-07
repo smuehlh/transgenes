@@ -18,13 +18,13 @@
             <legend class="text-primary">Downloads</legend>
             <ul class="fa-ul">
                 <li><i class="fa-li fa fa-download"></i>
-                    <%= link_to "Enhanced gene", download_enhancers_path(kind: "enhanced_gene") %>
+                    <%= link_to "Enhanced gene", download_enhancers_path(kind: "enhanced_gene"), data: {turbolinks: false} %>
                 </li>
                 <li><i class="fa-li fa fa-download"></i>
-                    <%= link_to "Generated gene variants", download_enhancers_path(kind: "gene_variants") %>
+                    <%= link_to "Generated gene variants", download_enhancers_path(kind: "gene_variants"), data: {turbolinks: false} %>
                 </li>
                 <li><i class="fa-li fa fa-download"></i>
-                    <%= link_to "Log file", download_enhancers_path %>
+                    <%= link_to "Log file", download_enhancers_path, data: {turbolinks: false} %>
                 </li>
             </ul>
         </div>
