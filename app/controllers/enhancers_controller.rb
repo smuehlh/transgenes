@@ -239,11 +239,11 @@ class EnhancersController < ApplicationController
             gene_name: gene.description,
             data: gene.sequence,
             gene_variants: info.generated_variants,
+            gc3_over_all_gene_variants: info.overall_gc3,
             log: info.log,
             strategy: info.strategy,
             keep_first_intron: info.keep_first_intron,
             destroy_ese_motifs: gene.ese_motifs.any?
         )
-        @gc3_across_synonymous_variants = info.overall_gc3
     end
 end
