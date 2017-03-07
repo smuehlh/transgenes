@@ -1,11 +1,13 @@
 class EnhancedGene < ActiveRecord::Base
     serialize :gene_variants
+    serialize :gc3_over_all_gene_variants
 
     def reset
         self.update_attributes(
             gene_name: "",
             data: "",
-            gene_variants: "",
+            gene_variants: [],
+            gc3_over_all_gene_variants: [],
             log: "",
             strategy: "",
             select_by: "",
