@@ -51,7 +51,7 @@ module SequenceOptimizerForWeb
         enhancer.generate_synonymous_genes(gene)
         enhanced_gene = enhancer.select_best_gene
 
-        gene_variants = enhancer.enhanced_genes.collect{|g| g.sequence}
+        gene_variants = enhancer.fasta_formatted_gene_variants
         gc3_across_all_synonymous_genes = enhancer.cross_variant_gc3_per_pos
         log = CoreExtensions::Settings.get_log_content
 
