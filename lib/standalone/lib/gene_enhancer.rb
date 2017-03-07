@@ -1,6 +1,6 @@
 class GeneEnhancer
 
-    attr_reader :cross_variant_gc3_per_pos
+    attr_reader :cross_variant_gc3_per_pos, :enhanced_genes
 
     def initialize(strategy, select_best_by, stay_in_subbox_for_6folds)
         @n_variants = 1000

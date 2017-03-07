@@ -41,8 +41,11 @@ class EnhancersController < ApplicationController
     end
 
     def download
-        if download_params[:fasta]
+        if download_params[:kind] == "enhanced_gene"
             data = get_enhanced_gene.to_fasta
+            filename = Dir::Tmpname.make_tmpname ["gene",".fas"], nil
+        elsif download_params[:kind] == "gene_variants"
+            data = get_enhanced_gene.fasta_formatted_synonymous_variants
             filename = Dir::Tmpname.make_tmpname ["gene",".fas"], nil
         else
             data = get_enhanced_gene.log
@@ -80,7 +83,7 @@ class EnhancersController < ApplicationController
     end
 
     def download_params
-        params.permit(:fasta)
+        params.permit(:kind)
     end
 
     def autocomplete_params
@@ -235,6 +238,7 @@ class EnhancersController < ApplicationController
         @enhanced_gene.update_attributes(
             gene_name: gene.description,
             data: gene.sequence,
+            gene_variants: info.generated_variants,
             log: info.log,
             strategy: info.strategy,
             keep_first_intron: info.keep_first_intron,

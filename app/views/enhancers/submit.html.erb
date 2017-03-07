@@ -11,14 +11,22 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-6">
-            <legend class="text-primary">GC3 content of all generated variants</legend>
+            <legend class="text-primary">GC3 content of all generated gene variants</legend>
             <canvas id="gc3Plot"></canvas>
         </div>
         <div class="col-sm-6">
             <legend class="text-primary">Downloads</legend>
-            <%= link_to "Download enhanced gene (as FASTA file).", download_enhancers_path(fasta: true) %>
-            <br>
-            <%= link_to "Download log file.", download_enhancers_path%>
+            <ul class="fa-ul">
+                <li><i class="fa-li fa fa-download"></i>
+                    <%= link_to "Enhanced gene", download_enhancers_path(kind: "enhanced_gene") %>
+                </li>
+                <li><i class="fa-li fa fa-download"></i>
+                    <%= link_to "Generated gene variants", download_enhancers_path(kind: "gene_variants") %>
+                </li>
+                <li><i class="fa-li fa fa-download"></i>
+                    <%= link_to "Log file", download_enhancers_path %>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
