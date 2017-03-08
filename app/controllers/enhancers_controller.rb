@@ -243,6 +243,7 @@ class EnhancersController < ApplicationController
             log: info.log,
             strategy: info.strategy,
             keep_first_intron: info.keep_first_intron,
+            select_by: info.select_by,
             destroy_ese_motifs: gene.ese_motifs.any?
         )
     end
