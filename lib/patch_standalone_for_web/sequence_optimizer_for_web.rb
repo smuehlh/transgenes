@@ -62,12 +62,12 @@ module SequenceOptimizerForWeb
         Struct.new("Info",
             :log,
             :generated_variants, :overall_gc3,
-            :strategy, :select_by, :keep_first_intron
+            :strategy, :select_by, :keep_first_intron, :stay_in_subbox
         )
         Struct::Info.new(
             log,
             gene_variants, overall_gc3,
-            options.strategy, options.select_by, options.is_keep_first_intron
+            options.strategy, options.select_by, options.is_keep_first_intron, options.stay_in_subbox_for_6folds
         )
     end
 end
