@@ -7,7 +7,8 @@ class EnhancedGene < ActiveRecord::Base
             log: "",
             strategy: "",
             select_by: "",
-            keep_first_intron: false
+            keep_first_intron: false,
+            destroy_ese_motifs: false
         )
     end
 
