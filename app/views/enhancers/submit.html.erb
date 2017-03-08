@@ -1,4 +1,10 @@
 <h1>Results</h1>
+    <div id="success-alert-results" class="alert alert-success" role="alert">
+        <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+        <span class="sr-only">Success:</span>
+        Successfully created <%= @enhanced_gene.gene_variants.size %> gene variants. Selected the best variant based on <%= @enhanced_gene.select_by %> GC3 content.
+    </div>
+
 <legend class="text-primary">Enhanced Gene</legend>
     <div class="well well-sm clearfix">
         <%= content_tag(:span,
