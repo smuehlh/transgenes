@@ -12,21 +12,21 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title"> <%= @enhancer.name %> </h4>
                 <small class="text-muted">
-                    <i>Exons are displayed in upper case, introns in lower case.</i>
                     <table class="padding-between-cols">
                         <tbody>
                             <tr>
-                                <th scope="row"><i>Sequence size (in nucleotides)</i></th>
+                                <th scope="row">Sequence size (in nucleotides):</th>
                                 <td><%= length %></td>
                             </tr>
                             <% if is_cds_resource(@enhancer.name) %>
                                 <tr>
-                                    <th scope="row"><i>Number of exons</i></th>
+                                    <th scope="row">Number of exons:</th>
                                     <td><%= n_exons %></td>
                                 </tr>
                             <% end %>
                         </tbody>
                     </table>
+                    <i>Exons are displayed in upper case, introns in lower case.</i>
                 </small>
             </div>
             <div class="modal-body">
