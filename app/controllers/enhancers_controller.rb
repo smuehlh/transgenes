@@ -38,6 +38,10 @@ class EnhancersController < ApplicationController
         @enhanced_gene = get_enhanced_gene
         reset_enhanced_gene
         tweak_gene
+    rescue EnhancerError => exception
+        flash.clear
+        flash.now[:error] = exception.to_s
+        render :submit_error
     end
 
     def download
