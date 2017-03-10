@@ -27,6 +27,12 @@ class GeneEnhancer
             update_cross_variant_gc3(gc3_per_pos)
         end
         log_cross_variant_gc3
+
+    rescue StandardError => exp
+        # something went very wrong.
+        ErrorHandling.abort_with_error_message(
+            "variant_generation_error", "GeneEnhancer"
+        )
     end
 
     def select_best_gene
@@ -34,6 +40,12 @@ class GeneEnhancer
         log_selection(ind_best_gene)
 
         @enhanced_genes[ind_best_gene]
+
+    rescue StandardError => exp
+        # something went very wrong.
+        ErrorHandling.abort_with_error_message(
+            "variant_selection_error", "GeneEnhancer"
+        )
     end
 
     private

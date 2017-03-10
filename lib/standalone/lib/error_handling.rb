@@ -32,6 +32,10 @@ module ErrorHandling
             "Found invalid codon(s)"
         when "invalid_ese_format"
             "Unrecognized format. Input might contain ESE motifs only (one per line)."
+        when "variant_generation_error"
+            "Cannot generate gene variants."
+        when "variant_selection_error"
+            "Cannot select the best gene variant."
         else
             "Something went wrong."
         end
@@ -72,6 +76,10 @@ module ErrorHandling
             )
         when "missing_strategy_matrix"
             "Missing reference data to alter the sequence."
+        when "variant_generation_error"
+            "Cannot generate gene variants."
+        when "variant_selection_error"
+            "Cannot select the best gene variant."
         else
             "An unknown error occured."
         end
