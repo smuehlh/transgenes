@@ -1,6 +1,6 @@
 class GeneEnhancer
 
-    attr_reader :cross_variant_gc3_per_pos
+    attr_reader :cross_variant_gc3_per_pos, :fasta_formatted_gene_variants
 
     def initialize(strategy, select_best_by, stay_in_subbox_for_6folds)
         @n_variants = 1000
@@ -11,19 +11,28 @@ class GeneEnhancer
 
         @enhanced_genes = []
         @gc3_contents = [] # per gene
+
         @cross_variant_gc3_per_pos = []
+        @fasta_formatted_gene_variants = []
     end
 
     def generate_synonymous_genes(gene)
         @n_variants.times do |num|
             @variant_number = Counting.ruby_to_human(num)
-            variant, gc3, gc3_per_pos = generate_synonymous_variant(gene)
+            variant, fasta, gc3, gc3_per_pos = generate_synonymous_variant(gene)
 
             @enhanced_genes.push variant
+            @fasta_formatted_gene_variants.push fasta
             @gc3_contents.push gc3
             update_cross_variant_gc3(gc3_per_pos)
         end
         log_cross_variant_gc3
+
+    rescue StandardError => exp
+        # something went very wrong.
+        ErrorHandling.abort_with_error_message(
+            "variant_generation_error", "GeneEnhancer"
+        )
     end
 
     def select_best_gene
@@ -31,6 +40,12 @@ class GeneEnhancer
         log_selection(ind_best_gene)
 
         @enhanced_genes[ind_best_gene]
+
+    rescue StandardError => exp
+        # something went very wrong.
+        ErrorHandling.abort_with_error_message(
+            "variant_selection_error", "GeneEnhancer"
+        )
     end
 
     private
@@ -50,9 +65,12 @@ class GeneEnhancer
         copy.tweak_sequence(@strategy, @stay_in_subbox_for_6folds)
         overall_gc3 = copy.gc3_content
         gc3_per_pos = copy.gc3_content_at_synonymous_sites
-        log_generated_variant(copy, overall_gc3)
+        n_mutated_sites, mutated_sites = copy.log_changed_sites
+        fasta = convert_variant_to_fasta(copy, overall_gc3, n_mutated_sites)
 
-        [copy, overall_gc3, gc3_per_pos]
+        log_generated_variant(fasta, mutated_sites)
+
+        [copy, fasta, overall_gc3, gc3_per_pos]
     end
 
     def update_cross_variant_gc3(gc3_per_pos)
@@ -62,12 +80,14 @@ class GeneEnhancer
         end
     end
 
-    def log_generated_variant(gene, gc3)
+    def convert_variant_to_fasta(gene, gc3, n_mutated_sites)
         gc3 = to_pct(gc3)
-        n_mutated_sites, mutated_sites = gene.log_changed_sites
         desc = "Variant #{@variant_number}: #{gc3}% GC3, #{n_mutated_sites} changed sites"
+        GeneToFasta.new(desc, gene.sequence).fasta
+    end
 
-        $logger.info GeneToFasta.new(desc, gene.sequence).fasta
+    def log_generated_variant(fasta, mutated_sites)
+        $logger.info fasta
         $logger.debug mutated_sites
     end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170216132320) do
+ActiveRecord::Schema.define(version: 20170308114411) do
 
   create_table "enhanced_genes", force: :cascade do |t|
     t.text     "gene_name"
@@ -19,11 +19,14 @@ ActiveRecord::Schema.define(version: 20170216132320) do
     t.text     "log"
     t.string   "strategy"
     t.boolean  "keep_first_intron"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.string   "session_id"
     t.boolean  "destroy_ese_motifs"
     t.string   "select_by"
+    t.text     "gene_variants"
+    t.text     "gc3_over_all_gene_variants"
+    t.boolean  "stay_in_subbox_for_6folds"
   end
 
   add_index "enhanced_genes", ["session_id"], name: "index_enhanced_genes_on_session_id"

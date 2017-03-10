@@ -7,9 +7,10 @@ class GeneToFasta
         fasta_obj.write(file)
     end
 
-    def initialize(description, sequence)
+    def initialize(description, sequence, is_split_seq_at_80_chars=true)
         @header = str_to_fasta_header(description)
-        @sequence = split_sequence_to_fasta_lines(sequence)
+        @sequence = sequence
+        split_sequence_to_fasta_lines if is_split_seq_at_80_chars
 
         @fasta = "#{@header}\n#{@sequence}"
     end
@@ -24,7 +25,7 @@ class GeneToFasta
         ">#{str}"
     end
 
-    def split_sequence_to_fasta_lines(sequence)
-        sequence.scan(/.{1,80}/).join("\n")
+    def split_sequence_to_fasta_lines
+        @sequence = @sequence.scan(/.{1,80}/).join("\n")
     end
 end
