@@ -193,6 +193,7 @@ function bind_to_select_by_radios() {
             params.filter("#enhanced_gene_select_by_high").prop("disabled", false).prop("checked", true);
         } else {
             params.filter(":input[name='enhanced_gene[select_by]']").prop('disabled', false);
+            params.filter("#enhanced_gene_select_by_mean").prop("checked", true);
         }
     });
 };
