@@ -48,6 +48,7 @@ function bind_eventhandlers_to_input_elements() {
 };
 
 function bind_eventhandlers_to_params_elements() {
+    bind_to_show_more_button();
     bind_to_select_by_radios();
 };
 
@@ -192,6 +193,17 @@ function bind_to_select_by_radios() {
             params.filter("#enhanced_gene_select_by_high").prop("disabled", false).prop("checked", true);
         } else {
             params.filter(":input[name='enhanced_gene[select_by]']").prop('disabled', false);
+            params.filter("#enhanced_gene_select_by_mean").prop("checked", true);
+        }
+    });
+};
+
+function bind_to_show_more_button() {
+    params.filter("button").on('click', function() {
+        if ($(this).text() == $(this).data('text')) {
+            $(this).text($(this).data('alt-text'));
+        } else {
+            $(this).text($(this).data('text'));
         }
     });
 };

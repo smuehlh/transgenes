@@ -1,9 +1,3 @@
-<legend class="text-primary">Select if first intron should be kept or removed</legend>
-<div class="checkbox form-group">
-    <%= f.check_box :keep_first_intron, {checked: true, disabled: true, class: "params-form"}, "true", "false" %>
-    <%= f.label :keep_first_intron, "Keep first intron" %>
-</div>
-
 <legend class="text-primary">Select a strategy</legend>
 <div class="radio form-group">
     <%= f.radio_button :strategy, 'gc', {disabled: true, class: "params-form"} %>
@@ -22,22 +16,34 @@
     <%= f.label :strategy_raw, content_tag(:strong, 'raw') +  ' - Leave the sequence as is. Only in combination with a list of ESE motifs to destroy' %>
 </div>
 
-<legend class="text-primary">Select a strategy to select the 'best' generated variant by its GC3 content</legend>
-<div class="radio form-group">
-    <%= f.radio_button :select_by, 'high', {disabled: true, class: "params-form"} %>
-    <%= f.label :select_by_high, content_tag(:strong, 'high') + ' - Highest GC3 content' %>
-</div>
-<div class="radio form-group">
-    <%= f.radio_button :select_by, 'mean', {:checked => true, disabled: true, class: "params-form"} %>
-    <%= f.label :select_by_mean, content_tag(:strong, 'mean') + ' - Closest match to the average human GC3 content' %>
-</div>
-<div class="radio form-group">
-    <%= f.radio_button :select_by, 'low', {disabled: true, class: "params-form"} %>
-    <%= f.label :select_by_low, content_tag(:strong, 'low') +  ' - Lowest GC3 content' %>
-</div>
+<span data-toggle="tooltip" title="View (and change) default settings.">
+    <%= f.button("More options", {type: "button", disabled: true, class: "btn btn-primary params-form", data: {toggle: "collapse", target: "#more-options", "alt-text" => "Less options", "text" => "More options"}}) %>
+</span>
 
-<legend class="text-primary">Select how 6-fold degenerate sites should be treated</legend>
-<div class="checkbox form-group">
-    <%= f.check_box :stay_in_subbox, {checked: false, disabled: true, class: "params-form"}, "true", "false" %>
-    <%= f.label :stay_in_subbox, "Stay in the respective (2- or 4-codon) sub-box rather than considering all 6 synonymous codons" %>
+<div id="more-options" class="collapse">
+    <legend class="text-primary">Select a strategy to select the best generated variant by its GC3 content</legend>
+    <div class="radio form-group">
+        <%= f.radio_button :select_by, 'high', {disabled: true, class: "params-form"} %>
+        <%= f.label :select_by_high, content_tag(:strong, 'high') + ' - Highest GC3 content' %>
+    </div>
+    <div class="radio form-group">
+        <%= f.radio_button :select_by, 'mean', {:checked => true, disabled: true, class: "params-form"} %>
+        <%= f.label :select_by_mean, content_tag(:strong, 'mean') + ' - Closest match to the average human GC3 content' %>
+    </div>
+    <div class="radio form-group">
+        <%= f.radio_button :select_by, 'low', {disabled: true, class: "params-form"} %>
+        <%= f.label :select_by_low, content_tag(:strong, 'low') +  ' - Lowest GC3 content' %>
+    </div>
+
+    <legend class="text-primary">Select if first intron should be kept or removed</legend>
+    <div class="checkbox form-group">
+        <%= f.check_box :keep_first_intron, {checked: true, disabled: true, class: "params-form"}, "true", "false" %>
+        <%= f.label :keep_first_intron, "Keep first intron" %>
+    </div>
+
+    <legend class="text-primary">Select how 6-fold degenerate sites should be treated</legend>
+    <div class="checkbox form-group">
+        <%= f.check_box :stay_in_subbox, {checked: false, disabled: true, class: "params-form"}, "true", "false" %>
+        <%= f.label :stay_in_subbox, "Stay in the respective (2- or 4-codon) sub-box rather than considering all 6 synonymous codons" %>
+    </div>
 </div>
