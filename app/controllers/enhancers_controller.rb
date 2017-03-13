@@ -38,11 +38,18 @@ class EnhancersController < ApplicationController
         @enhanced_gene = get_enhanced_gene
         reset_enhanced_gene
         tweak_gene
+    rescue EnhancerError => exception
+        flash.clear
+        flash.now[:error] = exception.to_s
+        render :submit_error
     end
 
     def download
-        if download_params[:fasta]
+        if download_params[:kind] == "enhanced_gene"
             data = get_enhanced_gene.to_fasta
+            filename = Dir::Tmpname.make_tmpname ["gene",".fas"], nil
+        elsif download_params[:kind] == "gene_variants"
+            data = get_enhanced_gene.fasta_formatted_synonymous_variants
             filename = Dir::Tmpname.make_tmpname ["gene",".fas"], nil
         else
             data = get_enhanced_gene.log
@@ -72,15 +79,15 @@ class EnhancersController < ApplicationController
     end
 
     def ese_params
-        params.fetch(:ese).permit(:data, :file, :commit)
+        params.fetch(:ese).permit(:data, :file, :dataset, :commit)
     end
 
     def enhanced_gene_params
-        params.require(:enhanced_gene).permit(:strategy, :keep_first_intron, :ese, :stay_in_subbox)
+        params.require(:enhanced_gene).permit(:strategy, :select_by, :keep_first_intron, :ese, :stay_in_subbox)
     end
 
     def download_params
-        params.permit(:fasta)
+        params.permit(:kind)
     end
 
     def autocomplete_params
@@ -235,9 +242,13 @@ class EnhancersController < ApplicationController
         @enhanced_gene.update_attributes(
             gene_name: gene.description,
             data: gene.sequence,
+            gene_variants: info.generated_variants,
+            gc3_over_all_gene_variants: info.overall_gc3,
             log: info.log,
             strategy: info.strategy,
             keep_first_intron: info.keep_first_intron,
+            select_by: info.select_by,
+            stay_in_subbox_for_6folds: info.stay_in_subbox,
             destroy_ese_motifs: gene.ese_motifs.any?
         )
     end

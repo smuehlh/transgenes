@@ -12,28 +12,45 @@
         <span class="sr-only">Info:</span>
         <span id="warning-alert-text-all-input"></span>
     </div>
-    <ul class="nav nav-tabs" data-tabs="tabs">
-        <li class="active"><a href="#input-tab-cds" data-toggle="tab">CDS</a></li>
-        <li><a href="#input-tab-five" data-toggle="tab">5'UTR</a></li>
-        <li><a href="#input-tab-three" data-toggle="tab">3'UTR</a></li>
-    </ul>
-
-    <div class="tab-content">
-        <div class="tab-pane active" id="input-tab-cds">
-            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "CDS"} %>
-        </div>
-        <div class="tab-pane" id="input-tab-five">
-            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "5'UTR"} %>
-        </div>
-        <div class="tab-pane" id="input-tab-three">
-            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "3'UTR"} %>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2">
+                <ul class="nav nav-pills nav-stacked" data-tabs="tabs">
+                    <li><a href="#input-tab-five" data-toggle="pill">Enter 5'UTR</a></li>
+                    <li class="active"><a href="#input-tab-cds" data-toggle="pill">Enter CDS</a></li>
+                    <li><a href="#input-tab-three" data-toggle="pill">Enter 3'UTR</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-10">
+                <div class="row">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="input-tab-cds">
+                            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "CDS"} %>
+                        </div>
+                        <div class="tab-pane" id="input-tab-five">
+                            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "5'UTR"} %>
+                        </div>
+                        <div class="tab-pane" id="input-tab-three">
+                            <%= render partial: "enhancers/index/enhancer_form", locals: {resource_name: "3'UTR"} %>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-<h3>Enter ESE motifs <small>Optional</small></h3>
-    <div id="input-tab-ese">
-        <%= render partial: "enhancers/index/ese_form" %>
-    </div>
+<div id="input-tab-ese">
+    <%= form_for Ese.new, :url => {action: "create_ese"}, remote: true, html: { style: "display:inline;", role: "form", multipart: true } do |f| %>
+        <h3>Enter ESE motifs
+            <small> Optional</small>
+            <div class="pull-right control-group">
+                <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save ESE data", data: {toggle: "tooltip"}, disabled: true %>
+                <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete ESE data", data: {toggle: "tooltip"}, disabled: true %>
+            </div>
+        </h3>
+            <%= render partial: "enhancers/index/ese_form", locals: {f: f} %>
+    <% end %>
+</div>
 
 <h3>Select parameters <small class="params-inactive">Please provide a valid CDS sequence first</small></h3>
     <!-- open submit form -->

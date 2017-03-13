@@ -28,7 +28,7 @@ namespace :ensembl do
                     next if GeneticCode.is_stopcodon(codon)
                     next if is_near_intron_border(aa_pos, parsed_gene)
 
-                    related_codons = GeneticCode.get_codons_same_third_site_and_degeneracy(codon)
+                    related_codons = GeneticCode.get_codons_same_third_site_and_degeneracy_group(codon)
                     counts = update_counts(counts, related_codons, aa_pos)
                 end
             end
@@ -70,7 +70,7 @@ namespace :ensembl do
                     next if GeneticCode.is_stopcodon(codon)
                     next unless is_near_intron_border(aa_pos, parsed_gene)
 
-                    related_codons = GeneticCode.get_codons_same_third_site_and_degeneracy(codon)
+                    related_codons = GeneticCode.get_codons_same_third_site_and_degeneracy_group(codon)
                     distance = distance_to_intron(aa_pos, parsed_gene)
                     counts = update_counts(counts, related_codons, distance)
                 end
@@ -82,32 +82,34 @@ namespace :ensembl do
                     Rails.root, 'lib', 'standalone', 'lib', 'scores', 'codon_usage_data', "third_site_counts_around_intron-ensembl-v#{EnsemblGene.first.version}.rb"
                 ), "w"
             )
-            fh.print "Third_site_counts = "
+            fh.print "Third_site_counts_near_intron = "
             fh.print counts
             fh.close
         end
 
-        desc "Calculate average GC content of 1- and 2-exon genes"
-        task gc: :environment do
-            gc_one_exon_genes = []
-            gc_two_exon_genes = []
+        desc "Calculate average GC3 content of 1- and 2-exon genes"
+        task gc3: :environment do
+            require File.join(Rails.root, 'lib', 'standalone', 'lib', 'gene.rb')
+
+            gc3_one_exon_genes = []
+            gc3_two_exon_genes = []
 
             EnsemblGene.find_each do |gene|
                 parsed_gene = parse_gene(gene)
                 next unless parsed_gene # parsing was unsuccessfull
                 n_exons = parsed_gene[:exons].size
-                gc = calc_gc(parsed_gene[:exons].join(""))
+                gc3 = calc_gc3(parsed_gene)
                 if n_exons == 1
-                    gc_one_exon_genes.push gc
+                    gc3_one_exon_genes.push gc3
                 elsif n_exons == 2
-                    gc_two_exon_genes.push gc
+                    gc3_two_exon_genes.push gc3
                 end
             end
 
-            average_one_exon_genes = Statistics.mean(gc_one_exon_genes)
-            average_two_exon_genes = Statistics.mean(gc_two_exon_genes)
-            puts "Average GC (1 exon genes): #{average_one_exon_genes}"
-            puts "Average GC (1 exon genes): #{average_two_exon_genes}"
+            average_one_exon_genes = Statistics.mean(gc3_one_exon_genes)
+            average_two_exon_genes = Statistics.mean(gc3_two_exon_genes)
+            puts "Average GC3 (1 exon genes): #{average_one_exon_genes}"
+            puts "Average GC3 (2 exon genes): #{average_two_exon_genes}"
         end
 
         def parse_gene(gene)
@@ -144,8 +146,10 @@ namespace :ensembl do
             counts
         end
 
-        def calc_gc(cds)
-            (cds.count("G") + cds.count("C"))/cds.size.to_f
+        def calc_gc3(parsed_gene)
+            gene = Gene.new
+            gene.add_cds(parsed_gene[:exons], parsed_gene[:introns], parsed_gene[:description])
+            gene.gc3_content
         end
 
         def convert_to_pos_in_cds(aa_pos)

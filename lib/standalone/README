@@ -1,0 +1,18 @@
+Sequence Optimiser
+==================
+A script to enhance mammalian transgenes.
+Usage: ruby sequence_optimizer.rb -i input -o output -s strategy [options]
+
+Contact
+=======
+Laurence Hurst (l.d.hurst@bath.ac.uk)
+
+ESE-Datasets
+============
+The ESE datasets have been obtained from the following websites and publications:
+INT3: Eva Fernández Cáceres and Laurence D Hurst: The evolution, impact and properties of exonic splice enhancers. Genome Biology. 2013, 14:R143. DOI: 10.1186/gb-2013-14-12-r143
+RESCUE-ESE: Fairbrother WG, Yeh RF, Sharp PA, Burge CB: Predictive identification of exonic splicing enhancers in human genes. Science. 2002, 297: 1007-1013. DOI: 10.1126/science.1073774.
+http://genes.mit.edu/burgelab/rescue-ese/ESE.txt
+PESE (hexamers with min 7 occurrences in the original list of octamers): Zhang XHF, Chasin LA: Computational definition of sequence motifs governing constitutive exon splicing. Genes Dev. 2004, 18: 1241-1250. DOI: 10.1101/gad.1195304.
+ESR: Goren A, Ram O, Amit M, Keren H, Lev-Maor G, Vig I, Pupko T, Ast G: Comparative analysis identifies exonic splicing regulatory sequences - The complex definition of enhancers and silencers. Mol Cell. 2006, 22: 769-781. DOI: 10.1016/j.molcel.2006.05.008.
+Ke-ESE400 (top 400 ESE): Ke S, Shang S, Kalachikov SM, Morozova I, Yu L, Russo JJ, Ju J, Chasin LA: Quantitative evaluation of all hexamers as exonic splicing elements. Genome Res. 2011, 21: 1360-1374. DOI: 10.1101/gr.119628.110.

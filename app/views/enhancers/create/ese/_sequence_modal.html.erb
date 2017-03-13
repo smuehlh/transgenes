@@ -1,0 +1,24 @@
+<a data-toggle="modal" href="#view-modal-ese" class="alert-link">Click to inspect parsed motifs.</a>
+<div id="view-modal-ese" class="modal" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">ESE motifs</h4>
+                <small class="text-muted">
+                    <table class="padding-between-cols">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Number of motifs:</th>
+                                <td><%= @ese.data.size %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </small>
+            </div>
+            <div class="modal-body">
+                <pre class="text-muted input-view-text"><%= @ese.data.join("\n") %></pre>
+            </div>
+        </div>
+    </div>
+</div>

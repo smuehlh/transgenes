@@ -8,10 +8,6 @@ class ScoreSynonymousCodons
         @choose_synonymous_codons_for_6folds_from_subbox = stay_in_subbox_for_6folds
     end
 
-    def synonymous_sites_in_cds
-        @synonymous_sites.get_synonymous_sites_in_cds
-    end
-
     def select_synonymous_codon_at(pos)
         syn_codons, scores = score_synonymous_codons_at(pos)
         select_codon_matching_random_score(syn_codons, scores)
@@ -31,19 +27,22 @@ class ScoreSynonymousCodons
 
     def score_synonymous_codons_at(pos)
         syn_codons = get_synonymous_codons_at(pos)
-        scores =
+        strategy_scores =
             if is_stopcodon_at(pos)
                 score_stopcodons(syn_codons)
-            elsif @synonymous_sites.is_in_proximity_to_deleted_intron(pos) &&
-                @ese_scorer.has_ese_motifs_to_score_by
+            else
+                score_by_strategy(syn_codons, pos)
+            end
+        scores =
+            if @synonymous_sites.is_in_proximity_to_deleted_intron(pos) &&
+                    @ese_scorer.has_ese_motifs_to_score_by
                 # additionally score by ese resemblance
                 # NOTE: ese input is optional and might have been omitted
-                strategy_scores = score_by_strategy(syn_codons, pos)
                 ese_scores = score_by_ese(syn_codons, pos)
                 combine_normalised_scores(strategy_scores, ese_scores)
             else
                 # pure strategy scores
-                score_by_strategy(syn_codons, pos)
+                strategy_scores
             end
 
         [syn_codons, scores]
@@ -61,13 +60,11 @@ class ScoreSynonymousCodons
     end
 
     def score_by_strategy(syn_codons, pos)
-        # NOTE: score stopcodon separately
         orig_codon = get_codon_at(pos)
-        if GeneticCode.is_stopcodon(orig_codon)
-            normalised_stopcodon_scores(syn_codons)
-        else
-            @strategy_scorer.normalised_scores(syn_codons, orig_codon, pos)
-        end
+        is_near_intron = @synonymous_sites.is_in_proximity_to_intron(pos)
+        distance_to_intron = @synonymous_sites.get_nt_distance_to_intron(pos)
+
+        @strategy_scorer.normalised_scores(syn_codons, orig_codon, pos, is_near_intron, distance_to_intron)
     end
 
     def score_by_ese(syn_codons, pos)
@@ -89,7 +86,7 @@ class ScoreSynonymousCodons
         combined_scores = strategy_scores.each_index.collect do |ind|
             strategy_scores[ind] * ese_scores[ind]
         end
-        Statistics.normalise(combined_scores)
+        Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(combined_scores)
     end
 
     def get_codon_at(pos)

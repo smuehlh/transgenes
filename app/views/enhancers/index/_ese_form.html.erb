@@ -1,61 +1,43 @@
 <%
-    valid_chars = Dna.valid_nucleotides
-    valid_chars = valid_chars.map{|c| [c.upcase, c.downcase]}.flatten.join("")
+    valid_chars = Dna.valid_nucleotides.join("")
     valid_textinput = "^(?:[#{valid_chars}]{6}[\\n\\r]{0,2})+$" # ensure each line contains exactly 6 nucleotides
 %>
 
-<%= form_for Ese.new, :url => {action: "create_ese"}, remote: true, html: { style: "display:inline;", role: "form", multipart: true } do |f| %>
-
-    <div class="pull-right control-group">
-        <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save ESE data", data: {toggle: "tooltip"}, disabled: true %>
-        <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete ESE data", data: {toggle: "tooltip"}, disabled: true %>
+<%= f.hidden_field :commit, value: "" %>
+<div class="container-fluid">
+    <div class="row">
+        <div id="error-alert-ese" class="alert alert-danger" role="alert" style="display: none;">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            <span id="error-alert-text-ese"></span>
+        </div>
+        <div id="success-alert-ese" class="alert alert-success" role="alert" style="display: none;">
+            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+            <span class="sr-only">Success:</span>
+            Successfully read ESE motifs.
+            <span id="success-alert-text-ese"></span>
+        </div>
     </div>
-    <legend class="text-primary">Please enter or upload motifs</legend>
-
-    <div id="error-alert-ese" class="alert alert-danger" role="alert" style="display: none;">
-        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span class="sr-only">Error:</span>
-        <span id="error-alert-text-ese"></span>
-    </div>
-    <div id="success-alert-ese" class="alert alert-success" role="alert" style="display: none;">
-        <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
-        <span class="sr-only">Success:</span>
-        Successfully read ESE motifs.
-    </div>
-
-    <%= f.hidden_field :commit, value: "" %>
-
-    <div class="panel-group" id="accordion-ese">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion-ese" href="#textarea-ese"><span data-toggle="tooltip" title="Click to collapse">Enter motifs <span class="glyphicon glyphicon-collapse-up"></span> </span></a>
-                </h4>
-            </div>
-            <div id="textarea-ese" class="panel-collapse collapse in">
-                <div class="panel-body">
-                    <div class="form-group-validation">
-                        <%= f.text_area :data, rows: 5, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 1000, data: {valid: valid_textinput} %>
-                        <small class="form-text text-muted">DNA sequence motifs of 6 bases, one motif per line.</small>
-                    </div>
-                </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <legend class="text-primary">Enter motifs</legend>
+            <div class="form-group-validation">
+                <%= f.text_area :data, rows: 6, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 2000, data: {valid: valid_textinput} %>
+                <small class="form-text text-muted">DNA sequence motifs of 6 bases, one motif per line.</small>
             </div>
         </div>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion-ese" href="#fileinput-ese"><span data-toggle="tooltip" title="Click to expand">Or, upload file <span class="glyphicon glyphicon-collapse-down"></span></span></a>
-                </h4>
-            </div>
-            <div id="fileinput-ese" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <div class="form-group-validation">
-                        <%= f.file_field :file, accept: ".txt" %>
-                        <small class="form-text text-muted">Plain text file containing one motif per line.</small>
-                    </div>
+        <div class="col-sm-6">
+            <div class="row">
+                <legend class="text-primary">Or, upload file</legend>
+                <div class="form-group-validation">
+                    <%= f.file_field :file, accept: ".txt" %>
+                    <small class="form-text text-muted">Plain text file containing one motif per line.</small>
                 </div>
+            </div>
+            <div class="row">
+                <legend class="text-primary">Or, select dataset</legend>
+                <%= select :ese, :dataset, options_for_select(["INT3", "ESR", "Ke-ESE400", "PESE", "RESCUE-ESE"]), {}, {class: "form-control"} %>
             </div>
         </div>
     </div>
-<% end %>
+</div>

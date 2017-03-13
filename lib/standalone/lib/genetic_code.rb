@@ -99,20 +99,52 @@ module GeneticCode
         syn_codons.select{ |syn_codon| syn_codon.start_with?(codon[0]) }
     end
 
-    def get_codons_same_third_site_and_degeneracy(codon)
+    def get_codons_by_degeneracy_and_third_site(degeneracy, subbox_size=degeneracy, third_site)
+        # NOTE: subbox_size only needed for 6-folds. for all other codons, it should equal the degeneracy
+        valid_codons.collect do |other|
+            next if other[-1] != third_site
+            next if is_stopcodon(other)
+            next if get_synonymous_codons(other).size != degeneracy
+            next if get_synonymous_codons_in_codon_box(other).size != subbox_size
+
+            other
+        end.compact
+    end
+
+    def get_codons_same_third_site_and_degeneracy_group(codon)
         if is_stopcodon(codon)
             return [codon]
         else
-            syn_codons = get_synonymous_codons(codon)
-            syn_codons_same_box = get_synonymous_codons_in_codon_box(codon)
-            valid_codons.collect do |other|
-                next if other[-1] != codon[-1] # third sites are equal
-                next if is_stopcodon(other)
-                next if get_synonymous_codons(other).size != syn_codons.size
-                next if get_synonymous_codons_in_codon_box(other).size != syn_codons_same_box.size
+            degeneracy = get_synonymous_codons(codon).size
+            subbox_size = get_synonymous_codons_in_codon_box(codon).size
+            third_site = codon[-1]
 
-                other
-            end.compact
+            matching_codons = get_codons_by_degeneracy_and_third_site(degeneracy, subbox_size, third_site)
+
+            additional_codons =
+                if degeneracy == 1
+                    [] # no additional codons.
+                elsif degeneracy == 2
+                    get_codons_by_degeneracy_and_third_site(6, 2, third_site)
+                elsif degeneracy == 3
+                    [
+                        get_codons_by_degeneracy_and_third_site(4, third_site),
+                        get_codons_by_degeneracy_and_third_site(6, 4, third_site)
+                    ].flatten
+                elsif degeneracy == 4
+                    [
+                        get_codons_by_degeneracy_and_third_site(3, third_site),
+                        get_codons_by_degeneracy_and_third_site(6, 4, third_site)
+                    ].flatten
+                elsif degeneracy == 6 && subbox_size == 2
+                    get_codons_by_degeneracy_and_third_site(2, third_site)
+                elsif degeneracy == 6 && subbox_size == 4
+                    [
+                        get_codons_by_degeneracy_and_third_site(3, third_site),
+                        get_codons_by_degeneracy_and_third_site(4, third_site)
+                    ].flatten
+                end
+            matching_codons | additional_codons
         end
     end
 end

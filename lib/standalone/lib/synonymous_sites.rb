@@ -5,13 +5,6 @@ class SynonymousSites
         @introns = introns
     end
 
-    def get_synonymous_sites_in_cds
-        # = all third codon positions
-        first_synonymous_site = 2
-        last_synonymous_site = @exons.join("").size - 1
-        (first_synonymous_site..last_synonymous_site).step(3)
-    end
-
     def is_in_proximity_to_deleted_intron(pos_in_cds)
         pos_in_exon, exon_ind = map_cds_pos_onto_exon_pos_and_ind(pos_in_cds)
         (
@@ -29,9 +22,11 @@ class SynonymousSites
         pos_in_exon, exon_ind = map_cds_pos_onto_exon_pos_and_ind(pos_in_cds)
         (
             is_succeeded_by_intron(exon_ind) &&
+            (! is_succeeding_intron_deleted(exon_ind)) &&
             is_at_exon_end(pos_in_exon, exon_ind)
         ) || (
             is_preceded_by_intron(exon_ind) &&
+            (! is_preceding_intron_deleted(exon_ind)) &&
             is_at_exon_start(pos_in_exon, exon_ind)
         )
     end

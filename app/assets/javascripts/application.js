@@ -15,9 +15,11 @@
 //= require jquery_ujs
 //= require jquery.remotipart
 //= require validate
+//= require Chart
 //= require bootstrap3-typeahead
 //= require typeahead-bloodhound
 //= require bootstrap-sprockets
 //= require enhancers
 //= require enhancers/input
+//= require enhancers/chartSettings
 //= require turbolinks

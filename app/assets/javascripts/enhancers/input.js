@@ -10,6 +10,7 @@ $(document).ready(function() {
     bind_eventhandlers_to_input_elements();
     bind_validate_to_input();
     bind_autocomplete_to_input();
+    bind_eventhandlers_to_params_elements();
 });
 
 $(document).on('page:load', function() {
@@ -40,9 +41,15 @@ function bind_eventhandlers_to_input_elements() {
     bind_to_input_textarea();
     bind_to_input_file();
     bind_to_input_text();
+    bind_to_select();
     bind_to_save_button();
     bind_to_reset_button();
     // NOTE: do not bind to_select_list here, since the element will be created later
+};
+
+function bind_eventhandlers_to_params_elements() {
+    bind_to_show_more_button();
+    bind_to_select_by_radios();
 };
 
 function bind_to_accordion() {
@@ -113,6 +120,19 @@ function bind_to_input_text() {
     });
 };
 
+function bind_to_select() {
+    inputs.find("select").on('change', function() {
+        var thisform = $(this).closest("form");
+        thisform.find("textarea").val('');
+        thisform.find("input:file").val('');
+        thisform.find(":submit[value=Reset]").prop('disabled', false);
+        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
+        thisform.find("[id^=success-alert]").hide();
+        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        thisform.submit();
+    });
+};
+
 function bind_to_save_button() {
     inputs.find(":submit[value=Save]").on('click', function() {
         var thisform = $(this).closest("form");
@@ -133,7 +153,7 @@ function bind_to_reset_button() {
     });
 }
 
-function bind_to_select_list() {
+function bind_to_selecting_lines_list() {
     inputs.find("#records_line").on('change', function() {
         var thisform = $(this).closest("form");
         thisform.find("input[type=hidden][name*=commit]").val("Line");
@@ -161,6 +181,31 @@ function enable_params_partial(enable_all_checkboxes = true) {
         $(".params-strategy-inactive").show();
     }
     $(".params-inactive").hide();
+};
+
+function bind_to_select_by_radios() {
+    params.find("#records_line").on('change', function() {
+    });
+    params.filter(":input[name='enhanced_gene[strategy]']").on('change', function() {
+        var checked = params.filter(":input[name='enhanced_gene[strategy]']:checked").val();
+        if (checked == "max_gc") {
+            params.filter(":input[name='enhanced_gene[select_by]']").prop('disabled', true);
+            params.filter("#enhanced_gene_select_by_high").prop("disabled", false).prop("checked", true);
+        } else {
+            params.filter(":input[name='enhanced_gene[select_by]']").prop('disabled', false);
+            params.filter("#enhanced_gene_select_by_mean").prop("checked", true);
+        }
+    });
+};
+
+function bind_to_show_more_button() {
+    params.filter("button").on('click', function() {
+        if ($(this).text() == $(this).data('text')) {
+            $(this).text($(this).data('alt-text'));
+        } else {
+            $(this).text($(this).data('text'));
+        }
+    });
 };
 
 function bind_validate_to_input() {

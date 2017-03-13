@@ -12,5 +12,10 @@ module CoreExtensions
             # remove tempfile (only if it is an tempfile)
             file.close! if file.kind_of?(Tempfile)
         end
+
+        def get_data_file_by_basename(basename)
+            path = File.join(Rails.root, "lib", "standalone", "data")
+            Dir.glob("#{path}/**/#{basename}.*")[0]
+        end
     end
 end

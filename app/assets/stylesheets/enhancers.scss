@@ -4,22 +4,28 @@ textarea {
     resize: vertical;
 }
 
+// display sequence inputs
 .tab-content {
     border: 1px solid #ddd;
-    border-top-right-radius:4px;
-    border-bottom-right-radius:4px;
-    border-bottom-left-radius:4px;
+    border-radius: 4px;
     padding: 10px;
+    margin-left: -15px;
 }
-
-.nav-tabs {
-    margin-bottom: 0;
-    border-bottom: 0;
+.nav-pills > li > a {
+    border-top-right-radius: 0px;
+    border-top-left-radius:4px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius:4px;
 }
 
 // display all uploaded text in monospace (similar to code - styling)
 .monospaced {
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.text-wrap {
+    word-break: break-all;
+    display: inline-block;
 }
 
 // display sequence stats

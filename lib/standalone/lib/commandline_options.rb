@@ -3,6 +3,7 @@ require 'optparse'
 class CommandlineOptions
     attr_reader :input, :output, :strategy,
         # optional params
+        :select_by,
         :utr5prime, :utr3prime,
         :input_line, :utr5prime_line, :utr3prime_line,
         :remove_first_intron,
@@ -39,12 +40,17 @@ class CommandlineOptions
         end
     end
 
+    def default_for_select_by_depending_on_strategy
+        @strategy == "max-gc" ? "high" : "mean"
+    end
+
     def mandatory_arguments
         %w(@input @output @strategy)
     end
 
     def optional_arguments
         %w(
+            @select_by
             @input_line
             @utr5prime @utr5prime_line @utr3prime @utr3prime_line
             @remove_first_intron
@@ -76,6 +82,7 @@ class CommandlineOptions
         opt_parser = argument_specification
         opt_parser.parse(@args)
 
+        set_defaults_for_unset_optional_arguments_that_cant_remain_unset
         ensure_mandatory_arguments_are_set
         ensure_dependencies_are_met
 
@@ -89,6 +96,13 @@ class CommandlineOptions
             ErrorHandling.abort_with_error_message(
                 "argument_error", "CommandlineOptions", exception_str
             )
+    end
+
+    def set_defaults_for_unset_optional_arguments_that_cant_remain_unset
+        unless @select_by
+            @select_by = default_for_select_by_depending_on_strategy
+            $logger.warn("Set select-by to #{@select_by}")
+        end
     end
 
     def argument_specification
@@ -109,12 +123,13 @@ class CommandlineOptions
                 "Path to output file, in FASTA format.") do |path|
                 @output = path
             end
-            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc"],
+            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc", "max-gc"],
                 "Strategy for altering the sequence.",
-                "Select one of: 'raw', 'humanized' or 'gc'.",
+                "Select one of: 'raw', 'humanize', 'gc' or 'max-gc'.",
                 "raw - Leave the sequence as is.", "May be specified only in combination with an ESE list (--ese).",
                 "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
-                "gc - Match GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.") do |opt|
+                "gc - Match position-dependent GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.",
+                "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.") do |opt|
                 @strategy = opt
             end
 
@@ -157,6 +172,16 @@ class CommandlineOptions
                 "6-fold degenerates: Stay in the respective (2- or 4-fold) codon box", "when selecting a synonymous codon.", "If not specified, all 6 codons are considered.") do |opt|
                 @stay_in_subbox_for_6folds = true
             end
+            opts.on("-b", "--select-by STRATEGY", ["mean", "high", "low"],
+                "Strategy for selecting which of the generated variants is best.",
+                "Select one of: 'mean', 'high' or 'low'.",
+                "mean - Closest GC3 to the average human GC3 content.",
+                "high - Highest GC3 of all variants.",
+                "low - Lowest GC3 of all variants.",
+                "If not specified, defaults to 'mean' ('high' if strategy is set to 'max-gc').") do |opt|
+                @select_by = opt
+            end
+
             opts.separator ""
             opts.on("-v", "--verbose", "Produce verbose log.") do |opt|
                 @verbose = true
@@ -181,6 +206,10 @@ class CommandlineOptions
             "invalid_argument_combination", "CommandlineOptions",
             "Nothing to do for the combination: 'raw'-strategy/ no ESEs"
         ) if strategy_raw_specified_without_ese_list
+        ErrorHandling.abort_with_error_message(
+            "invalid_argument_combination", "CommandlineOptions",
+            "'max-gc'-strategy/ '#{@select_by}'-select best variant.\nSet strategy to select best variant to 'high'"
+        ) if strategy_max_gc_specified_without_select_by_set_to_high
         ErrorHandling.warn_with_error_message(
             "unused_utr_line", "CommandlineOptions", "5'UTR"
         ) if utr_line_specified_without_file(@utr5prime, @utr5prime_line)
@@ -195,5 +224,9 @@ class CommandlineOptions
 
     def strategy_raw_specified_without_ese_list
         @strategy == "raw" && @ese.nil?
+    end
+
+    def strategy_max_gc_specified_without_select_by_set_to_high
+        @strategy == "max-gc" && @select_by != "high"
     end
 end
