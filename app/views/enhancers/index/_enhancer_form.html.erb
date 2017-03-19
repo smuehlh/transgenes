@@ -24,8 +24,11 @@
     <%= f.hidden_field :commit, value: "" %>
 
     <h4>Enter <%= resource_name %>
+        <small id="unsaved-data-<%= id %>" class="bg-success" style="display: none;">
+            Please click "Save" when done with your sequence input.
+        </small>
         <div class="pull-right control-group">
-            <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save #{resource_name} data", data: {toggle: "tooltip"}, disabled: true %>
+            <%= f.submit "Save", class: "btn btn-primary btn-save btn-xs", title: "Save #{resource_name} data", data: {toggle: "tooltip"}, disabled: true %>
             <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete #{resource_name} data", data: {toggle: "tooltip"}, disabled: true %>
         </div>
     </h4>

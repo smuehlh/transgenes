@@ -76,6 +76,13 @@ function bind_to_input_textarea() {
         thisform.find("input:file").val('');
         thisform.find("input:text").val('');
         thisform.find("[id^=success-alert]").hide();
+        if (thisform.valid()) {
+            thisform.find("[id^=unsaved-data]").show();
+            $("#unsaved-data").show();
+        } else {
+            thisform.find("[id^=unsaved-data]").hide();
+            $("#unsaved-data").hide();
+        }
 
         var thisinput_size = $(this).val().length;
         var thisinput_maxsize = $(this).attr('maxlength');
@@ -137,6 +144,8 @@ function bind_to_save_button() {
     inputs.find(":submit[value=Save]").on('click', function() {
         var thisform = $(this).closest("form");
         thisform.find("input[type=hidden][name*=commit]").val("Save");
+        thisform.find("[id^=unsaved-data]").hide();
+        $("#unsaved-data").hide();
     });
 };
 

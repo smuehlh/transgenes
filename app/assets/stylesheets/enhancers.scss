@@ -39,3 +39,12 @@ textarea {
     background-color: transparent;
     color: $brand-primary;
 }
+
+.btn-save {
+    background-color: $brand-primary;
+    color: white;
+    &[disabled] {
+        background-color: transparent;
+        color: $brand-primary;
+    }
+}
