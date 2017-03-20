@@ -72,12 +72,8 @@ function bind_to_accordion() {
 function bind_to_input_textarea() {
     inputs.find("textarea").on('input', function() {
         var thisform = $(this).closest("form");
-        thisform.find(":submit[value=Reset]").prop('disabled', false);
-        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
-        thisform.find("[id^=multigene-options]").empty();
         thisform.find("input:file").val('');
         thisform.find("input:text").val('');
-        thisform.find("[id^=success-alert]").hide();
         if (thisform.valid()) {
             thisform.find("[id^=unsaved-data]").show();
             $("#unsaved-data").show();
@@ -99,19 +95,16 @@ function bind_to_input_textarea() {
             thisform.find("textarea").val('');
             thisform.find(":submit").prop('disabled', true);
         }
+        common_to_all_inputs(thisform);
     });
 };
 
 function bind_to_input_file() {
     inputs.find("input:file").on('change', function() {
         var thisform = $(this).closest("form");
-        thisform.find(":submit[value=Reset]").prop('disabled', false);
-        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
-        thisform.find("[id^=success-alert]").hide();
-        thisform.find("[id^=multigene-options]").empty();
         thisform.find("textarea").val('');
         thisform.find("input:text").val('');
-        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        common_to_all_inputs(thisform);
         thisform.submit();
     });
 };
@@ -121,11 +114,7 @@ function bind_to_input_text() {
         var thisform = $(this).closest("form");
         thisform.find("textarea").val('');
         thisform.find("input:file").val('');
-        thisform.find(":submit[value=Reset]").prop('disabled', false);
-        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
-        thisform.find("[id^=success-alert]").hide();
-        thisform.find("[id^=multigene-options]").empty();
-        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        common_to_all_inputs(thisform);
         thisform.submit();
     });
 };
@@ -135,12 +124,17 @@ function bind_to_select() {
         var thisform = $(this).closest("form");
         thisform.find("textarea").val('');
         thisform.find("input:file").val('');
-        thisform.find(":submit[value=Reset]").prop('disabled', false);
-        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
-        thisform.find("[id^=success-alert]").hide();
-        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        common_to_all_inputs(thisform);
         thisform.submit();
     });
+};
+
+function common_to_all_inputs(thisform) {
+    thisform.find(":submit[value=Reset]").prop('disabled', false);
+    thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
+    thisform.find("[id^=success-alert]").hide();
+    thisform.find("[id^=multigene-options]").empty();
+    thisform.find("input[type=hidden][name*=commit]").val("Save");
 };
 
 function bind_to_submit() {
