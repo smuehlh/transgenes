@@ -124,6 +124,7 @@ function bind_to_input_text() {
         thisform.find(":submit[value=Reset]").prop('disabled', false);
         thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
         thisform.find("[id^=success-alert]").hide();
+        thisform.find("[id^=multigene-options]").empty();
         thisform.find("input[type=hidden][name*=commit]").val("Save");
         thisform.submit();
     });
