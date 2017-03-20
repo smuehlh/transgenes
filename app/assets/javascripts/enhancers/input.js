@@ -74,13 +74,6 @@ function bind_to_input_textarea() {
         var thisform = $(this).closest("form");
         thisform.find("input:file").val('');
         thisform.find("input:text").val('');
-        if (thisform.valid()) {
-            thisform.find("[id^=unsaved-data]").show();
-            $("#unsaved-data").show();
-        } else {
-            thisform.find("[id^=unsaved-data]").hide();
-            $("#unsaved-data").hide();
-        }
 
         var thisinput_size = $(this).val().length;
         var thisinput_maxsize = $(this).attr('maxlength');
@@ -130,6 +123,14 @@ function bind_to_select() {
 };
 
 function common_to_all_inputs(thisform) {
+    if (thisform.valid()) {
+        thisform.find("[id^=unsaved-data]").show();
+        $("#unsaved-data").show();
+    } else {
+        thisform.find("[id^=unsaved-data]").hide();
+        $("#unsaved-data").hide();
+    }
+
     thisform.find(":submit[value=Reset]").prop('disabled', false);
     thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
     thisform.find("[id^=success-alert]").hide();
