@@ -44,6 +44,7 @@ function bind_eventhandlers_to_input_elements() {
     bind_to_select();
     bind_to_save_button();
     bind_to_reset_button();
+    bind_to_submit();
     // NOTE: do not bind to_select_list here, since the element will be created later
 };
 
@@ -140,12 +141,18 @@ function bind_to_select() {
     });
 };
 
+function bind_to_submit() {
+    inputs.closest("form").on('submit', function() {
+        $(this).find("[id^=unsaved-data]").hide();
+        $("#unsaved-data").hide();
+        return true;
+    });
+};
+
 function bind_to_save_button() {
     inputs.find(":submit[value=Save]").on('click', function() {
         var thisform = $(this).closest("form");
         thisform.find("input[type=hidden][name*=commit]").val("Save");
-        thisform.find("[id^=unsaved-data]").hide();
-        $("#unsaved-data").hide();
     });
 };
 
