@@ -29,6 +29,7 @@ function clear_forms() {
 
 function hide_alerts() {
     inputs.find(".alert").hide();
+    $("[id^=unsaved-data]").hide();
 };
 
 function disable_form_elements() {
