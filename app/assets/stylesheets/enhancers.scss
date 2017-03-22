@@ -34,17 +34,50 @@ textarea {
     padding:0 0 0 10px;
 }
 
-// display button with outline only
-.btn-primary {
+// borrowed from bootstrap 4
+.btn.btn-outline {
     background-color: transparent;
-    color: $brand-primary;
-}
-
-.btn-save {
-    background-color: $brand-primary;
-    color: white;
-    &[disabled] {
-        background-color: transparent;
-        color: $brand-primary;
+    transition: all .5s;
+    &.btn-default {
+        color: $btn-default-color;
+        &:hover, &:active {
+            background-color: $btn-default-color;
+            color: white;
+        }
+    }
+    &.btn-primary {
+        color: $btn-primary-bg;
+        &:hover, &:active {
+            background-color : $btn-primary-bg;
+            color: white;
+        }
+    }
+    &.btn-success {
+        color: $btn-success-bg;
+        &:hover, &:active {
+            background-color : $btn-success-bg;
+            color: white;
+        }
+    }
+    &.btn-info {
+        color: $btn-info-bg;
+        &:hover, &:active {
+            background-color : $btn-info-bg;
+            color: white;
+        }
+    }
+    &.btn-warning {
+        color: $btn-warning-bg;
+        &:hover, &:active {
+            background-color : $btn-warning-bg;
+            color: white;
+        }
+    }
+    &.btn-danger {
+        color: $btn-danger-bg;
+        &:hover, &:active {
+            background-color : $btn-danger-bg;
+            color: white;
+        }
     }
 }

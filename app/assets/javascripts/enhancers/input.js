@@ -124,9 +124,11 @@ function bind_to_select() {
 
 function common_to_all_inputs(thisform) {
     if (thisform.valid()) {
+        thisform.find(":submit[value=Save]").removeClass("btn-outline");
         thisform.find("[id^=unsaved-data]").show();
         $("#unsaved-data").show();
     } else {
+        thisform.find(":submit[value=Save]").addClass("btn-outline");
         thisform.find("[id^=unsaved-data]").hide();
         $("#unsaved-data").hide();
     }
@@ -142,6 +144,7 @@ function bind_to_submit() {
     inputs.closest("form").on('submit', function() {
         $(this).find("[id^=unsaved-data]").hide();
         $("#unsaved-data").hide();
+        $(this).closest("form").find(":submit").addClass("btn-outline");
         return true;
     });
 };
