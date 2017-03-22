@@ -47,8 +47,8 @@
                 Please click "Save" when done with your motif input.
             </small>
             <div class="pull-right control-group">
-                <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save ESE data", data: {toggle: "tooltip"}, disabled: true %>
-                <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete ESE data", data: {toggle: "tooltip"}, disabled: true %>
+                <%= f.submit "Save", class: "btn btn-primary btn-outline btn-xs", title: "Save ESE data", data: {toggle: "tooltip"}, disabled: true %>
+                <%= f.submit "Reset", class: "btn btn-primary btn-outline btn-xs", title: "Delete ESE data", data: {toggle: "tooltip"}, disabled: true %>
             </div>
         </h3>
             <%= render partial: "enhancers/index/ese_form", locals: {f: f} %>
