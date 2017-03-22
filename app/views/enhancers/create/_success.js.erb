@@ -1,7 +1,9 @@
 <% if flash.now[:success] %>
     $("#success-alert-<%= id %>").show();
+    $("#input-tab-<%= id %>").find(":submit[value=Save]").text("Saved");
 <% else %>
     $("#success-alert-<%= id %>").hide();
+    $("#input-tab-<%= id %>").find(":submit[value=Save]").text("Save");
 <% end %>
 
 // enable/disable params & submit

@@ -28,7 +28,10 @@
             Please click "Save" when done with your sequence input.
         </small>
         <div class="pull-right control-group">
-            <%= f.submit "Save", class: "btn btn-primary btn-outline btn-xs", title: "Save #{resource_name} data", data: {toggle: "tooltip"}, disabled: true %>
+            <%# Use f.button instead of f.submit to change button-text later on%>
+            <%= f.button "", value: "Save", type: "submit", class: "btn btn-primary btn-outline btn-xs", title: "Save #{resource_name} data", data: {toggle: "tooltip"}, disabled: true do %>
+                Save
+            <% end %>
             <%= f.submit "Reset", class: "btn btn-primary btn-outline btn-xs", title: "Delete #{resource_name} data", data: {toggle: "tooltip"}, disabled: true %>
         </div>
     </h4>

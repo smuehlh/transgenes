@@ -134,7 +134,7 @@ function common_to_all_inputs(thisform) {
     }
 
     thisform.find(":submit[value=Reset]").prop('disabled', false);
-    thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
+    thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid()).text("Save");
     thisform.find("[id^=success-alert]").hide();
     thisform.find("[id^=multigene-options]").empty();
     thisform.find("input[type=hidden][name*=commit]").val("Save");
