@@ -38,7 +38,6 @@ function disable_form_elements() {
 };
 
 function bind_eventhandlers_to_input_elements() {
-    bind_to_accordion();
     bind_to_input_textarea();
     bind_to_input_file();
     bind_to_input_text();
@@ -52,21 +51,6 @@ function bind_eventhandlers_to_input_elements() {
 function bind_eventhandlers_to_params_elements() {
     bind_to_show_more_button();
     bind_to_select_by_radios();
-};
-
-function bind_to_accordion() {
-    inputs.find(".panel-collapse").on('hide.bs.collapse', function() {
-        // display as collapsed panel
-        var thispanelhead = $(this).prev();
-        thispanelhead.find(".glyphicon").removeClass("glyphicon-collapse-up").addClass("glyphicon-collapse-down");
-        thispanelhead.find("[title]").attr('data-original-title', "Click to expand").tooltip("hide");
-    });
-    inputs.find(".panel-collapse").on('show.bs.collapse', function() {
-        // display as expanded panel
-        var thispanelhead = $(this).prev();
-        thispanelhead.find(".glyphicon").removeClass("glyphicon-collapse-down").addClass("glyphicon-collapse-up");
-        thispanelhead.find("[title]").attr('data-original-title', "Click to collapse").tooltip("hide");
-    });
 };
 
 function bind_to_input_textarea() {
