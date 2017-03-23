@@ -65,7 +65,6 @@ function bind_to_input_textarea() {
             thisform.find(":submit").prop('disabled', true).addClass("btn-outline");
         } else {
             common_to_all_inputs(thisform);
-            thisform.find("[id^=error-alert]").hide();
         }
         if (thisinput_size >= thisinput_maxsize) {
             thisform.find("[id^=error-alert]").show();
@@ -120,6 +119,8 @@ function common_to_all_inputs(thisform) {
     thisform.find(":submit[value=Reset]").prop('disabled', false);
     thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid()).text("Save");
     thisform.find("[id^=success-alert]").hide();
+    thisform.find("[id^=error-alert]").hide();
+
     thisform.find("[id^=multigene-options]").empty();
     thisform.find("input[type=hidden][name*=commit]").val("Save");
 };
