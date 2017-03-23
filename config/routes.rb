@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     post :create_enhancer, on: :collection
     post :create_ese, on: :collection
     post :submit, on: :collection
+    get :submit, on: :collection, to: redirect('/')
     get :download, on: :collection
     get :ensembl_autocomplete, on: :collection
   end
