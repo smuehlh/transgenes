@@ -1,7 +1,7 @@
 <legend class="text-primary">Select a strategy</legend>
 <div class="radio form-group">
     <%= f.radio_button :strategy, 'gc', {disabled: true, class: "params-form"} %>
-    <%= f.label :strategy_gc, content_tag(:strong, 'gc') + ' - Match position-dependend GC3 content of 1- or 2-exon genes' %>
+    <%= f.label :strategy_gc, content_tag(:strong, 'gc') + ' - Match position-dependent GC3 content of 1- or 2-exon genes' %>
 </div>
 <div class="radio form-group">
     <%= f.radio_button :strategy, 'max_gc', {disabled: true, class: "params-form"} %>
@@ -17,7 +17,7 @@
 </div>
 
 <span data-toggle="tooltip" title="View (and change) default settings.">
-    <%= f.button("More options", {type: "button", disabled: true, class: "btn btn-primary params-form", data: {toggle: "collapse", target: "#more-options", "alt-text" => "Less options", "text" => "More options"}}) %>
+    <%= f.button("More options", {type: "button", disabled: true, class: "btn btn-primary btn-outline params-form", data: {toggle: "collapse", target: "#more-options", "alt-text" => "Less options", "text" => "More options"}}) %>
 </span>
 
 <div id="more-options" class="collapse">

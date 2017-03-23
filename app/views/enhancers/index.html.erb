@@ -43,9 +43,15 @@
     <%= form_for Ese.new, :url => {action: "create_ese"}, remote: true, html: { style: "display:inline;", role: "form", multipart: true } do |f| %>
         <h3>Enter ESE motifs
             <small> Optional</small>
+            <small id="unsaved-data-ese" class="bg-success" style="display: none;">
+                Please click "Save" when done with your motif input.
+            </small>
             <div class="pull-right control-group">
-                <%= f.submit "Save", class: "btn btn-primary btn-xs", title: "Save ESE data", data: {toggle: "tooltip"}, disabled: true %>
-                <%= f.submit "Reset", class: "btn btn-primary btn-xs", title: "Delete ESE data", data: {toggle: "tooltip"}, disabled: true %>
+                <%# Use f.button instead of f.submit to change button-text later on%>
+                <%= f.button "", value: "Save", type: "submit", class: "btn btn-primary btn-outline btn-xs", title: "Save ESE data", data: {toggle: "tooltip"}, disabled: true do %>
+                    Save
+                <% end %>
+                <%= f.submit "Reset", class: "btn btn-primary btn-outline btn-xs", title: "Delete ESE data", data: {toggle: "tooltip"}, disabled: true %>
             </div>
         </h3>
             <%= render partial: "enhancers/index/ese_form", locals: {f: f} %>

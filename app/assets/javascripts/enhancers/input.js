@@ -29,6 +29,7 @@ function clear_forms() {
 
 function hide_alerts() {
     inputs.find(".alert").hide();
+    $("[id^=unsaved-data]").hide();
 };
 
 function disable_form_elements() {
@@ -37,13 +38,13 @@ function disable_form_elements() {
 };
 
 function bind_eventhandlers_to_input_elements() {
-    bind_to_accordion();
     bind_to_input_textarea();
     bind_to_input_file();
     bind_to_input_text();
     bind_to_select();
     bind_to_save_button();
     bind_to_reset_button();
+    bind_to_submit();
     // NOTE: do not bind to_select_list here, since the element will be created later
 };
 
@@ -52,43 +53,24 @@ function bind_eventhandlers_to_params_elements() {
     bind_to_select_by_radios();
 };
 
-function bind_to_accordion() {
-    inputs.find(".panel-collapse").on('hide.bs.collapse', function() {
-        // display as collapsed panel
-        var thispanelhead = $(this).prev();
-        thispanelhead.find(".glyphicon").removeClass("glyphicon-collapse-up").addClass("glyphicon-collapse-down");
-        thispanelhead.find("[title]").attr('data-original-title', "Click to expand").tooltip("hide");
-    });
-    inputs.find(".panel-collapse").on('show.bs.collapse', function() {
-        // display as expanded panel
-        var thispanelhead = $(this).prev();
-        thispanelhead.find(".glyphicon").removeClass("glyphicon-collapse-down").addClass("glyphicon-collapse-up");
-        thispanelhead.find("[title]").attr('data-original-title', "Click to collapse").tooltip("hide");
-    });
-};
-
 function bind_to_input_textarea() {
     inputs.find("textarea").on('input', function() {
         var thisform = $(this).closest("form");
-        thisform.find(":submit[value=Reset]").prop('disabled', false);
-        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
-        thisform.find("[id^=multigene-options]").empty();
         thisform.find("input:file").val('');
         thisform.find("input:text").val('');
-        thisform.find("[id^=success-alert]").hide();
 
         var thisinput_size = $(this).val().length;
         var thisinput_maxsize = $(this).attr('maxlength');
         if (thisinput_size === 0) {
-            thisform.find(":submit").prop('disabled', true);
+            thisform.find(":submit").prop('disabled', true).addClass("btn-outline");
         } else {
-            thisform.find("[id^=error-alert]").hide();
+            common_to_all_inputs(thisform);
         }
         if (thisinput_size >= thisinput_maxsize) {
             thisform.find("[id^=error-alert]").show();
             thisform.find("[id^=error-alert-text]").text("Reached maximum input size. Please use file upload instead.");
             thisform.find("textarea").val('');
-            thisform.find(":submit").prop('disabled', true);
+            thisform.find(":submit").prop('disabled', true).addClass("btn-outline");
         }
     });
 };
@@ -96,13 +78,9 @@ function bind_to_input_textarea() {
 function bind_to_input_file() {
     inputs.find("input:file").on('change', function() {
         var thisform = $(this).closest("form");
-        thisform.find(":submit[value=Reset]").prop('disabled', false);
-        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
-        thisform.find("[id^=success-alert]").hide();
-        thisform.find("[id^=multigene-options]").empty();
         thisform.find("textarea").val('');
         thisform.find("input:text").val('');
-        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        common_to_all_inputs(thisform);
         thisform.submit();
     });
 };
@@ -112,10 +90,7 @@ function bind_to_input_text() {
         var thisform = $(this).closest("form");
         thisform.find("textarea").val('');
         thisform.find("input:file").val('');
-        thisform.find(":submit[value=Reset]").prop('disabled', false);
-        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
-        thisform.find("[id^=success-alert]").hide();
-        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        common_to_all_inputs(thisform);
         thisform.submit();
     });
 };
@@ -125,11 +100,37 @@ function bind_to_select() {
         var thisform = $(this).closest("form");
         thisform.find("textarea").val('');
         thisform.find("input:file").val('');
-        thisform.find(":submit[value=Reset]").prop('disabled', false);
-        thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid());
-        thisform.find("[id^=success-alert]").hide();
-        thisform.find("input[type=hidden][name*=commit]").val("Save");
+        common_to_all_inputs(thisform);
         thisform.submit();
+    });
+};
+
+function common_to_all_inputs(thisform) {
+    if (thisform.valid()) {
+        thisform.find(":submit[value=Save]").removeClass("btn-outline");
+        thisform.find("[id^=unsaved-data]").show();
+        $("#unsaved-data").show();
+    } else {
+        thisform.find(":submit[value=Save]").addClass("btn-outline");
+        thisform.find("[id^=unsaved-data]").hide();
+        $("#unsaved-data").hide();
+    }
+
+    thisform.find(":submit[value=Reset]").prop('disabled', false);
+    thisform.find(":submit[value=Save]").prop('disabled', ! thisform.valid()).text("Save");
+    thisform.find("[id^=success-alert]").hide();
+    thisform.find("[id^=error-alert]").hide();
+
+    thisform.find("[id^=multigene-options]").empty();
+    thisform.find("input[type=hidden][name*=commit]").val("Save");
+};
+
+function bind_to_submit() {
+    inputs.closest("form").on('submit', function() {
+        $(this).find("[id^=unsaved-data]").hide();
+        $("#unsaved-data").hide();
+        $(this).closest("form").find(":submit").addClass("btn-outline");
+        return true;
     });
 };
 
