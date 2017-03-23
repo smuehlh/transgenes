@@ -62,17 +62,17 @@ function bind_to_input_textarea() {
         var thisinput_size = $(this).val().length;
         var thisinput_maxsize = $(this).attr('maxlength');
         if (thisinput_size === 0) {
-            thisform.find(":submit").prop('disabled', true);
+            thisform.find(":submit").prop('disabled', true).addClass("btn-outline");
         } else {
+            common_to_all_inputs(thisform);
             thisform.find("[id^=error-alert]").hide();
         }
         if (thisinput_size >= thisinput_maxsize) {
             thisform.find("[id^=error-alert]").show();
             thisform.find("[id^=error-alert-text]").text("Reached maximum input size. Please use file upload instead.");
             thisform.find("textarea").val('');
-            thisform.find(":submit").prop('disabled', true);
+            thisform.find(":submit").prop('disabled', true).addClass("btn-outline");
         }
-        common_to_all_inputs(thisform);
     });
 };
 
