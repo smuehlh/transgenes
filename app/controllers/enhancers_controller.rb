@@ -35,13 +35,10 @@ class EnhancersController < ApplicationController
     end
 
     def submit
+        flash.clear
         @enhanced_gene = get_enhanced_gene
         reset_enhanced_gene
         tweak_gene
-    rescue EnhancerError => exception
-        flash.clear
-        flash.now[:error] = exception.to_s
-        render :submit_error
     end
 
     def download
@@ -233,22 +230,29 @@ class EnhancersController < ApplicationController
     end
 
     def tweak_gene
-        gene, info = SequenceOptimizerForWeb.tweak_gene(
+        optimizer = SequenceOptimizerForWeb.init_and_tweak_gene(
             prepare_gene_enhancers_for_sequence_optimizer,
             prepare_ese_motifs_for_sequence_optimizer,
             enhanced_gene_params
         )
-        @enhanced_gene.update_attributes(
-            gene_name: gene.description,
-            data: gene.sequence,
-            gene_variants: info.generated_variants,
-            gc3_over_all_gene_variants: info.overall_gc3,
-            log: info.log,
-            strategy: info.strategy,
-            keep_first_intron: info.keep_first_intron,
-            select_by: info.select_by,
-            stay_in_subbox_for_6folds: info.stay_in_subbox,
-            destroy_ese_motifs: gene.ese_motifs.any?
-        )
+        if optimizer.was_success?
+            gene, variants, overall_gc3 = optimizer.get_tweaked_gene
+            options = optimizer.get_options
+
+            @enhanced_gene.update_attributes(
+                gene_name: gene.description,
+                data: gene.sequence,
+                gene_variants: variants,
+                gc3_over_all_gene_variants: overall_gc3,
+                log: optimizer.log,
+                strategy: options.strategy,
+                keep_first_intron: options.is_keep_first_intron,
+                select_by: options.select_by,
+                stay_in_subbox_for_6folds: options.stay_in_subbox_for_6folds,
+                destroy_ese_motifs: gene.ese_motifs.any?
+            )
+        else
+            flash.now[:error] = optimizer.error.to_s
+        end
     end
 end
