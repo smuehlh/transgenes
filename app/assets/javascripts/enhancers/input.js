@@ -174,7 +174,7 @@ function disable_params_partial() {
 };
 
 
-function enable_params_partial(enable_all_checkboxes = true) {
+function enable_params_partial(enable_all_checkboxes) {
     params.filter(":input").prop("disabled", false);
     if (! enable_all_checkboxes) {
         params.filter(":input[value='humanize']").prop('checked', true);
