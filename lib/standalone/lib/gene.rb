@@ -43,11 +43,17 @@ class Gene
         $logger.info(str)
     end
 
-    def tweak_sequence(strategy, stay_in_subbox_for_6folds)
-        scorer = ScoreSynonymousCodons.new(strategy, stay_in_subbox_for_6folds, @ese_motifs, @exons, @introns)
+    def prepare_for_tweaking(stay_in_subbox_for_6folds)
+        # NOTE - keep this method seperate from tweak_sequence():
+        # preparation needs to be done only once
+        @synonymous_sites = SynonymousSites.new(@exons, @introns, stay_in_subbox_for_6folds)
+    end
+
+    def tweak_sequence(strategy)
+        scorer = ScoreSynonymousCodons.new(strategy, @synonymous_sites, @ese_motifs)
         init_codon_replacement_log
 
-        synonymous_sites.each do |pos|
+        @synonymous_sites.all_sites.each do |pos|
             codon = scorer.select_synonymous_codon_at(pos)
 
             if ! scorer.is_original_codon_selected_at(pos, codon)
@@ -58,16 +64,17 @@ class Gene
     end
 
     def sequence
+        # NOTE - can't precalc, as exons might change
         @five_prime_utr + combine_exons_and_introns(@exons, @introns) + @three_prime_utr
     end
 
     def gc3_content
-        gc3_per_pos = gc3_content_at_synonymous_sites
-        Statistics.sum(gc3_per_pos)/gc3_per_pos.size.to_f
+        gc3_counts = gc3_count_per_synonymous_site
+        Statistics.sum(gc3_counts)/gc3_counts.size.to_f
     end
 
-    def gc3_content_at_synonymous_sites
-        synonymous_sites.collect{|ind| cds[ind].count("GC")}
+    def gc3_count_per_synonymous_site
+        @synonymous_sites.all_sites.collect{|pos| cds[pos].count("GC")}
     end
 
     def log_changed_sites
@@ -81,14 +88,8 @@ class Gene
     end
 
     def cds
+        # NOTE - can't precalc, as exons might change
         @exons.join("")
-    end
-
-    def synonymous_sites
-        # = all third codon positions
-        first_synonymous_site = 2
-        last_synonymous_site = @exons.join("").size - 1
-        (first_synonymous_site..last_synonymous_site).step(3)
     end
 
     def replace_codon_at_pos(third_site, new_codon)

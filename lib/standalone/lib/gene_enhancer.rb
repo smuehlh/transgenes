@@ -2,12 +2,11 @@ class GeneEnhancer
 
     attr_reader :cross_variant_gc3_per_pos, :fasta_formatted_gene_variants
 
-    def initialize(strategy, select_best_by, stay_in_subbox_for_6folds)
+    def initialize(strategy, select_best_by)
         @n_variants = 1000
 
         @strategy = strategy
         @select_best_by = select_best_by
-        @stay_in_subbox_for_6folds = stay_in_subbox_for_6folds
 
         @enhanced_genes = []
         @gc3_contents = [] # per gene
@@ -62,15 +61,15 @@ class GeneEnhancer
 
     def generate_synonymous_variant(gene)
         copy = Marshal.load(Marshal.dump(gene))
-        copy.tweak_sequence(@strategy, @stay_in_subbox_for_6folds)
+        copy.tweak_sequence(@strategy)
         overall_gc3 = copy.gc3_content
-        gc3_per_pos = copy.gc3_content_at_synonymous_sites
+        gc3_counts_per_pos = copy.gc3_count_per_synonymous_site
         n_mutated_sites, mutated_sites = copy.log_changed_sites
         fasta = convert_variant_to_fasta(copy, overall_gc3, n_mutated_sites)
 
         log_generated_variant(fasta, mutated_sites)
 
-        [copy, fasta, overall_gc3, gc3_per_pos]
+        [copy, fasta, overall_gc3, gc3_counts_per_pos]
     end
 
     def update_cross_variant_gc3(gc3_per_pos)

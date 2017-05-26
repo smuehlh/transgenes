@@ -1,89 +1,108 @@
 class SynonymousSites
 
-    def initialize(exons, introns)
-        @exons = exons
-        @introns = introns
+    def initialize(exons, introns, stay_in_subbox_for_6folds)
+        @syn_sites = get_third_codon_positions(exons)
+        @orig_codons_by_site = collect_original_codons(exons)
+        @syn_codons_by_site = collect_synonymous_codons(stay_in_subbox_for_6folds)
+
+        mapping_obj = prepare_syn_site_mapping_to_exon_positions(exons, introns)
+        @near_deleted_intron_flags_by_site = collect_nearness_to_deleted_introns(mapping_obj)
+        @near_existing_intron_flags_by_site = collect_nearness_to_existing_introns(mapping_obj)
+        @distances_to_introns_by_site = collect_distances_to_introns(mapping_obj)
+
+        windows_obj = prepare_syn_site_mapping_to_sequence_windows(exons)
+        @sequence_windows_covering_site = collect_sequence_windows(windows_obj)
     end
 
-    def is_in_proximity_to_deleted_intron(pos_in_cds)
-        pos_in_exon, exon_ind = map_cds_pos_onto_exon_pos_and_ind(pos_in_cds)
-        (
-            is_at_exon_start(pos_in_exon, exon_ind) &&
-            is_preceded_by_intron(exon_ind) &&
-            is_preceding_intron_deleted(exon_ind)
-        ) || (
-            is_at_exon_end(pos_in_exon, exon_ind) &&
-            is_succeeded_by_intron(exon_ind) &&
-            is_succeeding_intron_deleted(exon_ind)
-        )
+    def all_sites
+        @syn_sites
     end
 
-    def is_in_proximity_to_intron(pos_in_cds)
-        pos_in_exon, exon_ind = map_cds_pos_onto_exon_pos_and_ind(pos_in_cds)
-        (
-            is_succeeded_by_intron(exon_ind) &&
-            (! is_succeeding_intron_deleted(exon_ind)) &&
-            is_at_exon_end(pos_in_exon, exon_ind)
-        ) || (
-            is_preceded_by_intron(exon_ind) &&
-            (! is_preceding_intron_deleted(exon_ind)) &&
-            is_at_exon_start(pos_in_exon, exon_ind)
-        )
+    def original_codon_at(pos)
+        @orig_codons_by_site[pos]
     end
 
-    def get_nt_distance_to_intron(pos_in_cds)
-        pos_in_exon, exon_ind = map_cds_pos_onto_exon_pos_and_ind(pos_in_cds)
-        if is_at_exon_start(pos_in_exon, exon_ind)
-            pos_in_exon
-        else
-            -(@exons[exon_ind].size - pos_in_exon)
-        end
+    def synonymous_codons_at(pos)
+        @syn_codons_by_site[pos]
+    end
+
+    def is_stopcodon_at(pos)
+        GeneticCode.is_stopcodon(original_codon_at(pos))
+    end
+
+    def is_in_proximity_to_deleted_intron(pos)
+        @near_deleted_intron_flags_by_site[pos]
+    end
+
+    def is_in_proximity_to_intron(pos)
+        @near_existing_intron_flags_by_site[pos]
+    end
+
+    def get_nt_distance_to_intron(pos)
+        @distances_to_introns_by_site[pos]
+    end
+
+    def sequence_windows_covering_syn_codon_at(pos)
+        # by synonymous codon
+        @sequence_windows_covering_site[pos]
     end
 
     private
 
-    def map_cds_pos_onto_exon_pos_and_ind(pos)
-        @exons.each_with_index do |exon, ind|
-            if pos >= exon.size
-                pos -= exon.size
-                next
-            else
-                return [pos, ind]
-            end
-        end
+    def get_third_codon_positions(exons)
+        first_synonymous_site = 2
+        last_synonymous_site = exons.join("").size - 1
+        (first_synonymous_site..last_synonymous_site).step(3).to_a
     end
 
-    def is_at_exon_start(pos, exon_ind)
-        pos < exon_border_width(exon_ind)
+    def collect_original_codons(exons)
+        cds = exons.join("")
+        @syn_sites.collect do |pos|
+            [pos, cds[pos-2..pos]]
+        end.to_h
     end
 
-    def is_at_exon_end(pos, exon_ind)
-        pos >= @exons[exon_ind].size - exon_border_width(exon_ind)
+    def collect_synonymous_codons(stay_in_subbox_for_6folds)
+        @orig_codons_by_site.collect do |pos, codon|
+            syn_codons =
+                if stay_in_subbox_for_6folds
+                    GeneticCode.get_synonymous_codons_in_codon_box(codon)
+                else
+                    GeneticCode.get_synonymous_codons(codon)
+                end
+            [pos, syn_codons]
+        end.to_h
     end
 
-    def exon_border_width(exon_ind)
-        if @exons[exon_ind].size < Constants.number_of_nucleotides_to_tweak * 2
-            @exons[exon_ind].size/2
-        else
-            Constants.number_of_nucleotides_to_tweak
-        end
+    def prepare_syn_site_mapping_to_exon_positions(exons, introns)
+        SynonymousSitePositioningsAroundIntrons.new(exons, introns, @syn_sites)
     end
 
-    def is_preceded_by_intron(exon_ind)
-        exon_ind != 0
+    def collect_nearness_to_deleted_introns(mapping_obj)
+        @syn_sites.collect do |pos|
+            [pos, mapping_obj.is_in_proximity_to_deleted_intron(pos)]
+        end.to_h
     end
 
-    def is_succeeded_by_intron(exon_ind)
-        exon_ind != @exons.size - 1
+    def collect_nearness_to_existing_introns(mapping_obj)
+        @syn_sites.collect do |pos|
+            [pos, mapping_obj.is_in_proximity_to_intron(pos)]
+        end.to_h
     end
 
-    def is_preceding_intron_deleted(exon_ind)
-        # NOTE: relies on the fact that there is an preceding intron
-        @introns[exon_ind-1].nil?
+    def collect_distances_to_introns(mapping_obj)
+        @syn_sites.collect do |pos|
+            [pos, mapping_obj.get_nt_distance_to_intron(pos)]
+        end.to_h
     end
 
-    def is_succeeding_intron_deleted(exon_ind)
-        # NOTE: relies on the fact that there is an succeeding intron
-        @introns[exon_ind].nil?
+    def prepare_syn_site_mapping_to_sequence_windows(exons)
+        SynonymousSiteContainingSequenceWindows.new(exons, @syn_sites)
+    end
+
+    def collect_sequence_windows(windows_obj)
+        @syn_codons_by_site.collect do |pos, codons|
+            [pos, windows_obj.get_windows_covering_syn_codon_at_pos(pos, codons)]
+        end.to_h
     end
 end
