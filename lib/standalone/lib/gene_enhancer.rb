@@ -16,6 +16,7 @@ class GeneEnhancer
     end
 
     def generate_synonymous_genes(gene)
+        @individual_gc3_per_pos = [] # convert to cross-variant later
         @n_variants.times do |num|
             @variant_number = Counting.ruby_to_human(num)
             variant, fasta, gc3, gc3_per_pos = generate_synonymous_variant(gene)
@@ -23,8 +24,9 @@ class GeneEnhancer
             @enhanced_genes.push variant
             @fasta_formatted_gene_variants.push fasta
             @gc3_contents.push gc3
-            update_cross_variant_gc3(gc3_per_pos)
+            @individual_gc3_per_pos.push gc3_per_pos
         end
+        convert_individual_to_cross_variant_gc3_per_pos
         log_cross_variant_gc3
 
     rescue StandardError => exp
@@ -72,10 +74,10 @@ class GeneEnhancer
         [copy, fasta, overall_gc3, gc3_counts_per_pos]
     end
 
-    def update_cross_variant_gc3(gc3_per_pos)
-        gc3_per_pos.each_with_index do |val, ind|
-            @cross_variant_gc3_per_pos[ind] = 0 unless @cross_variant_gc3_per_pos[ind]
-            @cross_variant_gc3_per_pos[ind] += val/@n_variants.to_f * 100
+    def convert_individual_to_cross_variant_gc3_per_pos
+        @individual_gc3_per_pos.transpose.each do |gc3s|
+            gc3_content = Statistics.sum(gc3s) / @n_variants.to_f * 100
+            @cross_variant_gc3_per_pos.push gc3_content
         end
     end
 
