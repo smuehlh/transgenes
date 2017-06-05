@@ -37,7 +37,7 @@ class Gene
         str = "Number of exons: #{@exons.size}\n"
         first_intron_kept = @introns.size == 1
         str += "All introns " + (first_intron_kept ? "but" : "including") + " the first removed.\n"
-        n_aa = cds.size / 3
+        n_aa = @exons.join("").size / 3
         str += "Number of amino acids: #{n_aa}\n"
         str += "Total mRNA size: #{sequence.size}"
         $logger.info(str)
@@ -49,22 +49,26 @@ class Gene
         @synonymous_sites = SynonymousSites.new(@exons, @introns, stay_in_subbox_for_6folds)
     end
 
-    def tweak_sequence(strategy)
+    def tweak_exonic_sequence(strategy)
         scorer = ScoreSynonymousCodons.new(strategy, @synonymous_sites, @ese_motifs)
         init_codon_replacement_log
+        init_exon_copy
 
         @synonymous_sites.all_sites.each do |pos|
             codon = scorer.select_synonymous_codon_at(pos)
 
             if ! scorer.is_original_codon_selected_at(pos, codon)
-                replace_codon_at_pos(pos, codon)
+                replace_codon_at_pos(@tweaked_exons, pos, codon)
                 log_codon_replacement(scorer.log_selected_codon_at(pos, codon))
             end
         end
     end
 
+    def log_changed_sites
+        [@number_of_changed_sites, @changed_sites]
+    end
+
     def sequence
-        # NOTE - can't precalc, as exons might change
         @five_prime_utr + combine_exons_and_introns(@exons, @introns) + @three_prime_utr
     end
 
@@ -74,11 +78,15 @@ class Gene
     end
 
     def gc3_count_per_synonymous_site
+        cds = @exons.join("")
         @synonymous_sites.all_sites.collect{|pos| cds[pos].count("GC")}
     end
 
-    def log_changed_sites
-        [@number_of_changed_sites, @changed_sites]
+    def deep_copy_using_tweaked_sequence
+        copy = self.dup
+        copy.add_cds(@tweaked_exons, @introns, @description)
+
+        copy
     end
 
     private
@@ -87,19 +95,14 @@ class Gene
         exons.zip(introns).flatten.compact.join("")
     end
 
-    def cds
-        # NOTE - can't precalc, as exons might change
-        @exons.join("")
+    def replace_codon_at_pos(exons, third_site, new_codon)
+        replace_nt_at_pos(exons, third_site-2, new_codon[0])
+        replace_nt_at_pos(exons, third_site-1, new_codon[1])
+        replace_nt_at_pos(exons, third_site, new_codon[2])
     end
 
-    def replace_codon_at_pos(third_site, new_codon)
-        replace_nt_at_pos(third_site-2, new_codon[0])
-        replace_nt_at_pos(third_site-1, new_codon[1])
-        replace_nt_at_pos(third_site, new_codon[2])
-    end
-
-    def replace_nt_at_pos(pos, new_nt)
-        @exons.each do |exon|
+    def replace_nt_at_pos(exons, pos, new_nt)
+        exons.each do |exon|
             if pos >= exon.size
                 pos -= exon.size
             else
@@ -107,6 +110,13 @@ class Gene
                 break
             end
         end
+    end
+
+    def init_exon_copy
+        @tweaked_exons = []
+        @exons.each{|exon| @tweaked_exons.push exon.dup }
+
+        @tweaked_exons
     end
 
     def init_codon_replacement_log

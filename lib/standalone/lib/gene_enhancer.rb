@@ -8,25 +8,21 @@ class GeneEnhancer
         @strategy = strategy
         @select_best_by = select_best_by
 
-        @enhanced_genes = []
-        @gc3_contents = [] # per gene
+        @gene_variants = []
+        @gc3_contents = [] # needed to select best variant
+        @gc3_counts_per_pos = [] # needed to calc cross-variant GC3 per pos
 
         @cross_variant_gc3_per_pos = []
         @fasta_formatted_gene_variants = []
     end
 
     def generate_synonymous_genes(gene)
-        @individual_gc3_per_pos = [] # convert to cross-variant later
-        @n_variants.times do |num|
-            @variant_number = Counting.ruby_to_human(num)
-            variant, fasta, gc3, gc3_per_pos = generate_synonymous_variant(gene)
-
-            @enhanced_genes.push variant
-            @fasta_formatted_gene_variants.push fasta
-            @gc3_contents.push gc3
-            @individual_gc3_per_pos.push gc3_per_pos
+        @n_variants.times do |ind|
+            variant = generate_variant(gene)
+            log_variant(variant, ind)
+            collect_variant_data(variant, ind)
         end
-        convert_individual_to_cross_variant_gc3_per_pos
+        convert_individual_to_cross_variant_gc3
         log_cross_variant_gc3
 
     rescue StandardError => exp
@@ -40,7 +36,7 @@ class GeneEnhancer
         ind_best_gene = find_index_of_best_gene
         log_selection(ind_best_gene)
 
-        @enhanced_genes[ind_best_gene]
+        @gene_variants[ind_best_gene]
 
     rescue StandardError => exp
         # something went very wrong.
@@ -61,33 +57,43 @@ class GeneEnhancer
         end
     end
 
-    def generate_synonymous_variant(gene)
-        copy = Marshal.load(Marshal.dump(gene))
-        copy.tweak_sequence(@strategy)
-        overall_gc3 = copy.gc3_content
-        gc3_counts_per_pos = copy.gc3_count_per_synonymous_site
-        n_mutated_sites, mutated_sites = copy.log_changed_sites
-        fasta = convert_variant_to_fasta(copy, overall_gc3, n_mutated_sites)
-
-        log_generated_variant(fasta, mutated_sites)
-
-        [copy, fasta, overall_gc3, gc3_counts_per_pos]
+    def generate_variant(gene)
+        gene.tweak_exonic_sequence(@strategy)
+        gene.deep_copy_using_tweaked_sequence
     end
 
-    def convert_individual_to_cross_variant_gc3_per_pos
-        @individual_gc3_per_pos.transpose.each do |gc3s|
+    def log_variant(variant, variant_ind)
+        _, mutated_sites = variant.log_changed_sites
+        fasta = convert_variant_to_fasta(variant, variant_ind)
+        log_variant_sequence(fasta, mutated_sites)
+    end
+
+    def collect_variant_data(variant, variant_ind)
+        fasta = convert_variant_to_fasta(variant, variant_ind)
+
+        @gene_variants.push variant
+        @gc3_contents.push variant.gc3_content
+        @gc3_counts_per_pos.push variant.gc3_count_per_synonymous_site
+        @fasta_formatted_gene_variants.push fasta
+    end
+
+    def convert_individual_to_cross_variant_gc3
+        @gc3_counts_per_pos.transpose.each do |gc3s|
             gc3_content = Statistics.sum(gc3s) / @n_variants.to_f * 100
             @cross_variant_gc3_per_pos.push gc3_content
         end
     end
 
-    def convert_variant_to_fasta(gene, gc3, n_mutated_sites)
-        gc3 = to_pct(gc3)
-        desc = "Variant #{@variant_number}: #{gc3}% GC3, #{n_mutated_sites} changed sites"
-        GeneToFasta.new(desc, gene.sequence).fasta
+    def convert_variant_to_fasta(variant, variant_ind)
+        variant_number = Counting.ruby_to_human(variant_ind)
+
+        gc3 = to_pct(variant.gc3_content)
+        n_mutated_sites,_ = variant.log_changed_sites
+        desc = "Variant #{variant_number}: #{gc3}% GC3, #{n_mutated_sites} changed sites"
+        GeneToFasta.new(desc, variant.sequence).fasta
     end
 
-    def log_generated_variant(fasta, mutated_sites)
+    def log_variant_sequence(fasta, mutated_sites)
         $logger.info fasta
         $logger.debug mutated_sites
     end
@@ -133,6 +139,6 @@ class GeneEnhancer
     end
 
     def is_one_exon_genes
-        @enhanced_genes.first.introns.size == 0
+        @gene_variants.first.introns.size == 0
     end
 end
