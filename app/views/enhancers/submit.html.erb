@@ -1,82 +1,91 @@
-<h1>Results</h1>
-    <div id="success-alert-results" class="alert alert-success" role="alert">
-        <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
-        <span class="sr-only">Success:</span>
-        Successfully created <%= @enhanced_gene.gene_variants.size %> gene variants. Selected the best variant based on <%= @enhanced_gene.select_by %> GC3 content.
-        <a data-toggle="modal" href="#results-modal-params" class="alert-link">Click to inspect submission details.</a>
-        <div id="results-modal-params" class="modal" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title"> Submission details </h4>
-                    </div>
-                    <div class="modal-body">
-                        <dl class="row text-muted">
-                            <dt class="col-sm-8">Strategy for tweaking the gene:</dt>
-                            <dd class="col-sm-4"><i><%= @enhanced_gene.strategy %></i></dd>
+<% if flash.now[:error] %>
+    <div id="error-alert-results" class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        Failed to enhance the gene.
+        <%= flash.now[:error].to_s %>
+    </div>
+<% else %>
+    <h1>Results</h1>
+        <div id="success-alert-results" class="alert alert-success" role="alert">
+            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+            <span class="sr-only">Success:</span>
+            Successfully created <%= @enhanced_gene.gene_variants.size %> gene variants. Selected the best variant based on <%= @enhanced_gene.select_by %> GC3 content.
+            <a data-toggle="modal" href="#results-modal-params" class="alert-link">Click to inspect submission details.</a>
+            <div id="results-modal-params" class="modal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title"> Submission details </h4>
+                        </div>
+                        <div class="modal-body">
+                            <dl class="row text-muted">
+                                <dt class="col-sm-8">Strategy for tweaking the gene:</dt>
+                                <dd class="col-sm-4"><i><%= @enhanced_gene.strategy %></i></dd>
 
-                            <dt class="col-sm-8">Select the best generated variant by:</dt>
-                            <dd class="col-sm-4"><i><%= @enhanced_gene.select_by %> GC3 content</i></dd>
+                                <dt class="col-sm-8">Select the best generated variant by:</dt>
+                                <dd class="col-sm-4"><i><%= @enhanced_gene.select_by %> GC3 content</i></dd>
 
-                            <dt class="col-sm-8">Keep first intron?</dt>
-                            <dd class="col-sm-4"><i>
-                                <%= @enhanced_gene.keep_first_intron ? "yes" : "no" %></i></dd>
+                                <dt class="col-sm-8">Keep first intron?</dt>
+                                <dd class="col-sm-4"><i>
+                                    <%= @enhanced_gene.keep_first_intron ? "yes" : "no" %></i></dd>
 
-                            <dt class="col-sm-8">6-fold degenerate sites: Chose synonymous codons among the respective 2- or 4-codon sub-box only?</dt>
-                            <dd class="col-sm-4"><i><%= @enhanced_gene.stay_in_subbox_for_6folds ? "yes" : "no" %></i></dd>
-                        </dl>
+                                <dt class="col-sm-8">6-fold degenerate sites: Chose synonymous codons among the respective 2- or 4-codon sub-box only?</dt>
+                                <dd class="col-sm-4"><i><%= @enhanced_gene.stay_in_subbox_for_6folds ? "yes" : "no" %></i></dd>
+                            </dl>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+    <legend class="text-primary">Enhanced Gene</legend>
+        <div class="well well-sm clearfix">
+            <%= content_tag(:span,
+                patch_multiline_text_for_web(
+                    @enhanced_gene.to_fasta(split_seq_at_80_chars=false)
+                ),
+                class: "text-muted monospaced text-wrap"
+            ) %>
+        </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <legend class="text-primary">GC3 content of all generated gene variants</legend>
+                <canvas id="gc3Plot"></canvas>
+            </div>
+            <div class="col-sm-6">
+                <legend class="text-primary">Downloads</legend>
+                <ul class="fa-ul">
+                    <li><i class="fa-li fa fa-download"></i>
+                        <%= link_to "Enhanced gene", download_enhancers_path(kind: "enhanced_gene"), data: {turbolinks: false} %>
+                    </li>
+                    <li><i class="fa-li fa fa-download"></i>
+                        <%= link_to "Generated gene variants", download_enhancers_path(kind: "gene_variants"), data: {turbolinks: false} %>
+                    </li>
+                    <li><i class="fa-li fa fa-download"></i>
+                        <%= link_to "Log file", download_enhancers_path, data: {turbolinks: false} %>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 
-<legend class="text-primary">Enhanced Gene</legend>
-    <div class="well well-sm clearfix">
-        <%= content_tag(:span,
-            patch_multiline_text_for_web(
-                @enhanced_gene.to_fasta(split_seq_at_80_chars=false)
-            ),
-            class: "text-muted monospaced text-wrap"
-        ) %>
-    </div>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-6">
-            <legend class="text-primary">GC3 content of all generated gene variants</legend>
-            <canvas id="gc3Plot"></canvas>
-        </div>
-        <div class="col-sm-6">
-            <legend class="text-primary">Downloads</legend>
-            <ul class="fa-ul">
-                <li><i class="fa-li fa fa-download"></i>
-                    <%= link_to "Enhanced gene", download_enhancers_path(kind: "enhanced_gene"), data: {turbolinks: false} %>
-                </li>
-                <li><i class="fa-li fa fa-download"></i>
-                    <%= link_to "Generated gene variants", download_enhancers_path(kind: "gene_variants"), data: {turbolinks: false} %>
-                </li>
-                <li><i class="fa-li fa fa-download"></i>
-                    <%= link_to "Log file", download_enhancers_path, data: {turbolinks: false} %>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<%
-    points = @enhanced_gene.gc3_over_all_gene_variants
-    labels = (1..points.size).to_a
-%>
-<script>
-    var ctx = $("#gc3Plot");
-    var scatterChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: <%= raw labels %>,
-            datasets: [{ data: <%= raw points %>}]
-        },
-        options: chartOptions
-    });
-</script>
-<!-- TODO: submit form via ajax to stay on same page... -->
+    <%
+        points = @enhanced_gene.gc3_over_all_gene_variants
+        labels = (1..points.size).to_a
+    %>
+    <script>
+        var ctx = $("#gc3Plot");
+        var scatterChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: <%= raw labels %>,
+                datasets: [{ data: <%= raw points %>}]
+            },
+            options: chartOptions
+        });
+    </script>
+    <!-- TODO: submit form via ajax to stay on same page... -->
+<% end %>

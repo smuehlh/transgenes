@@ -26,8 +26,11 @@ gene.add_ese_list(EseToGene.init_and_parse(options.ese)) if options.ese
 gene.remove_introns(options.remove_first_intron)
 gene.log_statistics
 
+# prepare for tweaking the sequence
+gene.prepare_for_tweaking(options.stay_in_subbox_for_6folds)
+
 # tweak sequence
-enhancer = GeneEnhancer.new(options.strategy, options.select_by, options.stay_in_subbox_for_6folds)
+enhancer = GeneEnhancer.new(options.strategy, options.select_by)
 enhancer.generate_synonymous_genes(gene)
 enhanced_gene = enhancer.select_best_gene
 

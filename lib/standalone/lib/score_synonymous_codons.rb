@@ -1,11 +1,9 @@
 class ScoreSynonymousCodons
 
-    def initialize(strategy, stay_in_subbox_for_6folds, ese_motifs, exons, introns)
-        @cds = exons.join("")
-        @synonymous_sites = SynonymousSites.new(exons, introns)
+    def initialize(strategy, synonymous_sites, ese_motifs)
         @strategy_scorer = StrategyScores.new(strategy)
+        @synonymous_sites = synonymous_sites
         @ese_scorer = EseScores.new(ese_motifs)
-        @choose_synonymous_codons_for_6folds_from_subbox = stay_in_subbox_for_6folds
     end
 
     def select_synonymous_codon_at(pos)
@@ -14,31 +12,31 @@ class ScoreSynonymousCodons
     end
 
     def is_original_codon_selected_at(pos, best_codon)
-        orig_codon = get_codon_at(pos)
+        orig_codon = @synonymous_sites.original_codon_at(pos)
         best_codon == orig_codon
     end
 
     def log_selected_codon_at(pos, best_codon)
-        orig_codon = get_codon_at(pos)
+        orig_codon = @synonymous_sites.original_codon_at(pos)
         "Pos #{pos}: #{orig_codon} -> #{best_codon}"
     end
 
     private
 
     def score_synonymous_codons_at(pos)
-        syn_codons = get_synonymous_codons_at(pos)
+        syn_codons = @synonymous_sites.synonymous_codons_at(pos)
         strategy_scores =
-            if is_stopcodon_at(pos)
-                score_stopcodons(syn_codons)
+            if @synonymous_sites.is_stopcodon_at(pos)
+                score_stopcodons(pos)
             else
-                score_by_strategy(syn_codons, pos)
+                score_by_strategy(pos)
             end
         scores =
             if @synonymous_sites.is_in_proximity_to_deleted_intron(pos) &&
                     @ese_scorer.has_ese_motifs_to_score_by
                 # additionally score by ese resemblance
                 # NOTE: ese input is optional and might have been omitted
-                ese_scores = score_by_ese(syn_codons, pos)
+                ese_scores = score_by_ese(pos)
                 combine_normalised_scores(strategy_scores, ese_scores)
             else
                 # pure strategy scores
@@ -59,27 +57,25 @@ class ScoreSynonymousCodons
         end
     end
 
-    def score_by_strategy(syn_codons, pos)
-        orig_codon = get_codon_at(pos)
+    def score_by_strategy(pos)
+        orig_codon = @synonymous_sites.original_codon_at(pos)
+        syn_codons = @synonymous_sites.synonymous_codons_at(pos)
         is_near_intron = @synonymous_sites.is_in_proximity_to_intron(pos)
         distance_to_intron = @synonymous_sites.get_nt_distance_to_intron(pos)
 
         @strategy_scorer.normalised_scores(syn_codons, orig_codon, pos, is_near_intron, distance_to_intron)
     end
 
-    def score_by_ese(syn_codons, pos)
-        windows_containing_syn_codons = syn_codons.collect do |codon|
-            seq_part = get_mutated_subsequence_covering_all_windows(pos, codon)
-            divide_into_windows(seq_part)
-        end
+    def score_by_ese(pos)
+        windows = @synonymous_sites.sequence_windows_covering_syn_codon_at(pos)
 
-        @ese_scorer.normalised_scores(windows_containing_syn_codons)
+        @ese_scorer.normalised_scores(windows)
     end
 
-    def score_stopcodons(syn_codons)
-        syn_codons.collect do |codon|
-            codon == "TAA" ? 1 : 0
-        end
+    def score_stopcodons(pos)
+        syn_codons = @synonymous_sites.synonymous_codons_at(pos)
+
+        StopcodonScores.normalised_scores(syn_codons)
     end
 
     def combine_normalised_scores(strategy_scores, ese_scores)
@@ -87,72 +83,5 @@ class ScoreSynonymousCodons
             strategy_scores[ind] * ese_scores[ind]
         end
         Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(combined_scores)
-    end
-
-    def get_codon_at(pos)
-        @cds[pos-2..pos]
-    end
-
-    def get_synonymous_codons(codon)
-        # original codon always included
-        # codons will be restricted to codon subbox depending on option set (relevant for 6-codon boxes only)
-        if @choose_synonymous_codons_for_6folds_from_subbox
-            GeneticCode.get_synonymous_codons_in_codon_box(codon)
-        else
-            GeneticCode.get_synonymous_codons(codon)
-        end
-    end
-
-    def get_synonymous_codons_at(pos)
-        orig_codon = get_codon_at(pos)
-        get_synonymous_codons(orig_codon)
-    end
-
-    def is_stopcodon_at(pos)
-        orig_codon = get_codon_at(pos)
-        GeneticCode.is_stopcodon(orig_codon)
-    end
-
-    def get_mutated_subsequence_covering_all_windows(pos, codon)
-        mutated_cds = mutate_codon_at(pos, codon)
-
-        window_starts = get_startpositions_of_windows_containing_pos(pos)
-        first_window_start = window_starts.first
-        last_window_stop = window_starts.last + ind_last_pos_in_window
-
-        mutated_cds[first_window_start..last_window_stop]
-    end
-
-    def divide_into_windows(seq_part)
-        (0..seq_part.size-1).collect do |startpos|
-            stoppos = startpos + ind_last_pos_in_window
-            next if stoppos >= seq_part.size
-            seq_part[startpos..stoppos]
-        end.compact
-    end
-
-    def mutate_codon_at(pos, new_codon)
-        tmp = String.new(@cds)
-        tmp[pos-2..pos] = new_codon
-        tmp
-    end
-
-    def get_startpositions_of_windows_containing_pos(pos)
-        # need first two snippets only if codon at pos is 6-fold and option to choose from all 6 is set.
-        codonstart = is_pos_treated_as_sixfold_site(pos) ? pos - 2 : pos
-        codonstop = pos
-        snippet_starts = ((codonstart-ind_last_pos_in_window)..codonstop)
-        snippet_starts.reject do |startpos|
-            stoppos = startpos + ind_last_pos_in_window
-            startpos < 0 || stoppos >= @cds.size
-        end
-    end
-
-    def is_pos_treated_as_sixfold_site(pos)
-        get_synonymous_codons_at(pos).size == 6
-    end
-
-    def ind_last_pos_in_window
-        Constants.window_size - 1
     end
 end
