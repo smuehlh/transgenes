@@ -2,11 +2,12 @@ class GeneEnhancer
 
     attr_reader :cross_variant_gc3_per_pos, :fasta_formatted_gene_variants
 
-    def initialize(strategy, select_best_by)
+    def initialize(strategy, select_best_by, stay_in_subbox_for_6folds)
         @n_variants = 1000
 
         @strategy = strategy
         @select_best_by = select_best_by
+        @stay_in_subbox_for_6folds = stay_in_subbox_for_6folds
 
         @gene_variants = []
         @gc3_contents = [] # needed to select best variant
@@ -17,6 +18,8 @@ class GeneEnhancer
     end
 
     def generate_synonymous_genes(gene)
+        gene.prepare_for_tweaking(@stay_in_subbox_for_6folds)
+
         @n_variants.times do |ind|
             variant = generate_variant(gene)
             log_variant(variant, ind)
