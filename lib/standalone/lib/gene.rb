@@ -1,5 +1,5 @@
 class Gene
-    attr_reader :exons, :introns, :ese_motifs, :five_prime_utr, :three_prime_utr, :description
+    attr_reader :exons, :introns, :ese_motifs, :five_prime_utr, :three_prime_utr, :description, :gc3_content, :gc3_count_per_synonymous_site
 
     def initialize
         @description = ""
@@ -8,6 +8,9 @@ class Gene
         @five_prime_utr = "" # exons and introns merged
         @three_prime_utr = "" # exons and introns merged
 
+        @gc3_content = []
+        @gc3_count_per_synonymous_site = []
+
         @ese_motifs = []
     end
 
@@ -15,6 +18,9 @@ class Gene
         @exons = exons
         @introns = introns
         @description = gene_name
+
+        @gc3_content = get_gc3_content
+        @gc3_count_per_synonymous_site = get_gc3_counts_per_site
     end
 
     def add_five_prime_utr(exons, introns, dummy)
@@ -43,6 +49,11 @@ class Gene
         $logger.info(str)
     end
 
+    def sequence
+        # NOTE - can't precalc as data is added gradually
+        @five_prime_utr + combine_exons_and_introns(@exons, @introns) + @three_prime_utr
+    end
+
     def prepare_for_tweaking(stay_in_subbox_for_6folds)
         # NOTE - keep this method seperate from tweak_sequence():
         # preparation needs to be done only once
@@ -68,20 +79,6 @@ class Gene
         [@number_of_changed_sites, @changed_sites]
     end
 
-    def sequence
-        @five_prime_utr + combine_exons_and_introns(@exons, @introns) + @three_prime_utr
-    end
-
-    def gc3_content
-        gc3_counts = gc3_count_per_synonymous_site
-        Statistics.sum(gc3_counts)/gc3_counts.size.to_f
-    end
-
-    def gc3_count_per_synonymous_site
-        cds = @exons.join("")
-        @synonymous_sites.all_sites.collect{|pos| cds[pos].count("GC")}
-    end
-
     def deep_copy_using_tweaked_sequence
         copy = self.dup
         copy.add_cds(@tweaked_exons, @introns, @description)
@@ -93,6 +90,16 @@ class Gene
 
     def combine_exons_and_introns(exons, introns)
         exons.zip(introns).flatten.compact.join("")
+    end
+
+    def get_gc3_content
+        gc3_counts = get_gc3_counts_per_site
+        Statistics.sum(gc3_counts)/gc3_counts.size.to_f
+    end
+
+    def get_gc3_counts_per_site
+        cds = @exons.join("")
+        SynonymousSites.all_sites(@exons).collect{|pos| cds[pos].count("GC")}
     end
 
     def replace_codon_at_pos(exons, third_site, new_codon)

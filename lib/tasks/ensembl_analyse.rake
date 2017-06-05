@@ -90,6 +90,7 @@ namespace :ensembl do
         desc "Calculate average GC3 content of 1- and 2-exon genes"
         task gc3: :environment do
             require File.join(Rails.root, 'lib', 'standalone', 'lib', 'gene.rb')
+            require File.join(Rails.root, 'lib', 'standalone', 'lib', 'synonymous_sites.rb')
 
             gc3_one_exon_genes = []
             gc3_two_exon_genes = []

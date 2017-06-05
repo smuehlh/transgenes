@@ -1,5 +1,12 @@
 class SynonymousSites
 
+    def self.all_sites(exons)
+        # HOTFIX - need third codon positions as both class and instance method
+        first_synonymous_site = 2
+        last_synonymous_site = exons.join("").size - 1
+        (first_synonymous_site..last_synonymous_site).step(3).to_a
+    end
+
     def initialize(exons, introns, stay_in_subbox_for_6folds)
         @syn_sites = get_third_codon_positions(exons)
         @orig_codons_by_site = collect_original_codons(exons)
@@ -50,9 +57,8 @@ class SynonymousSites
     private
 
     def get_third_codon_positions(exons)
-        first_synonymous_site = 2
-        last_synonymous_site = exons.join("").size - 1
-        (first_synonymous_site..last_synonymous_site).step(3).to_a
+        # HOTFIX - need third codon positions as both class and instance method
+        SynonymousSites.all_sites(exons)
     end
 
     def collect_original_codons(exons)
