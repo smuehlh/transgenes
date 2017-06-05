@@ -1,8 +1,11 @@
 <%
     resources = @statistics[:uploaded_resources]
+    is_cds_resource_provided = resources.any? {|str| is_cds_resource(str)}
+    has_introns = @statistics[:n_exons] > 1
+
     text = "Provided #{resources.to_sentence} #{"sequence".pluralize(resources.size)}. The total mRNA size based on this input will be #{number_with_delimiter(@statistics[:size_w_first_intron])} nucleotides"
 
-    if resources.any? {|str| is_cds_resource(str)}
+    if is_cds_resource_provided && has_introns
         text += " if all but the first intron in CDS are removed, or #{number_with_delimiter(@statistics[:size_wo_first_intron])} nucleotides if all introns in CDS including the first are removed"
     end
     text += "."
