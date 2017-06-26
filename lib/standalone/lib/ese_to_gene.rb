@@ -59,6 +59,6 @@ class EseToGene
     end
 
     def is_valid_motif(motif)
-        motif.size == 6 && Dna.are_only_valid_nucleotides(motif)
+        motif.size == Constants.window_size && Dna.are_only_valid_nucleotides(motif)
     end
 end
