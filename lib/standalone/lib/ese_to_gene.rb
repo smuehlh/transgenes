@@ -30,7 +30,7 @@ class EseToGene
 
     def ensure_file_is_not_empty(file)
         ErrorHandling.abort_with_error_message(
-            "empty_file", "ToGene", @file_info
+            "empty_file", "EseToGene", @file_info
         ) if FileHelper.file_empty?(file)
     end
 
@@ -48,6 +48,7 @@ class EseToGene
     end
 
     def ensure_eses_are_parsed_successfully
+        Constants.window_size = @motifs.first.size
         @motifs.each do |motif|
             unless is_valid_motif(motif)
                 $logger.debug("Invalid motif: #{motif}")
@@ -59,6 +60,8 @@ class EseToGene
     end
 
     def is_valid_motif(motif)
-        motif.size == Constants.window_size && Dna.are_only_valid_nucleotides(motif)
+        motif.size == Constants.window_size &&
+        motif.size.between?(Constants.min_motif_length, Constants.max_motif_length) &&
+        Dna.are_only_valid_nucleotides(motif)
     end
 end
