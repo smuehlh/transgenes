@@ -91,8 +91,9 @@ class GeneEnhancer
         variant_number = Counting.ruby_to_human(variant_ind)
 
         gc3 = to_pct(variant.gc3_content)
+        ese_content = to_pct(variant.sequence_proportion_covered_by_eses)
         n_mutated_sites,_ = variant.log_changed_sites
-        desc = "Variant #{variant_number}: #{gc3}% GC3, #{n_mutated_sites} changed sites"
+        desc = "Variant #{variant_number}: #{gc3}% GC3, #{n_mutated_sites} changed sites, #{ese_content}% of sequence covered by ESEs"
         GeneToFasta.new(desc, variant.sequence).fasta
     end
 
