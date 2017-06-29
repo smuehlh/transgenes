@@ -1,6 +1,6 @@
 class SynonymousSiteContainingSequenceWindows
 
-    def initialize(exons, syn_sites)
+    def initialize(exons)
         @cds = exons.join()
     end
 

@@ -103,7 +103,7 @@ class SynonymousSites
     end
 
     def prepare_syn_site_mapping_to_sequence_windows(exons)
-        SynonymousSiteContainingSequenceWindows.new(exons, @syn_sites)
+        SynonymousSiteContainingSequenceWindows.new(exons)
     end
 
     def collect_sequence_windows(windows_obj)
