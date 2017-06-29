@@ -4,6 +4,15 @@ class SynonymousSiteContainingSequenceWindows
         @cds = exons.join()
     end
 
+    def get_extended_windows_for_each_pos
+        # cover enough sequence such that a Constants.window_size sized window ends in pos (extension towards left) or starts in pos (extension to right side)
+        (0..@cds.size-1).collect do |pos|
+            startpos = get_startposition_of_extended_window_containing_pos(pos)
+            stoppos = get_stopposition_of_extended_window_containing_pos(pos)
+            @cds[startpos..stoppos]
+        end
+    end
+
     def get_windows_covering_syn_codon_at_pos(syn_site, syn_codons)
         is_sixfold = is_site_treated_as_sixfold?(syn_codons)
         window_starts = get_startpositions_of_windows_containing_pos(syn_site, is_sixfold)
@@ -42,5 +51,17 @@ class SynonymousSiteContainingSequenceWindows
         tmp = String.new(@cds)
         tmp[pos-2..pos] = new_codon
         tmp
+    end
+
+    def get_startposition_of_extended_window_containing_pos(pos)
+        startpos = pos - ind_last_pos_in_window
+        startpos = 0 if startpos < 0
+        startpos
+    end
+
+    def get_stopposition_of_extended_window_containing_pos(pos)
+        stoppos = pos + ind_last_pos_in_window
+        stoppos = @cds.size - 1 if stoppos >= @cds.size
+        stoppos
     end
 end

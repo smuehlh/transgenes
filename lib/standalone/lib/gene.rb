@@ -1,5 +1,6 @@
 class Gene
-    attr_reader :exons, :introns, :ese_motifs, :five_prime_utr, :three_prime_utr, :description, :gc3_content, :gc3_count_per_synonymous_site
+    attr_reader :exons, :introns, :ese_motifs, :five_prime_utr, :three_prime_utr, :description,
+        :gc3_content, :gc3_count_per_synonymous_site, :sequence_proportion_covered_by_eses
 
     def initialize
         @description = ""
@@ -8,8 +9,9 @@ class Gene
         @five_prime_utr = "" # exons and introns merged
         @three_prime_utr = "" # exons and introns merged
 
-        @gc3_content = []
+        @gc3_content = ""
         @gc3_count_per_synonymous_site = []
+        @sequence_proportion_covered_by_eses = ""
 
         @ese_motifs = []
     end
@@ -33,6 +35,7 @@ class Gene
 
     def add_ese_list(ese_motifs)
         @ese_motifs = ese_motifs
+        @sequence_proportion_covered_by_eses = get_sequence_proporion_covered_by_eses if @exons.any?
     end
 
     def remove_introns(is_remove_first_intron)
@@ -82,6 +85,7 @@ class Gene
     def deep_copy_using_tweaked_sequence
         copy = self.dup
         copy.add_cds(@tweaked_exons, @introns, @description)
+        copy.add_ese_list(@ese_motifs) # recalc seq-proportion covered by eses
 
         copy
     end
@@ -100,6 +104,14 @@ class Gene
     def get_gc3_counts_per_site
         cds = @exons.join("")
         SynonymousSites.all_sites(@exons).collect{|pos| cds[pos].count("GC")}
+    end
+
+    def get_sequence_proporion_covered_by_eses
+        windows = SynonymousSiteContainingSequenceWindows.new(@exons)
+        counts = windows.get_extended_windows_for_each_pos.collect do |window|
+            @ese_motifs.any?{|motif| window.include?(motif)} ? 1 : 0
+        end
+        Statistics.sum(counts)/counts.size.to_f
     end
 
     def replace_codon_at_pos(exons, third_site, new_codon)
