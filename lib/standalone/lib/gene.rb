@@ -43,7 +43,8 @@ class Gene
     end
 
     def log_statistics
-        str = "Number of exons: #{@exons.size}\n"
+        str = "Gene name: #{@description}\n"
+        str += "Number of exons: #{@exons.size}\n"
         first_intron_kept = @introns.size == 1
         str += "All introns " + (first_intron_kept ? "but" : "including") + " the first removed.\n"
         n_aa = @exons.join("").size / 3
