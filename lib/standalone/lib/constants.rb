@@ -7,7 +7,7 @@ module Constants
     end
 
     def window_size
-        @window_size
+        @window_size || 6
     end
 
     def window_size=(var)
