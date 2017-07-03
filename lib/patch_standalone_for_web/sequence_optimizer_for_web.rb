@@ -44,6 +44,8 @@ class SequenceOptimizerForWeb
 
     def tweak_gene(web_params)
         @options = WebinputToOptions.new(web_params)
+        log_options_and_gene_setup
+
         @enhancer = GeneEnhancer.new(@options.strategy, @options.select_by, @options.stay_in_subbox_for_6folds)
         @enhancer.generate_synonymous_genes(@gene)
         @enhanced_gene = @enhancer.select_best_gene
@@ -78,5 +80,11 @@ class SequenceOptimizerForWeb
         @stats[:len_w_first_intron] = @stats[:len_wo_first_intron] + first_intron_length
     rescue StandardError
         raise EnhancerError, "Cannot parse gene."
+    end
+
+    def log_options_and_gene_setup
+        @options.log_program_call
+        @gene.log_statistics
+        $logger.info "ESE motifs specified." if @gene.ese_motifs.any?
     end
 end

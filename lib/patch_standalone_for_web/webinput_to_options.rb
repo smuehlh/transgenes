@@ -22,4 +22,11 @@ class WebinputToOptions
     def is_keep_first_intron
         ! @remove_first_intron
     end
+
+    def log_program_call
+        params = "--strategy #{@strategy} --select-by #{@select_by}"
+        params += " --stay-in-codon-box" if @stay_in_subbox_for_6folds
+        params += " --remove-first-intron" if @remove_first_introns
+        $logger.info "Commandline parameters: #{params}"
+    end
 end
