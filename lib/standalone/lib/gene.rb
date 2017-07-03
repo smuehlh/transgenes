@@ -83,9 +83,11 @@ class Gene
         [@number_of_changed_sites, @changed_sites]
     end
 
-    def deep_copy_using_tweaked_sequence
+    def deep_copy_using_tweaked_sequence(copy_number)
+        updated_description = "Variant #{copy_number}: #{Statistics.percents(@gc3_content)}% GC, #{@number_of_changed_sites} changed sites, #{Statistics.percents(@sequence_proportion_covered_by_eses)}% of sequence covered by ESEs. [Variant of: #{@description}]"
+
         copy = self.dup
-        copy.add_cds(@tweaked_exons, @introns, @description)
+        copy.add_cds(@tweaked_exons, @introns, updated_description)
         copy.add_ese_list(@ese_motifs) # recalc seq-proportion covered by eses
 
         copy

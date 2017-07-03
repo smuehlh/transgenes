@@ -20,6 +20,10 @@ module Statistics
         end
     end
 
+    def self.percents(n)
+        (n*100).round(2)
+    end
+
     private
 
     def self.equal_scores_size(n)
