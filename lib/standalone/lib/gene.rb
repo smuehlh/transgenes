@@ -49,7 +49,17 @@ class Gene
         str += "All introns " + (first_intron_kept ? "but" : "including") + " the first removed.\n"
         n_aa = @exons.join("").size / 3
         str += "Number of amino acids: #{n_aa}\n"
-        str += "Total mRNA size: #{sequence.size}"
+        utr_flag =
+            if @five_prime_utr.empty? && @three_prime_utr.empty?
+                ""
+            elsif ! @five_prime_utr.empty? && @three_prime_utr.empty?
+                " (including 5'UTR)"
+            elsif @five_prime_utr.empty? && ! @three_prime_utr.empty?
+                " (including 3'UTR)"
+            else
+                " (including 5'UTR and 3'UTR)"
+            end
+        str += "Total mRNA size#{utr_flag}: #{sequence.size}"
         $logger.info(str)
     end
 
