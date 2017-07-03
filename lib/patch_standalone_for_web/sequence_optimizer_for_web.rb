@@ -44,6 +44,7 @@ class SequenceOptimizerForWeb
 
     def tweak_gene(web_params)
         @options = WebinputToOptions.new(web_params)
+        @gene.remove_introns(@options.remove_first_intron) # var is a boolean
         log_options_and_gene_setup
 
         @enhancer = GeneEnhancer.new(@options.strategy, @options.select_by, @options.stay_in_subbox_for_6folds)
@@ -64,8 +65,6 @@ class SequenceOptimizerForWeb
         @gene.add_five_prime_utr(*web_genes[:five_utr]) if web_genes[:five_utr]
         @gene.add_three_prime_utr(*web_genes[:three_utr]) if web_genes[:three_utr]
         @gene.add_ese_list(web_ese_motifs) if web_ese_motifs
-
-        @gene.remove_introns(@options.remove_first_intron) if @options
     rescue StandardError
         raise EnhancerError, "Cannot parse gene."
     end

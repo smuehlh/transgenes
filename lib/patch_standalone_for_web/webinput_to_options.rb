@@ -26,7 +26,7 @@ class WebinputToOptions
     def log_program_call
         params = "--strategy #{@strategy} --select-by #{@select_by}"
         params += " --stay-in-codon-box" if @stay_in_subbox_for_6folds
-        params += " --remove-first-intron" if @remove_first_introns
+        params += " --remove-first-intron" if @remove_first_intron
         $logger.info "Commandline parameters: #{params}"
     end
 end
