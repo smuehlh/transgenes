@@ -75,7 +75,7 @@ class CommandlineOptions
     end
 
     def log_options
-        $logger.info("Programm call") {@program_call}
+        $logger.info("Program call") {@program_call}
     end
 
     def parse_options
@@ -101,7 +101,7 @@ class CommandlineOptions
     def set_defaults_for_unset_optional_arguments_that_cant_remain_unset
         unless @select_by
             @select_by = default_for_select_by_depending_on_strategy
-            $logger.warn("Set select-by to #{@select_by}")
+            $logger.warn("Option select-by was not set. Defaults to '#{@select_by}'")
         end
     end
 
