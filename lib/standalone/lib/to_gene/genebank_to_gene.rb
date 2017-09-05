@@ -1,6 +1,5 @@
 class ToGene
     class GenebankToGene
-
         attr_reader :gene_name, :exons, :introns
 
         def self.valid_file_extensions

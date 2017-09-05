@@ -1,5 +1,4 @@
 class GeneToFasta
-
     attr_reader :header, :sequence, :fasta
 
     def self.write(file, gene_obj)

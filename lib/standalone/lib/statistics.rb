@@ -1,16 +1,17 @@
 module Statistics
+    extend self
 
-    def self.mean(arr)
+    def mean(arr)
         sum = sum(arr)
         len = arr.size
         sum/len.to_f
     end
 
-    def self.sum(arr)
+    def sum(arr)
         arr.inject(:+)
     end
 
-    def self.normalise_scores_or_set_equal_if_all_scores_are_zero(arr)
+    def normalise_scores_or_set_equal_if_all_scores_are_zero(arr)
         sum = sum(arr)
         if sum == 0
             # all syn_codons are equally (un-)likely. avoid diving by 0
@@ -20,13 +21,13 @@ module Statistics
         end
     end
 
-    def self.percents(n)
+    def percents(n)
         (n*100).round(2)
     end
 
     private
 
-    def self.equal_scores_size(n)
+    def equal_scores_size(n)
         Array.new(n) {1/n.to_f}
     end
 end
