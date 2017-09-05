@@ -95,7 +95,9 @@ class Gene
 
     def deep_copy_using_tweaked_sequence(copy_number)
         updated_description = "Variant #{copy_number}: #{Statistics.percents(@gc3_content)}% GC, #{@number_of_changed_sites} changed sites"
-        updated_description += ", #{Statistics.percents(@sequence_proportion_covered_by_eses)}% of sequence covered by ESEs" if @ese_motifs.any?
+        if @ese_motifs.any?
+            updated_description += ", #{Statistics.percents(@sequence_proportion_covered_by_eses)}% of sequence covered by ESEs"
+        end
         updated_description += ". [Variant of: #{@description}]"
 
         copy = self.dup
