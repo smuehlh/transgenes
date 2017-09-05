@@ -164,7 +164,7 @@ class CommandlineOptions
             end
             opts.on("-e", "--ese FILE",
                 "Path to ESE file, one motif per line.",
-                "All motifs must be of same length and in 5-10 bp range.",
+                "All motifs must be of same length and in #{Constants.min_motif_length}-#{Constants.max_motif_length} bp range.",
                 "ESEs near introns that will be removed will be destroyed.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @ese = path
