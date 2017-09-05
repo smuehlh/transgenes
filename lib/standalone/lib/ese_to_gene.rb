@@ -36,6 +36,7 @@ class EseToGene
 
     def parse_eses_and_ensure_ese_format(file)
         parse_eses(file)
+        set_accepted_ese_size_to_size_of_first_motif
         ensure_eses_are_parsed_successfully
     end
 
@@ -48,7 +49,6 @@ class EseToGene
     end
 
     def ensure_eses_are_parsed_successfully
-        Constants.window_size = @motifs.first.size
         @motifs.each do |motif|
             unless is_valid_motif(motif)
                 $logger.debug("Invalid motif: #{motif}")
@@ -59,9 +59,17 @@ class EseToGene
         end
     end
 
+    def set_accepted_ese_size_to_size_of_first_motif
+        ese_size = @motifs.first.size
+        ErrorHandling.abort_with_error_message(
+            "invalid_ese_size", "EseToGene", @file_info
+        ) unless ese_size.between?(Constants.min_motif_length, Constants.max_motif_length)
+
+        # expect all other ESEs to be of same size
+        Constants.window_size = ese_size
+    end
+
     def is_valid_motif(motif)
-        motif.size == Constants.window_size &&
-        motif.size.between?(Constants.min_motif_length, Constants.max_motif_length) &&
-        Dna.are_only_valid_nucleotides(motif)
+        motif.size == Constants.window_size && Dna.are_only_valid_nucleotides(motif)
     end
 end

@@ -67,6 +67,8 @@ module ErrorHandling
             )
         when "invalid_codons"
             "Invalid codons: #{additional_error_message}"
+        when "invalid_ese_size"
+            "Unrecognized ESE format: ESE size out of range."
         when "invalid_ese_format"
             "Unrecognized file format: #{additional_error_message}.\nInput has to contain ESE motifs only, one per line."
         when "unknown_strategy"
