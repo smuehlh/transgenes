@@ -45,6 +45,7 @@ class EseToGene
             line = line.chomp
             @motifs.push line
         end
+        @motifs.uniq!
         $logger.debug("Identified #{@motifs.size} motifs.")
     end
 
