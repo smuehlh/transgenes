@@ -2,7 +2,6 @@ class EnhancerError < Exception
 end
 
 module ErrorHandling
-
     extend self
 
     def is_commandline_tool

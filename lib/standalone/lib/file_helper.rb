@@ -1,5 +1,4 @@
 module FileHelper
-
     extend self
 
     def file_exist?(path)
