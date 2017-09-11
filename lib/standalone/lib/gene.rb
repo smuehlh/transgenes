@@ -80,7 +80,9 @@ class Gene
         init_exon_copy
 
         @synonymous_sites.all_sites.each do |pos|
-            codon = scorer.select_synonymous_codon_at(pos)
+            # NOTE - pass up-to-date tweaked exons to scorer:
+            # ESE-scores considers the already tweaked sequence upstream of pos
+            codon = scorer.select_synonymous_codon_at(@tweaked_exons.join, pos)
 
             if ! scorer.is_original_codon_selected_at(pos, codon)
                 replace_codon_at_pos(@tweaked_exons, pos, codon)

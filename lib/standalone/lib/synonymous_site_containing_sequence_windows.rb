@@ -13,17 +13,13 @@ class SynonymousSiteContainingSequenceWindows
         end
     end
 
-    def get_windows_covering_syn_codon_at_pos(syn_site, syn_codons)
+    def get_coordinates_of_window_covering_syn_site(syn_site, syn_codons)
         is_sixfold = is_site_treated_as_sixfold?(syn_codons)
         window_starts = get_startpositions_of_windows_containing_pos(syn_site, is_sixfold)
+        start = window_starts.first
+        stop = window_starts.last + ind_last_pos_in_window
 
-        syn_codons.collect do |codon|
-            cds_mutated_at_syn_site = mutate_cds_at(syn_site, codon)
-            window_starts.collect do |startpos|
-                stoppos = startpos + ind_last_pos_in_window
-                cds_mutated_at_syn_site[startpos..stoppos]
-            end
-        end
+        [start, stop]
     end
 
     private
@@ -45,12 +41,6 @@ class SynonymousSiteContainingSequenceWindows
 
     def ind_last_pos_in_window
         Constants.window_size - 1
-    end
-
-    def mutate_cds_at(pos, new_codon)
-        tmp = String.new(@cds)
-        tmp[pos-2..pos] = new_codon
-        tmp
     end
 
     def get_startposition_of_extended_window_containing_pos(pos)
