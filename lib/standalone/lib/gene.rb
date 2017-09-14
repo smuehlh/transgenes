@@ -126,11 +126,18 @@ class Gene
     end
 
     def get_sequence_proporion_covered_by_eses
-        windows = SynonymousSiteContainingSequenceWindows.new(@exons)
-        counts = windows.get_extended_windows_for_each_pos.collect do |window|
-            @ese_motifs.any?{|motif| window.include?(motif)} ? 1 : 0
-        end
-        Statistics.sum(counts)/counts.size.to_f
+        cds = @exons.join("")
+        pos_covering_eses = (0..cds.size-1).collect do |start|
+            # NOTE - last couple of windows will be too short
+            # this is ok, as they won't be part of ese-motifs anyway.
+            stop = start + Constants.window_size - 1
+            window = cds[start..stop]
+            if @ese_motifs.include?(window)
+                (start..stop).to_a
+            end
+        end.flatten.compact.uniq
+
+        pos_covering_eses.size/cds.size.to_f
     end
 
     def replace_codon_at_pos(exons, third_site, new_codon)
