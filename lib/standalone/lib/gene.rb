@@ -1,5 +1,5 @@
 class Gene
-    attr_reader :exons, :introns, :ese_motifs, :five_prime_utr, :three_prime_utr, :description,
+    attr_reader :exons, :introns, :five_prime_utr, :three_prime_utr, :description,
         :gc3_content, :gc3_count_per_synonymous_site, :sequence_proportion_covered_by_eses
 
     def initialize
@@ -13,7 +13,13 @@ class Gene
         @gc3_count_per_synonymous_site = []
         @sequence_proportion_covered_by_eses = ""
 
-        @ese_motifs = []
+        @ese_motifs = {} # save motifs as hash keys for faster lookup
+    end
+
+    def ese_motifs
+        # NOTE - use custom getter to convert motifs hash to array
+        # (which is the more obvious, but slower way of storing eses)
+        @ese_motifs.keys
     end
 
     def add_cds(exons, introns, gene_name)
@@ -34,7 +40,7 @@ class Gene
     end
 
     def add_ese_list(ese_motifs)
-        @ese_motifs = ese_motifs
+        ese_motifs.each {|motif| @ese_motifs[motif] = nil}
         @sequence_proportion_covered_by_eses = get_sequence_proporion_covered_by_eses if @exons.any?
     end
 
@@ -104,7 +110,7 @@ class Gene
 
         copy = self.dup
         copy.add_cds(@tweaked_exons, @introns, updated_description)
-        copy.add_ese_list(@ese_motifs) # recalc seq-proportion covered by eses
+        copy.add_ese_list(@ese_motifs.keys) # recalc seq-proportion covered by eses
 
         copy
     end
@@ -132,7 +138,7 @@ class Gene
             # this is ok, as they won't be part of ese-motifs anyway.
             stop = start + Constants.window_size - 1
             window = cds[start..stop]
-            if @ese_motifs.include?(window)
+            if @ese_motifs.has_key?(window)
                 (start..stop).to_a
             end
         end.flatten.compact.uniq
