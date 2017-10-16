@@ -26,9 +26,12 @@ class Gene
         @exons = exons
         @introns = introns
         @description = gene_name
-
         @gc3_content = get_gc3_content
         @gc3_count_per_synonymous_site = get_gc3_counts_per_site
+    end
+
+    def change_description_from_gene_name_to_variant_data(variant_desc)
+        @description = variant_desc
     end
 
     def add_five_prime_utr(exons, introns, dummy)
@@ -102,15 +105,17 @@ class Gene
     end
 
     def deep_copy_using_tweaked_sequence(copy_number)
-        updated_description = "Variant #{copy_number}: #{Statistics.percents(@gc3_content)}% GC, #{@number_of_changed_sites} changed sites"
-        if @ese_motifs.any?
-            updated_description += ", #{Statistics.percents(@sequence_proportion_covered_by_eses)}% of sequence covered by ESEs"
-        end
-        updated_description += ". [Variant of: #{@description}]"
-
         copy = self.dup
-        copy.add_cds(@tweaked_exons, @introns, updated_description)
+        copy.add_cds(@tweaked_exons, @introns, @description) # recalc GC3
         copy.add_ese_list(@ese_motifs.keys) # recalc seq-proportion covered by eses
+
+        variant_desc = "Variant #{copy_number}: "\
+            "#{Statistics.percents(copy.gc3_content)}% GC, "\
+            "#{@number_of_changed_sites} changed sites"
+        if @ese_motifs.any?
+            variant_desc += ", #{Statistics.percents(copy.sequence_proportion_covered_by_eses)}% of sequence covered by ESEs"
+        end
+        copy.change_description_from_gene_name_to_variant_data(variant_desc)
 
         copy
     end
