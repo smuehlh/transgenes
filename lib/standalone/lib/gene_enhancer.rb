@@ -1,5 +1,4 @@
 class GeneEnhancer
-
     attr_reader :cross_variant_gc3_per_pos, :fasta_formatted_gene_variants
 
     def initialize(strategy, select_best_by, stay_in_subbox_for_6folds)

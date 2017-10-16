@@ -18,6 +18,6 @@ class EseScores
     private
 
     def count_non_eses(windows)
-        (windows - @ese_motifs).size
+        windows.count{|window| ! @ese_motifs.has_key?(window)}
     end
 end

@@ -1,8 +1,7 @@
 module Counting
-
     extend self
 
-    def human_to_ruby(int) 
+    def human_to_ruby(int)
         int.to_i - 1
     end
 

@@ -1,5 +1,5 @@
 class Gene
-    attr_reader :exons, :introns, :ese_motifs, :five_prime_utr, :three_prime_utr, :description,
+    attr_reader :exons, :introns, :five_prime_utr, :three_prime_utr, :description,
         :gc3_content, :gc3_count_per_synonymous_site, :sequence_proportion_covered_by_eses
 
     def initialize
@@ -13,7 +13,13 @@ class Gene
         @gc3_count_per_synonymous_site = []
         @sequence_proportion_covered_by_eses = ""
 
-        @ese_motifs = []
+        @ese_motifs = {} # save motifs as hash keys for faster lookup
+    end
+
+    def ese_motifs
+        # NOTE - use custom getter to convert motifs hash to array
+        # (which is the more obvious, but slower way of storing eses)
+        @ese_motifs.keys
     end
 
     def add_cds(exons, introns, gene_name)
@@ -34,7 +40,7 @@ class Gene
     end
 
     def add_ese_list(ese_motifs)
-        @ese_motifs = ese_motifs
+        ese_motifs.each {|motif| @ese_motifs[motif] = nil}
         @sequence_proportion_covered_by_eses = get_sequence_proporion_covered_by_eses if @exons.any?
     end
 
@@ -80,7 +86,9 @@ class Gene
         init_exon_copy
 
         @synonymous_sites.all_sites.each do |pos|
-            codon = scorer.select_synonymous_codon_at(pos)
+            # NOTE - pass up-to-date tweaked exons to scorer:
+            # ESE-scores considers the already tweaked sequence upstream of pos
+            codon = scorer.select_synonymous_codon_at(@tweaked_exons.join, pos)
 
             if ! scorer.is_original_codon_selected_at(pos, codon)
                 replace_codon_at_pos(@tweaked_exons, pos, codon)
@@ -95,12 +103,14 @@ class Gene
 
     def deep_copy_using_tweaked_sequence(copy_number)
         updated_description = "Variant #{copy_number}: #{Statistics.percents(@gc3_content)}% GC, #{@number_of_changed_sites} changed sites"
-        updated_description += ", #{Statistics.percents(@sequence_proportion_covered_by_eses)}% of sequence covered by ESEs" if @ese_motifs.any?
+        if @ese_motifs.any?
+            updated_description += ", #{Statistics.percents(@sequence_proportion_covered_by_eses)}% of sequence covered by ESEs"
+        end
         updated_description += ". [Variant of: #{@description}]"
 
         copy = self.dup
         copy.add_cds(@tweaked_exons, @introns, updated_description)
-        copy.add_ese_list(@ese_motifs) # recalc seq-proportion covered by eses
+        copy.add_ese_list(@ese_motifs.keys) # recalc seq-proportion covered by eses
 
         copy
     end
@@ -122,11 +132,18 @@ class Gene
     end
 
     def get_sequence_proporion_covered_by_eses
-        windows = SynonymousSiteContainingSequenceWindows.new(@exons)
-        counts = windows.get_extended_windows_for_each_pos.collect do |window|
-            @ese_motifs.any?{|motif| window.include?(motif)} ? 1 : 0
-        end
-        Statistics.sum(counts)/counts.size.to_f
+        cds = @exons.join("")
+        pos_covering_eses = (0..cds.size-1).collect do |start|
+            # NOTE - last couple of windows will be too short
+            # this is ok, as they won't be part of ese-motifs anyway.
+            stop = start + Constants.window_size - 1
+            window = cds[start..stop]
+            if @ese_motifs.has_key?(window)
+                (start..stop).to_a
+            end
+        end.flatten.compact.uniq
+
+        pos_covering_eses.size/cds.size.to_f
     end
 
     def replace_codon_at_pos(exons, third_site, new_codon)

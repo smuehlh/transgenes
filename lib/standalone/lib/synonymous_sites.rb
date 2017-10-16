@@ -17,8 +17,7 @@ class SynonymousSites
         @near_existing_intron_flags_by_site = collect_nearness_to_existing_introns(mapping_obj)
         @distances_to_introns_by_site = collect_distances_to_introns(mapping_obj)
 
-        windows_obj = prepare_syn_site_mapping_to_sequence_windows(exons)
-        @sequence_windows_covering_site = collect_sequence_windows(windows_obj)
+        @windows_covering_site = collect_window_positions(exons)
     end
 
     def all_sites
@@ -49,9 +48,21 @@ class SynonymousSites
         @distances_to_introns_by_site[pos]
     end
 
-    def sequence_windows_covering_syn_codon_at(pos)
-        # by synonymous codon
-        @sequence_windows_covering_site[pos]
+    def sequence_windows_covering_syn_codons_at(cds, pos)
+        # NOTE - use up-to-date cds as it might contain tweaks just before pos
+        start, stop = @windows_covering_site[pos]
+        window_head =
+            if pos-3 < 0
+                "" # synonyous site is at beginning of window
+            else
+                cds[start..pos-3] # pos-3: last pos before syn codon
+            end
+        window_tail = cds[pos+1..stop]
+
+        @syn_codons_by_site[pos].collect do |codon|
+            maxwindow = window_head + codon + window_tail
+            maxwindow.chars.each_cons(Constants.window_size).collect{|arr| arr.join}
+        end
     end
 
     private
@@ -102,13 +113,11 @@ class SynonymousSites
         end.to_h
     end
 
-    def prepare_syn_site_mapping_to_sequence_windows(exons)
-        SynonymousSiteContainingSequenceWindows.new(exons)
-    end
-
-    def collect_sequence_windows(windows_obj)
+    def collect_window_positions(exons)
+        # can't collect actual sequence windows, as sequence will change while tweaking the gene
+        obj = SynonymousSiteContainingSequenceWindows.new(exons)
         @syn_codons_by_site.collect do |pos, codons|
-            [pos, windows_obj.get_windows_covering_syn_codon_at_pos(pos, codons)]
+            [pos, obj.get_coordinates_of_window_covering_syn_site(pos, codons)]
         end.to_h
     end
 end
