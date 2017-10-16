@@ -8,7 +8,7 @@ module Statistics
     end
 
     def sum(arr)
-        arr.inject(:+)
+        arr.inject(0, :+) # 0 as "base case" for empty arrays
     end
 
     def normalise_scores_or_set_equal_if_all_scores_are_zero(arr)
