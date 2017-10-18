@@ -114,7 +114,7 @@ class Gene
         copy.add_ese_list(@ese_motifs.keys) # recalc seq-proportion covered by eses
 
         variant_desc = "Variant #{copy_number}: "\
-            "#{Statistics.percents(copy.gc3_content)}% GC, "\
+            "#{Statistics.percents(copy.gc3_content)}% GC3, "\
             "#{@number_of_changed_sites} changed sites"
         if @ese_motifs.any?
             variant_desc += ", #{Statistics.percents(copy.sequence_proportion_covered_by_eses)}% of sequence covered by ESEs"
