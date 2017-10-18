@@ -68,7 +68,11 @@ class Gene
             else
                 " (including 5'UTR and 3'UTR)"
             end
-        str += "Total mRNA size#{utr_flag}: #{sequence.size}"
+        str += "Total mRNA size#{utr_flag}: #{sequence.size}\n"
+        str += "GC3 content: #{Statistics.percents(@gc3_content)}%\n"
+        if @ese_motifs.any?
+            str += "Sequence proportion covered by ESEs: #{Statistics.percents(@sequence_proportion_covered_by_eses)}%\n"
+        end
         $logger.info(str)
     end
 
