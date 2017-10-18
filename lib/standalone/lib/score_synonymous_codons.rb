@@ -37,7 +37,15 @@ class ScoreSynonymousCodons
                 # additionally score by ese resemblance
                 # NOTE: ese input is optional and might have been omitted
                 ese_scores = score_by_ese(cds_tweaked_up_to_pos, pos)
-                combine_normalised_scores(strategy_scores, ese_scores)
+
+                if @strategy_scorer.is_strategy_to_select_for_original_codon
+                    # pure ese scores (as is intended by this particular strategy)
+                    # NOTE: the combining method would fail here anyways
+                    # (strategy scores are 0's or 1 and would therefore overwrite ese scores)
+                    ese_scores
+                else
+                    combine_normalised_scores(strategy_scores, ese_scores)
+                end
             else
                 # pure strategy scores
                 strategy_scores

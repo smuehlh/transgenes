@@ -10,6 +10,10 @@ class StrategyScores
         ) unless is_strategy_data_defined
     end
 
+    def is_strategy_to_select_for_original_codon
+        @strategy == "raw"
+    end
+
     def normalised_scores(synonymous_codons, original_codon, pos, is_near_intron, dist_to_intron)
         counts = synonymous_codons.collect do |synonymous_codon|
             codon_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
