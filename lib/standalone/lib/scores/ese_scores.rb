@@ -14,7 +14,10 @@ class EseScores
 
     def normalised_scores(windows_for_all_syn_codons)
         counts = windows_for_all_syn_codons.collect do |windows|
-            count_non_eses(windows)
+            case @strategy
+            when "deplete" then count_non_eses(windows)
+            when "enrich" then count_eses(windows)
+            end
         end
         Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(counts)
     end
@@ -25,7 +28,11 @@ class EseScores
         ["deplete", "enrich"].include?(@strategy)
     end
 
+    def count_eses(windows)
+        windows.count{|window| @ese_motifs.has_key?(window)}
+    end
+
     def count_non_eses(windows)
-        windows.count{|window| ! @ese_motifs.has_key?(window)}
+        windows.size - count_eses(windows)
     end
 end
