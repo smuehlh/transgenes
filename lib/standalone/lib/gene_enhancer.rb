@@ -1,10 +1,11 @@
 class GeneEnhancer
     attr_reader :cross_variant_gc3_per_pos, :fasta_formatted_gene_variants
 
-    def initialize(strategy, select_best_by, stay_in_subbox_for_6folds)
+    def initialize(strategy, ese_strategy, select_best_by, stay_in_subbox_for_6folds)
         @n_variants = 1000
 
         @strategy = strategy
+        @ese_strategy = ese_strategy
         @select_best_by = select_best_by
         @stay_in_subbox_for_6folds = stay_in_subbox_for_6folds
 
@@ -62,7 +63,7 @@ class GeneEnhancer
     def generate_variant(gene, variant_ind)
         variant_number = Counting.ruby_to_human(variant_ind)
 
-        gene.tweak_exonic_sequence(@strategy)
+        gene.tweak_exonic_sequence(@strategy, @ese_strategy)
         gene.deep_copy_using_tweaked_sequence(variant_number)
     end
 

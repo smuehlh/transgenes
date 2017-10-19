@@ -1,7 +1,11 @@
 class EseScores
 
-    def initialize(ese_motifs)
+    def initialize(ese_motifs, strategy)
         @ese_motifs = ese_motifs
+        @strategy = strategy
+        ErrorHandling.abort_with_error_message(
+            "unknown_ese_strategy", "EseScores"
+        ) unless is_known_strategy
     end
 
     def has_ese_motifs_to_score_by
@@ -16,6 +20,10 @@ class EseScores
     end
 
     private
+
+    def is_known_strategy
+        ["deplete", "enrich"].include?(@strategy)
+    end
 
     def count_non_eses(windows)
         windows.count{|window| ! @ese_motifs.has_key?(window)}

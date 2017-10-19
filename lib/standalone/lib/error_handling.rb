@@ -77,6 +77,10 @@ module ErrorHandling
             )
         when "missing_strategy_matrix"
             "Missing reference data to alter the sequence."
+        when "unknown_ese_strategy"
+            error_message_with_reference_to_commandline_option_help(
+                "Unknown strategy for scoring codons by ESE resemblance."
+            )
         when "variant_generation_error"
             "Cannot generate gene variants."
         when "variant_selection_error"

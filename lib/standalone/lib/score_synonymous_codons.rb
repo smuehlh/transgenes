@@ -1,9 +1,9 @@
 class ScoreSynonymousCodons
 
-    def initialize(strategy, synonymous_sites, ese_motifs)
+    def initialize(strategy, ese_strategy, synonymous_sites, ese_motifs)
         @strategy_scorer = StrategyScores.new(strategy)
         @synonymous_sites = synonymous_sites
-        @ese_scorer = EseScores.new(ese_motifs)
+        @ese_scorer = EseScores.new(ese_motifs, ese_strategy)
     end
 
     def select_synonymous_codon_at(cds_tweaked_up_to_pos, pos)
