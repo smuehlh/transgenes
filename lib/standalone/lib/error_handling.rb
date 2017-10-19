@@ -92,6 +92,8 @@ module ErrorHandling
             "Gene is partial."
         when "unused_utr_line"
             "#{additional_warning_message}: A starting line but no file was provided. Will ignore starting line."
+        when "unused_ese_strategy"
+            "An ESE-strategy but not ESE motif file was provided. Will ignore ESE-strategy."
         when "no_codons_replaced"
             "Sequence has not been altered."
         end

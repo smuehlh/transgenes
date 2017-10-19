@@ -8,6 +8,7 @@ class CommandlineOptions
         :input_line, :utr5prime_line, :utr3prime_line,
         :remove_first_intron,
         :ese,
+        :ese_strategy,
         :stay_in_subbox_for_6folds,
         :verbose
 
@@ -44,6 +45,10 @@ class CommandlineOptions
         @strategy == "max-gc" ? "high" : "mean"
     end
 
+    def default_for_ese_strategy
+        "deplete"
+    end
+
     def mandatory_arguments
         %w(@input @output @strategy)
     end
@@ -55,6 +60,7 @@ class CommandlineOptions
             @utr5prime @utr5prime_line @utr3prime @utr3prime_line
             @remove_first_intron
             @ese
+            @ese_strategy
             @stay_in_subbox_for_6folds
             @verbose
         )
@@ -102,6 +108,11 @@ class CommandlineOptions
         unless @select_by
             @select_by = default_for_select_by_depending_on_strategy
             $logger.warn("Option select-by was not set. Defaults to '#{@select_by}'")
+        end
+
+        if @ese && @ese_strategy.nil?
+            @ese_strategy = default_for_ese_strategy
+            $logger.warn("Option ese-strategy was not set. Defaults to '#{@ese_strategy}'")
         end
     end
 
@@ -165,9 +176,17 @@ class CommandlineOptions
             opts.on("-e", "--ese FILE",
                 "Path to ESE file, one motif per line.",
                 "All motifs must be of same length and in #{Constants.min_motif_length}-#{Constants.max_motif_length} bp range.",
-                "ESEs near introns that will be removed will be destroyed.") do |path|
+                "To tweak the sequence by ESE resemblance only, set --strategy to 'raw'.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @ese = path
+            end
+            opts.on("--ese-strategy STRATEGY", ["deplete", "enrich"],
+                "Strategy for scoring codons by their ESE resemblance.",
+                "Select one of: 'deplete' or 'enrich'.",
+                "deplete - Deplete ESEs in vicinity to deleted introns.",
+                "enrich - Enrich ESEs in vicinity to deleted introns.",
+                "If not specified, defaults to 'deplete'.") do |opt|
+                @ese_strategy = opt
             end
             opts.on("-c", "--stay-in-codon-box",
                 "6-fold degenerates: Stay in the respective (2- or 4-fold) codon box", "when selecting a synonymous codon.", "If not specified, all 6 codons are considered.") do |opt|
@@ -207,6 +226,9 @@ class CommandlineOptions
             "invalid_argument_combination", "CommandlineOptions",
             "Nothing to do for the combination: 'raw'-strategy/ no ESEs"
         ) if strategy_raw_specified_without_ese_list
+        ErrorHandling.warn_with_error_message(
+            "unused_ese_strategy", "CommandlineOptions"
+        ) if ese_strategy_specified_without_ese_list
         ErrorHandling.abort_with_error_message(
             "invalid_argument_combination", "CommandlineOptions",
             "'max-gc'-strategy/ '#{@select_by}'-select best variant.\nSet strategy to select best variant to 'high'"
@@ -225,6 +247,10 @@ class CommandlineOptions
 
     def strategy_raw_specified_without_ese_list
         @strategy == "raw" && @ese.nil?
+    end
+
+    def ese_strategy_specified_without_ese_list
+        @ese_strategy && @ese.nil?
     end
 
     def strategy_max_gc_specified_without_select_by_set_to_high
