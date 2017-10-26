@@ -182,6 +182,7 @@ class CommandlineOptions
             end
             opts.on("--ese-strategy STRATEGY", ["deplete", "enrich"],
                 "Strategy for scoring codons by their ESE resemblance.",
+                "(Selection will also be applied to select the best variant)",
                 "Select one of: 'deplete' or 'enrich'.",
                 "deplete - Deplete ESEs in vicinity to deleted introns.",
                 "enrich - Enrich ESEs in vicinity to deleted introns.",
@@ -194,6 +195,7 @@ class CommandlineOptions
             end
             opts.on("-b", "--select-by STRATEGY", ["mean", "high", "low"],
                 "Strategy for selecting which of the generated variants is best.",
+                "Take ESE coverage into account when multiple variants have same GC3.",
                 "Select one of: 'mean', 'high' or 'low'.",
                 "mean - Closest GC3 to the average human GC3 content.",
                 "high - Highest GC3 of all variants.",
