@@ -10,7 +10,8 @@ class CommandlineOptions
         :ese,
         :ese_strategy,
         :stay_in_subbox_for_6folds,
-        :verbose
+        :verbose,
+        :wildtype
 
     def initialize(args)
         init_commandline_arguments(args)
@@ -63,6 +64,7 @@ class CommandlineOptions
             @ese_strategy
             @stay_in_subbox_for_6folds
             @verbose
+            @wildtype
         )
     end
 
@@ -105,6 +107,7 @@ class CommandlineOptions
     end
 
     def set_defaults_for_unset_optional_arguments_that_cant_remain_unset
+        return if @wildtype # NOTE - no defaults needed if option wildtype is set
         unless @select_by
             @select_by = default_for_select_by_depending_on_strategy
             $logger.warn("Option select-by was not set. Defaults to '#{@select_by}'")
@@ -205,6 +208,12 @@ class CommandlineOptions
             end
 
             opts.separator ""
+            opts.on("-w", "--wildtype", "Output wildtype gene with introns removed and exit.",
+                "Warning - the sequence won't be altered at all.") do |opt|
+                @wildtype = true
+            end
+
+            opts.separator ""
             opts.on("-v", "--verbose", "Produce verbose log.") do |opt|
                 @verbose = true
             end
@@ -217,6 +226,8 @@ class CommandlineOptions
 
     def ensure_mandatory_arguments_are_set
         mandatory_arguments.each do |arg|
+            # NOTE - only input & output needed if option wildtype is set
+            next unless arg == "@input" || arg == "@output"
             ErrorHandling.abort_with_error_message(
                 "missing_mandatory_argument", "CommandlineOptions", instance_variable_to_argument(arg)
             ) unless is_argument_set(arg)

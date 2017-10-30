@@ -32,6 +32,12 @@ end
 gene.remove_introns(options.remove_first_intron)
 gene.log_statistics
 
+if options.wildtype
+    $logger.info("Output wildtype and exit programm")
+    GeneToFasta.write(options.output, gene)
+    exit
+end
+
 # tweak sequence
 enhancer = GeneEnhancer.new(
     options.strategy, options.ese_strategy, options.select_by,
