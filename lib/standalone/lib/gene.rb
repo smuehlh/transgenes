@@ -48,7 +48,12 @@ class Gene
     end
 
     def remove_introns(is_remove_first_intron)
-        @introns = is_remove_first_intron ? [] : [@introns.first]
+        @introns =
+            if is_remove_first_intron || @introns.empty?
+                []
+            else
+                [@introns.first]
+            end
     end
 
     def log_statistics
