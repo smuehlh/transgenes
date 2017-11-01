@@ -5,7 +5,7 @@ class EseScores
         @strategy = strategy
         ErrorHandling.abort_with_error_message(
             "unknown_ese_strategy", "EseScores"
-        ) unless is_known_strategy
+        ) unless is_known_strategy || ! has_ese_motifs_to_score_by
     end
 
     def has_ese_motifs_to_score_by
