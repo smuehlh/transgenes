@@ -47,7 +47,7 @@ class SequenceOptimizerForWeb
         @gene.remove_introns(@options.remove_first_intron) # var is a boolean
         log_options_and_gene_setup
 
-        @enhancer = GeneEnhancer.new(@options.strategy, @options.select_by, @options.stay_in_subbox_for_6folds)
+        @enhancer = GeneEnhancer.new(@options.strategy, @options.ese_strategy, @options.select_by, @options.stay_in_subbox_for_6folds)
         @enhancer.generate_synonymous_genes(@gene)
         @enhanced_gene = @enhancer.select_best_gene
 
@@ -82,7 +82,7 @@ class SequenceOptimizerForWeb
     end
 
     def log_options_and_gene_setup
-        @options.log_program_call
+        @options.log_program_call(@gene.ese_motifs.any?)
         @gene.log_statistics
         $logger.info "ESE motifs specified." if @gene.ese_motifs.any?
     end
