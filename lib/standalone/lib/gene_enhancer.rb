@@ -1,16 +1,17 @@
 class GeneEnhancer
-
     attr_reader :cross_variant_gc3_per_pos, :fasta_formatted_gene_variants
 
-    def initialize(strategy, select_best_by, stay_in_subbox_for_6folds)
+    def initialize(strategy, ese_strategy, select_best_by, stay_in_subbox_for_6folds)
         @n_variants = 1000
 
         @strategy = strategy
+        @ese_strategy = ese_strategy
         @select_best_by = select_best_by
         @stay_in_subbox_for_6folds = stay_in_subbox_for_6folds
 
         @gene_variants = []
         @gc3_contents = [] # needed to select best variant
+        @ese_resemblance = [] # need to select best variant (in case of a tie)
         @gc3_counts_per_pos = [] # needed to calc cross-variant GC3 per pos
 
         @cross_variant_gc3_per_pos = []
@@ -21,9 +22,9 @@ class GeneEnhancer
         gene.prepare_for_tweaking(@stay_in_subbox_for_6folds)
 
         @n_variants.times do |ind|
-            variant = generate_variant(gene)
-            log_variant(variant, ind)
-            collect_variant_data(variant, ind)
+            variant = generate_variant(gene, ind)
+            log_variant(variant)
+            collect_variant_data(variant)
         end
         convert_individual_to_cross_variant_gc3
         log_cross_variant_gc3
@@ -60,24 +61,25 @@ class GeneEnhancer
         end
     end
 
-    def generate_variant(gene)
-        gene.tweak_exonic_sequence(@strategy)
-        gene.deep_copy_using_tweaked_sequence
+    def generate_variant(gene, variant_ind)
+        variant_number = Counting.ruby_to_human(variant_ind)
+
+        gene.tweak_exonic_sequence(@strategy, @ese_strategy)
+        gene.deep_copy_using_tweaked_sequence(variant_number)
     end
 
-    def log_variant(variant, variant_ind)
+    def log_variant(variant)
         _, mutated_sites = variant.log_changed_sites
-        fasta = convert_variant_to_fasta(variant, variant_ind)
+        fasta = convert_variant_to_fasta(variant)
         log_variant_sequence(fasta, mutated_sites)
     end
 
-    def collect_variant_data(variant, variant_ind)
-        fasta = convert_variant_to_fasta(variant, variant_ind)
-
+    def collect_variant_data(variant)
         @gene_variants.push variant
         @gc3_contents.push variant.gc3_content
+        @ese_resemblance.push variant.sequence_proportion_covered_by_eses
         @gc3_counts_per_pos.push variant.gc3_count_per_synonymous_site
-        @fasta_formatted_gene_variants.push fasta
+        @fasta_formatted_gene_variants.push convert_variant_to_fasta(variant)
     end
 
     def convert_individual_to_cross_variant_gc3
@@ -87,13 +89,8 @@ class GeneEnhancer
         end
     end
 
-    def convert_variant_to_fasta(variant, variant_ind)
-        variant_number = Counting.ruby_to_human(variant_ind)
-
-        gc3 = to_pct(variant.gc3_content)
-        n_mutated_sites,_ = variant.log_changed_sites
-        desc = "Variant #{variant_number}: #{gc3}% GC3, #{n_mutated_sites} changed sites"
-        GeneToFasta.new(desc, variant.sequence).fasta
+    def convert_variant_to_fasta(variant)
+        GeneToFasta.new(variant.description, variant.sequence).fasta
     end
 
     def log_variant_sequence(fasta, mutated_sites)
@@ -108,20 +105,41 @@ class GeneEnhancer
 
     def log_selection(variant_ind)
         variant_number = Counting.ruby_to_human(variant_ind)
-        selected = to_pct(@gc3_contents[variant_ind])
+        gc3 = Statistics.percents(@gc3_contents[variant_ind])
+        ese = Statistics.percents(@ese_resemblance[variant_ind])
         $logger.info "Target GC3 content: #{target_description}"
-        $logger.info "Closest match: Variant #{variant_number} (#{selected}%)"
+        $logger.info "Subsequent target: #{ese_target_description} ESE resemblance"
+        $logger.info "Closest match: Variant #{variant_number} (#{gc3}% GC3; #{ese}% ESE resemblance)"
     end
 
     def find_index_of_best_gene
-        case @select_best_by
-        when "mean"
-            distances_to_mean = @gc3_contents.collect{|gc| (gc - mean_gc3).abs}
-            distances_to_mean.index(distances_to_mean.min)
-        when "high"
-            @gc3_contents.index(@gc3_contents.max)
-        when "low"
-            @gc3_contents.index(@gc3_contents.min)
+        # (mainly) select by GC3
+        # in case of a tie: additional selection by ESE resemblance
+        gc3_selection_target =
+            case @select_best_by
+            when "mean"
+                distances_to_mean = @gc3_contents.collect{|gc3| (gc3 - mean_gc3).abs}
+                distances_to_mean.min
+            when "high"
+                @gc3_contents.max
+            when "low"
+                @gc3_contents.min
+            end
+        best_by_gc3 =
+            @gc3_contents.each_index.select do |ind|
+                if @select_best_by == "mean"
+                    # use distance rather than gc3 for selection
+                    distances_to_mean[ind] == gc3_selection_target
+                else
+                    @gc3_contents[ind] == gc3_selection_target
+                end
+
+            end
+
+        if @ese_strategy == "deplete"
+            best_by_gc3.min_by{|i| @ese_resemblance[i]}
+        else
+            best_by_gc3.max_by{|i| @ese_resemblance[i]}
         end
     end
 
@@ -129,7 +147,7 @@ class GeneEnhancer
         case @select_best_by
         when "mean"
             n_exons = is_one_exon_genes ? "1-exon" : "2-exon"
-            "mean GC3 of #{n_exons} genes (#{to_pct(mean_gc3)}%)"
+            "mean GC3 of #{n_exons} genes (#{Statistics.percents(mean_gc3)}%)"
         when "high"
             "highest"
         when "low"
@@ -137,8 +155,12 @@ class GeneEnhancer
         end
     end
 
-    def to_pct(num)
-        (num*100).round(2)
+    def ese_target_description
+        if @ese_strategy == "deplete"
+            "minimal"
+        else
+            "maximal"
+        end
     end
 
     def is_one_exon_genes

@@ -1,7 +1,6 @@
 require 'logger'
 
 module Logging
-
     extend self
 
     def setup

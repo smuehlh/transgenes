@@ -30,12 +30,13 @@ class EseToGene
 
     def ensure_file_is_not_empty(file)
         ErrorHandling.abort_with_error_message(
-            "empty_file", "ToGene", @file_info
+            "empty_file", "EseToGene", @file_info
         ) if FileHelper.file_empty?(file)
     end
 
     def parse_eses_and_ensure_ese_format(file)
         parse_eses(file)
+        set_accepted_ese_size_to_size_of_first_motif
         ensure_eses_are_parsed_successfully
     end
 
@@ -44,6 +45,7 @@ class EseToGene
             line = line.chomp
             @motifs.push line
         end
+        @motifs.uniq!
         $logger.debug("Identified #{@motifs.size} motifs.")
     end
 
@@ -58,7 +60,17 @@ class EseToGene
         end
     end
 
+    def set_accepted_ese_size_to_size_of_first_motif
+        ese_size = @motifs.first.size
+        ErrorHandling.abort_with_error_message(
+            "invalid_ese_size", "EseToGene", @file_info
+        ) unless ese_size.between?(Constants.min_motif_length, Constants.max_motif_length)
+
+        # expect all other ESEs to be of same size
+        Constants.window_size = ese_size
+    end
+
     def is_valid_motif(motif)
-        motif.size == 6 && Dna.are_only_valid_nucleotides(motif)
+        motif.size == Constants.window_size && Dna.are_only_valid_nucleotides(motif)
     end
 end

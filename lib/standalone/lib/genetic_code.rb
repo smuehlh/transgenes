@@ -1,5 +1,4 @@
 module GeneticCode
-
     extend self
 
     # NOTE: any changes - change reverse_table accordingly

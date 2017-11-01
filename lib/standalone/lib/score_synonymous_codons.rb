@@ -1,13 +1,13 @@
 class ScoreSynonymousCodons
 
-    def initialize(strategy, synonymous_sites, ese_motifs)
+    def initialize(strategy, ese_strategy, synonymous_sites, ese_motifs)
         @strategy_scorer = StrategyScores.new(strategy)
         @synonymous_sites = synonymous_sites
-        @ese_scorer = EseScores.new(ese_motifs)
+        @ese_scorer = EseScores.new(ese_motifs, ese_strategy)
     end
 
-    def select_synonymous_codon_at(pos)
-        syn_codons, scores = score_synonymous_codons_at(pos)
+    def select_synonymous_codon_at(cds_tweaked_up_to_pos, pos)
+        syn_codons, scores = score_synonymous_codons_at(cds_tweaked_up_to_pos, pos)
         select_codon_matching_random_score(syn_codons, scores)
     end
 
@@ -23,7 +23,7 @@ class ScoreSynonymousCodons
 
     private
 
-    def score_synonymous_codons_at(pos)
+    def score_synonymous_codons_at(cds_tweaked_up_to_pos, pos)
         syn_codons = @synonymous_sites.synonymous_codons_at(pos)
         strategy_scores =
             if @synonymous_sites.is_stopcodon_at(pos)
@@ -36,8 +36,16 @@ class ScoreSynonymousCodons
                     @ese_scorer.has_ese_motifs_to_score_by
                 # additionally score by ese resemblance
                 # NOTE: ese input is optional and might have been omitted
-                ese_scores = score_by_ese(pos)
-                combine_normalised_scores(strategy_scores, ese_scores)
+                ese_scores = score_by_ese(cds_tweaked_up_to_pos, pos)
+
+                if @strategy_scorer.is_strategy_to_select_for_original_codon
+                    # pure ese scores (as is intended by this particular strategy)
+                    # NOTE: the combining method would fail here anyways
+                    # (strategy scores are 0's or 1 and would therefore overwrite ese scores)
+                    ese_scores
+                else
+                    combine_normalised_scores(strategy_scores, ese_scores)
+                end
             else
                 # pure strategy scores
                 strategy_scores
@@ -66,8 +74,8 @@ class ScoreSynonymousCodons
         @strategy_scorer.normalised_scores(syn_codons, orig_codon, pos, is_near_intron, distance_to_intron)
     end
 
-    def score_by_ese(pos)
-        windows = @synonymous_sites.sequence_windows_covering_syn_codon_at(pos)
+    def score_by_ese(cds_tweaked_up_to_pos, pos)
+        windows = @synonymous_sites.sequence_windows_covering_syn_codons_at(cds_tweaked_up_to_pos, pos)
 
         @ese_scorer.normalised_scores(windows)
     end

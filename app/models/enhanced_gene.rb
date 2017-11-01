@@ -11,6 +11,7 @@ class EnhancedGene < ActiveRecord::Base
             log: "",
             strategy: "",
             select_by: "",
+            ese_strategy: "",
             keep_first_intron: false,
             stay_in_subbox_for_6folds: false,
             destroy_ese_motifs: false
@@ -23,10 +24,6 @@ class EnhancedGene < ActiveRecord::Base
     end
 
     def fasta_formatted_synonymous_variants
-        self.gene_variants.collect.with_index do |seq, ind|
-            name = "#{self.gene_name} -- Variant #{Counting.ruby_to_human(ind)}"
-            to_fasta_obj = GeneToFasta.new(name, seq)
-            to_fasta_obj.fasta
-        end.join("\n")
+        self.gene_variants.join("\n")
     end
 end

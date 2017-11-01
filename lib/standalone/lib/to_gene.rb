@@ -1,5 +1,4 @@
 class ToGene
-
     attr_reader :gene_name, :exons, :introns
 
     def self.init_and_parse(use_feature, file, use_feature_starting_in_line)

@@ -1,6 +1,6 @@
 <%
-    valid_chars = Dna.valid_nucleotides.join("")
-    valid_textinput = "^(?:[#{valid_chars}]{6}[\\n\\r]{0,2})+$" # ensure each line contains exactly 6 nucleotides
+    valid_chars = "[#{Dna.valid_nucleotides.join("")}]{#{Constants.min_motif_length},#{Constants.max_motif_length}}"
+    valid_textinput = "^(#{valid_chars}[\\n\\r]+)*(#{valid_chars}){1}$"
 %>
 
 <%= f.hidden_field :commit, value: "" %>
@@ -23,7 +23,7 @@
             <legend class="text-primary">Enter motifs</legend>
             <div class="form-group-validation">
                 <%= f.text_area :data, rows: 6, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 2000, data: {valid: valid_textinput} %>
-                <small class="form-text text-muted">DNA sequence motifs of 6 bases, one motif per line.</small>
+                <small class="form-text text-muted">DNA sequence motifs of <%= Constants.min_motif_length %>-<%= Constants.max_motif_length %> bases, one motif per line.</small>
             </div>
         </div>
         <div class="col-sm-6">

@@ -1,5 +1,4 @@
 module Dna
-
     extend self
 
     def base_complement

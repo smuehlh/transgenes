@@ -8,8 +8,10 @@ class CommandlineOptions
         :input_line, :utr5prime_line, :utr3prime_line,
         :remove_first_intron,
         :ese,
+        :ese_strategy,
         :stay_in_subbox_for_6folds,
-        :verbose
+        :verbose,
+        :wildtype
 
     def initialize(args)
         init_commandline_arguments(args)
@@ -44,6 +46,10 @@ class CommandlineOptions
         @strategy == "max-gc" ? "high" : "mean"
     end
 
+    def default_for_ese_strategy
+        "deplete"
+    end
+
     def mandatory_arguments
         %w(@input @output @strategy)
     end
@@ -55,8 +61,10 @@ class CommandlineOptions
             @utr5prime @utr5prime_line @utr3prime @utr3prime_line
             @remove_first_intron
             @ese
+            @ese_strategy
             @stay_in_subbox_for_6folds
             @verbose
+            @wildtype
         )
     end
 
@@ -75,7 +83,7 @@ class CommandlineOptions
     end
 
     def log_options
-        $logger.info("Programm call") {@program_call}
+        $logger.info("Program call") {@program_call}
     end
 
     def parse_options
@@ -99,9 +107,15 @@ class CommandlineOptions
     end
 
     def set_defaults_for_unset_optional_arguments_that_cant_remain_unset
+        return if @wildtype # NOTE - no defaults needed if option wildtype is set
         unless @select_by
             @select_by = default_for_select_by_depending_on_strategy
-            $logger.warn("Set select-by to #{@select_by}")
+            $logger.warn("Option select-by was not set. Defaults to '#{@select_by}'")
+        end
+
+        if @ese && @ese_strategy.nil?
+            @ese_strategy = default_for_ese_strategy
+            $logger.warn("Option ese-strategy was not set. Defaults to '#{@ese_strategy}'")
         end
     end
 
@@ -164,9 +178,19 @@ class CommandlineOptions
             end
             opts.on("-e", "--ese FILE",
                 "Path to ESE file, one motif per line.",
-                "ESEs near introns that will be removed will be destroyed.") do |path|
+                "All motifs must be of same length and in #{Constants.min_motif_length}-#{Constants.max_motif_length} bp range.",
+                "To tweak the sequence by ESE resemblance only, set --strategy to 'raw'.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @ese = path
+            end
+            opts.on("--ese-strategy STRATEGY", ["deplete", "enrich"],
+                "Strategy for scoring codons by their ESE resemblance.",
+                "(Selection will also be applied to select the best variant)",
+                "Select one of: 'deplete' or 'enrich'.",
+                "deplete - Deplete ESEs in vicinity to deleted introns.",
+                "enrich - Enrich ESEs in vicinity to deleted introns.",
+                "If not specified, defaults to 'deplete'.") do |opt|
+                @ese_strategy = opt
             end
             opts.on("-c", "--stay-in-codon-box",
                 "6-fold degenerates: Stay in the respective (2- or 4-fold) codon box", "when selecting a synonymous codon.", "If not specified, all 6 codons are considered.") do |opt|
@@ -174,12 +198,19 @@ class CommandlineOptions
             end
             opts.on("-b", "--select-by STRATEGY", ["mean", "high", "low"],
                 "Strategy for selecting which of the generated variants is best.",
+                "Take ESE coverage into account when multiple variants have same GC3.",
                 "Select one of: 'mean', 'high' or 'low'.",
                 "mean - Closest GC3 to the average human GC3 content.",
                 "high - Highest GC3 of all variants.",
                 "low - Lowest GC3 of all variants.",
                 "If not specified, defaults to 'mean' ('high' if strategy is set to 'max-gc').") do |opt|
                 @select_by = opt
+            end
+
+            opts.separator ""
+            opts.on("-w", "--wildtype", "Output wildtype gene with introns removed and exit.",
+                "Warning - the sequence won't be altered at all.") do |opt|
+                @wildtype = true
             end
 
             opts.separator ""
@@ -195,6 +226,8 @@ class CommandlineOptions
 
     def ensure_mandatory_arguments_are_set
         mandatory_arguments.each do |arg|
+            # NOTE - only input & output needed if option wildtype is set
+            next unless arg == "@input" || arg == "@output"
             ErrorHandling.abort_with_error_message(
                 "missing_mandatory_argument", "CommandlineOptions", instance_variable_to_argument(arg)
             ) unless is_argument_set(arg)
@@ -206,6 +239,9 @@ class CommandlineOptions
             "invalid_argument_combination", "CommandlineOptions",
             "Nothing to do for the combination: 'raw'-strategy/ no ESEs"
         ) if strategy_raw_specified_without_ese_list
+        ErrorHandling.warn_with_error_message(
+            "unused_ese_strategy", "CommandlineOptions"
+        ) if ese_strategy_specified_without_ese_list
         ErrorHandling.abort_with_error_message(
             "invalid_argument_combination", "CommandlineOptions",
             "'max-gc'-strategy/ '#{@select_by}'-select best variant.\nSet strategy to select best variant to 'high'"
@@ -224,6 +260,10 @@ class CommandlineOptions
 
     def strategy_raw_specified_without_ese_list
         @strategy == "raw" && @ese.nil?
+    end
+
+    def ese_strategy_specified_without_ese_list
+        @ese_strategy && @ese.nil?
     end
 
     def strategy_max_gc_specified_without_select_by_set_to_high

@@ -2,7 +2,6 @@ class EnhancerError < Exception
 end
 
 module ErrorHandling
-
     extend self
 
     def is_commandline_tool
@@ -68,6 +67,8 @@ module ErrorHandling
             )
         when "invalid_codons"
             "Invalid codons: #{additional_error_message}"
+        when "invalid_ese_size"
+            "Unrecognized ESE format: ESE size out of range."
         when "invalid_ese_format"
             "Unrecognized file format: #{additional_error_message}.\nInput has to contain ESE motifs only, one per line."
         when "unknown_strategy"
@@ -76,6 +77,10 @@ module ErrorHandling
             )
         when "missing_strategy_matrix"
             "Missing reference data to alter the sequence."
+        when "unknown_ese_strategy"
+            error_message_with_reference_to_commandline_option_help(
+                "Unknown strategy for scoring codons by ESE resemblance."
+            )
         when "variant_generation_error"
             "Cannot generate gene variants."
         when "variant_selection_error"
@@ -91,6 +96,8 @@ module ErrorHandling
             "Gene is partial."
         when "unused_utr_line"
             "#{additional_warning_message}: A starting line but no file was provided. Will ignore starting line."
+        when "unused_ese_strategy"
+            "An ESE-strategy but not ESE motif file was provided. Will ignore ESE-strategy."
         when "no_codons_replaced"
             "Sequence has not been altered."
         end

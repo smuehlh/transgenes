@@ -35,10 +35,21 @@
         <%= f.label :select_by_low, content_tag(:strong, 'low') +  ' - Lowest GC3 content' %>
     </div>
 
+
+    <legend class="text-primary">Select how to adjust ESE resemblance near introns to be removed</legend>
+    <div class="radio form-group">
+        <%= f.radio_button :ese_strategy, 'deplete', {:checked => true, disabled: true, class: "params-form"} %>
+        <%= f.label :ese_strategy_deplete, content_tag(:strong, 'deplete') + ' - Deplete ESEs' %>
+    </div>
+    <div class="radio form-group">
+        <%= f.radio_button :ese_strategy, 'enrich', {disabled: true, class: "params-form"} %>
+        <%= f.label :ese_strategy_enrich, content_tag(:strong, 'enrich') + ' - Enrich ESEs' %>
+    </div>
+
     <legend class="text-primary">Select if first intron should be kept or removed</legend>
     <div class="checkbox form-group">
         <%= f.check_box :keep_first_intron, {checked: true, disabled: true, class: "params-form"}, "true", "false" %>
-        <%= f.label :keep_first_intron, "Keep first intron" %>
+        <%= f.label :keep_first_intron, "Keep first intron rather than removing all introns" %>
     </div>
 
     <legend class="text-primary">Select how 6-fold degenerate sites should be treated</legend>
