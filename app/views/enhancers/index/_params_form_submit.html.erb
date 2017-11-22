@@ -1,6 +1,21 @@
 <div class="form-group">
-    <%= f.submit "Submit", class: "btn btn-primary btn-outline params-form", title: "Submit data and start enhancing the gene.", data: {toggle: "tooltip"}, disabled: true %>
-    <p id="unsaved-data" class="bg-success" style="display: inline-block;">
-        Your input data is not yet saved. Please click the "Save" button of each form you have put data into.
-    </p>
+    <span data-toggle="modal" data-target="#block-page">
+        <%= f.submit "Submit", class: "btn btn-primary btn-outline params-form", title: "Submit data and start enhancing the gene.", data: {toggle: "tooltip"}, disabled: true %>
+        <p id="unsaved-data" class="bg-success" style="display: inline-block;">
+            Your input data is not yet saved. Please click the "Save" button of each form you have put data into.
+        </p>
+    </span>
+</div>
+
+<div id="block-page" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-sm" style="padding-top: 15%;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p style="text-align: center;">
+                    <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+                    Calculating...
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
