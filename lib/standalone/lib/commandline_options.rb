@@ -10,6 +10,7 @@ class CommandlineOptions
         :ese,
         :ese_strategy,
         :stay_in_subbox_for_6folds,
+        :restriction_enzymes_to_keep,
         :verbose,
         :wildtype
 
@@ -63,6 +64,7 @@ class CommandlineOptions
             @ese
             @ese_strategy
             @stay_in_subbox_for_6folds
+            @restriction_enzymes_to_keep
             @verbose
             @wildtype
         )
@@ -205,6 +207,12 @@ class CommandlineOptions
                 "low - Lowest GC3 of all variants.",
                 "If not specified, defaults to 'mean' ('high' if strategy is set to 'max-gc').") do |opt|
                 @select_by = opt
+            end
+            opts.on("--motif-to-keep FILE",
+                "Path to restriction enzyme file, one sequence per line.",
+                "All occurrences of the specified sequences will be kept intact.") do |path|
+                FileHelper.file_exist_or_die(path)
+                @restriction_enzymes_to_keep = path
             end
 
             opts.separator ""
