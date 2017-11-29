@@ -27,6 +27,11 @@ end
 if options.ese
     gene.add_ese_list(EseToGene.init_and_parse(options.ese))
 end
+if options.restriction_enzymes_to_keep
+    gene.add_restriction_sites(
+        RestrictionEnzymeToGene.init_and_parse(options.restriction_enzymes_to_keep)
+    )
+end
 
 # remove unwanted introns
 gene.remove_introns(options.remove_first_intron)

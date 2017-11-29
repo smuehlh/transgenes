@@ -47,6 +47,21 @@ class Gene
         @sequence_proportion_covered_by_eses = get_sequence_proporion_covered_by_eses if @exons.any?
     end
 
+    def add_restriction_sites(enzymes)
+        cds = @exons.join
+        # determine which sites should be left intact
+        pos_covered_by_restriction_enzymes = enzymes.collect do |enzyme|
+            cds.all_indices(enzyme).collect do |start|
+                stop = start + enzyme.size - 1
+                (start..stop).to_a
+            end
+        end.flatten.uniq
+        @sites_to_keep_intact = SynonymousSites.all_sites(@exons) & pos_covered_by_restriction_enzymes
+
+        sites = @sites_to_keep_intact.map{|pos| Counting.ruby_to_human(pos)}
+        $logger.info "Keep sites #{sites.join(", ")} mapping restriction enzymes intact."
+    end
+
     def remove_introns(is_remove_first_intron)
         @introns =
             if is_remove_first_intron || @introns.empty?
@@ -98,6 +113,8 @@ class Gene
         init_exon_copy
 
         @synonymous_sites.all_sites.each do |pos|
+            next if is_site_to_be_left_intact?(pos)
+
             # NOTE - pass up-to-date tweaked exons to scorer:
             # ESE-scores considers the already tweaked sequence upstream of pos
             codon = scorer.select_synonymous_codon_at(@tweaked_exons.join, pos)
@@ -192,5 +209,9 @@ class Gene
     def log_codon_replacement(log)
         @number_of_changed_sites += 1
         @changed_sites += "#{log}\n"
+    end
+
+    def is_site_to_be_left_intact?(pos)
+        @sites_to_keep_intact.include?(pos)
     end
 end

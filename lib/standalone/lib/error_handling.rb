@@ -70,7 +70,9 @@ module ErrorHandling
         when "invalid_ese_size"
             "Unrecognized ESE format: ESE size out of range."
         when "invalid_ese_format"
-            "Unrecognized file format: #{additional_error_message}.\nInput has to contain ESE motifs only, one per line."
+            "Unrecognized file format: #{additional_error_message}.\nInput must contain ESE motifs only, one per line."
+        when "invalid_enzyme_format"
+            "Unrecognized file format: #{additional_error_message}.\nInput must contain restriction enzyme sequences only, one per line."
         when "unknown_strategy"
             error_message_with_reference_to_commandline_option_help(
                 "Unknown strategy for altering the sequence."
