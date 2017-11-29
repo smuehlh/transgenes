@@ -11,6 +11,7 @@ class CommandlineOptions
         :ese_strategy,
         :stay_in_subbox_for_6folds,
         :restriction_enzymes_to_keep,
+        :restriction_enzymes_to_avoid,
         :verbose,
         :wildtype
 
@@ -65,6 +66,7 @@ class CommandlineOptions
             @ese_strategy
             @stay_in_subbox_for_6folds
             @restriction_enzymes_to_keep
+            @restriction_enzymes_to_avoid
             @verbose
             @wildtype
         )
@@ -213,6 +215,12 @@ class CommandlineOptions
                 "All occurrences of the specified sequences will be kept intact.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @restriction_enzymes_to_keep = path
+            end
+            opts.on("--motif-to-avoid FILE",
+                "Path to restriction enzyme file, one sequence per line.",
+                "Introducing the specified sequences will be avoided.") do |path|
+                FileHelper.file_exist_or_die(path)
+                @restriction_enzymes_to_avoid = path
             end
 
             opts.separator ""
