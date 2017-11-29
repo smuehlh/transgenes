@@ -43,7 +43,7 @@ class EseToGene
     def parse_eses(file)
         IO.foreach(file) do |line|
             line = line.chomp
-            @motifs.push line
+            @motifs.push line unless line.empty?
         end
         @motifs.uniq!
         $logger.debug("Identified #{@motifs.size} motifs.")
