@@ -122,12 +122,12 @@ class Gene
         init_exon_copy
 
         @synonymous_sites.all_sites.each do |pos|
-            next if is_site_to_be_left_intact?(pos)
-
             # NOTE - pass up-to-date tweaked exons to scorer:
             # ESE-scores considers the already tweaked sequence upstream of pos
             codon = scorer.select_synonymous_codon_at(@tweaked_exons.join, pos)
-            if ! scorer.is_original_codon_selected_at(pos, codon)
+            unless is_site_to_be_left_intact?(pos) ||
+                scorer.is_original_codon_selected_at(pos, codon)
+
                 if is_introducing_unwanted_motif?(@tweaked_exons.join, pos,
                     codon)
                     log_missed_replacement("Cannot change site #{pos}, would introduce a restriction site")
