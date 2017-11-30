@@ -47,7 +47,7 @@ class Gene
         @sequence_proportion_covered_by_eses = get_sequence_proporion_covered_by_eses if @exons.any?
     end
 
-    def add_restriction_sites(enzymes)
+    def add_restriction_sites_to_keep_intact(enzymes)
         cds = @exons.join
         # determine which sites should be left intact
         pos_covered_by_restriction_enzymes = enzymes.collect do |enzyme|
@@ -60,6 +60,12 @@ class Gene
 
         sites = @sites_to_keep_intact.map{|pos| Counting.ruby_to_human(pos)}
         $logger.info "Keep sites #{sites.join(", ")} mapping restriction enzymes intact."
+    end
+
+    def add_restriction_enzymes_to_avoid(enzymes)
+        @restriction_enzymes_to_avoid = enzymes
+
+        $logger.info "Avoid introducing restriction enzymes #{@restriction_enzymes_to_avoid.join(" ")}"
     end
 
     def remove_introns(is_remove_first_intron)
@@ -118,10 +124,14 @@ class Gene
             # NOTE - pass up-to-date tweaked exons to scorer:
             # ESE-scores considers the already tweaked sequence upstream of pos
             codon = scorer.select_synonymous_codon_at(@tweaked_exons.join, pos)
-
             if ! scorer.is_original_codon_selected_at(pos, codon)
-                replace_codon_at_pos(@tweaked_exons, pos, codon)
-                log_codon_replacement(scorer.log_selected_codon_at(pos, codon))
+                if is_introducing_unwanted_motif?(@tweaked_exons.join, pos,
+                    codon)
+                    log_missed_replacement("Cannot change site #{pos}, would introduce a restriction site")
+                else
+                    replace_codon_at_pos(@tweaked_exons, pos, codon)
+                    log_codon_replacement(scorer.log_selected_codon_at(pos, codon))
+                end
             end
         end
     end
@@ -211,7 +221,24 @@ class Gene
         @changed_sites += "#{log}\n"
     end
 
-    def is_site_to_be_left_intact?(pos)
-        @sites_to_keep_intact.include?(pos)
+    def log_missed_replacement(log)
+        @changed_sites += "#{log}\n"
+    end
+
+    def is_site_to_be_left_intact?(site)
+        @sites_to_keep_intact.include?(site)
+    end
+
+    def is_introducing_unwanted_motif?(cds, third_site, new_codon)
+        cds[third_site-2..third_site] = new_codon
+
+        @restriction_enzymes_to_avoid.any? do |enzyme|
+            len = enzyme.size
+
+            # construct maximal enzyme-sized window covering the new codon
+            window_start = third_site - len - 1
+            window_stop = third_site + len - 1
+            cds[window_start..window_stop].include?(enzyme)
+        end
     end
 end

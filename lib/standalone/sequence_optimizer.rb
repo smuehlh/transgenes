@@ -28,8 +28,13 @@ if options.ese
     gene.add_ese_list(EseToGene.init_and_parse(options.ese))
 end
 if options.restriction_enzymes_to_keep
-    gene.add_restriction_sites(
+    gene.add_restriction_sites_to_keep_intact(
         RestrictionEnzymeToGene.init_and_parse(options.restriction_enzymes_to_keep)
+    )
+end
+if options.restriction_enzymes_to_avoid
+    gene.add_restriction_enzymes_to_avoid(
+        RestrictionEnzymeToGene.init_and_parse(options.restriction_enzymes_to_avoid)
     )
 end
 
