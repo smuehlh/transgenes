@@ -13,6 +13,9 @@ class Gene
         @gc3_count_per_synonymous_site = []
         @sequence_proportion_covered_by_eses = ""
 
+        @sites_to_keep_intact = []
+        @restriction_enzymes_to_avoid = []
+
         @ese_motifs = {} # save motifs as hash keys for faster lookup
     end
 
