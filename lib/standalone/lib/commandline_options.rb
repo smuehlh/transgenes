@@ -218,7 +218,9 @@ class CommandlineOptions
             end
             opts.on("--motif-to-avoid FILE",
                 "Path to restriction enzyme file, one sequence per line.",
-                "Introducing the specified sequences will be avoided.") do |path|
+                "Introducing the specified sequences will be avoided.",
+                "Warning -this will only avoid insertion of new sites,",
+                "but is not guaranteed to delete sites already present.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @restriction_enzymes_to_avoid = path
             end
