@@ -17,12 +17,12 @@ class ToGene
 
             line_number = 0
             IO.foreach(@file) do |line|
-                line_number += 1
                 line = line.chomp
                 next if is_comment(line)
 
                 update_current_gene_start(line_number) if is_line_starting_new_gene_record(line)
                 save_gene_record(line)
+                line_number += 1
             end
             @gene_records_by_gene_starts
         end
@@ -65,7 +65,8 @@ class ToGene
         end
 
         def update_current_gene_start(line_number)
-            @current_gene_start = line_number
+            humanized_line_number = Counting.ruby_to_human(line_number)
+            @current_gene_start = humanized_line_number
             $logger.debug("Identified line #{@current_gene_start} as FASTA header. Will treat following lines as FASTA sequence.")
         end
 

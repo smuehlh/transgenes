@@ -18,7 +18,7 @@ class ScoreSynonymousCodons
 
     def log_selected_codon_at(pos, best_codon)
         orig_codon = @synonymous_sites.original_codon_at(pos)
-        "Pos #{pos}: #{orig_codon} -> #{best_codon}"
+        "Pos #{Counting.ruby_to_human(pos)}: #{orig_codon} -> #{best_codon}"
     end
 
     private

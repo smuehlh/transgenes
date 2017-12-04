@@ -62,7 +62,9 @@ class Gene
         @sites_to_keep_intact = SynonymousSites.all_sites(@exons) & pos_covered_by_restriction_enzymes
 
         sites = @sites_to_keep_intact.map{|pos| Counting.ruby_to_human(pos)}
-        $logger.info "Keep sites #{sites.join(", ")} mapping restriction enzymes intact."
+        if sites.any?
+            $logger.info "Keep sites #{sites.join(", ")} mapping restriction enzymes intact."
+        end
     end
 
     def add_restriction_enzymes_to_avoid(enzymes)
@@ -130,7 +132,8 @@ class Gene
 
                 if is_introducing_unwanted_motif?(@tweaked_exons.join, pos,
                     codon)
-                    log_missed_replacement("Cannot change site #{pos}, would introduce a restriction site")
+                    log = "Cannot change site #{Counting.ruby_to_human(pos)}, would introduce a restriction site"
+                    log_missed_replacement(log)
                 else
                     replace_codon_at_pos(@tweaked_exons, pos, codon)
                     log_codon_replacement(scorer.log_selected_codon_at(pos, codon))
