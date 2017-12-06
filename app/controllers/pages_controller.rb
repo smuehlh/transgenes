@@ -8,9 +8,6 @@ class PagesController < ApplicationController
     def help
     end
 
-    def privacy
-    end
-
     def download
         @main = ZipStandalone.get_main_filename_in_zip
         @archive = ZipStandalone.get_archive_name
