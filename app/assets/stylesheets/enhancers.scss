@@ -81,3 +81,20 @@ textarea {
         }
     }
 }
+
+// footer
+html{
+  position:relative;
+  min-height: 100%;
+}
+#main-container{
+  margin-bottom: 4em;
+}
+footer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3em;
+    background: #e5e5e5;
+}
