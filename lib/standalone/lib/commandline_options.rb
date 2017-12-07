@@ -126,7 +126,13 @@ class CommandlineOptions
     def argument_specification
         OptionParser.new do |opts|
             opts.banner = "Enhance mammalian transgenes."
-            opts.separator "Contact: Laurence Hurst (l.d.hurst@bath.ac.uk)"
+            opts.separator ""
+            opts.separator "Copyright (c) 2017, by University of Bath"
+            opts.separator "Contributors: Stefanie Mühlhausen"
+            opts.separator "Affiliation: Laurence D Hurst"
+            opts.separator "Contact: l.d.hurst@bath.ac.uk"
+            opts.separator "This program comes with ABSOLUTELY NO WARRANTY"
+
             opts.separator ""
             opts.separator "Usage: ruby #{File.basename($PROGRAM_NAME)} -i input -o output -s strategy [options]"
 
