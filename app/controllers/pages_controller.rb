@@ -1,11 +1,9 @@
 class PagesController < ApplicationController
-    def about
-    end
-
     def contact
     end
 
     def help
+        @archive = ZipStandalone.get_archive_name
     end
 
     def download
