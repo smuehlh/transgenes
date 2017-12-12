@@ -28,6 +28,20 @@ textarea {
     display: inline-block;
 }
 
+// display all sample data with same height
+.line-wrap {
+    height: 23.1em; // 22 lines x 1.1em height per line
+    line-height: 1.1;
+    overflow: auto;
+}
+.without-border {
+    padding: 0;
+    border: 0;
+}
+.without-left-margin {
+    margin-left: 0;
+}
+
 // display sequence stats
 .padding-between-cols td
 {
