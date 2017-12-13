@@ -6,44 +6,54 @@
 <h4>Generating variants and selecting the best</h4>
 <p>
     The <%= @archive.camelize %> software will generate 1,000 gene variants and select the best by its GC3 content. By default, target GC3 content will be the average GC3 in human one- or two-exon genes (option <abbr title="selection">mean</abbr>). Alternatively, you may set target GC3 to <abbr title="selection">high</abbr> or <abbr title="selection">low</abbr> selecting for highest or lowest GC3 found among generated variants.
-    <div class="row without-left-margin">
-        <div class="well col-md-7">
-            <img src="/images/gc3-selection.png" class="img-responsive" alt="Select target GC3">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="well">
+                <img src="/images/gc3-selection.png" class="img-responsive" alt="Select target GC3">
+            </div>
         </div>
     </div>
 </p>
 <h4>Removing introns determines which sites are checked for ESE resemblance</h4>
 <p>
     The first step when generating the gene variants is to remove all introns but the first, or, if requested all introns including the first. This is to determine exonic sites in vicinity to now deleted introns. ESE resemblance will be adjusted at those sites only and at no other position in the gene.
-    <div class="row without-left-margin">
-        <div class="well col-md-7">
-            <img src="/images/intron-selection.png" class="img-responsive" alt="Remove introns">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="well">
+                <img src="/images/intron-selection.png" class="img-responsive" alt="Remove introns">
+            </div>
         </div>
     </div>
 </p>
 <p>
     Per default ESE motifs will be depleted (option <abbr title="selection">deplete</abbr>), select option <abbr title="enrich">enrich</abbr> to enrich them instead.
-    <div class="row without-left-margin">
-        <div class="well col-md-7">
-            <img src="/images/ese-selection.png" class="img-responsive" alt="Select ESE resemblance">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="well">
+                <img src="/images/ese-selection.png" class="img-responsive" alt="Select ESE resemblance">
+            </div>
         </div>
     </div>
 </p>
 <h4>Scoring synonymous codons</h4>
 <p>
     For each site, synonymous codons are assigned a score and selected with a probability equaling its score. Scores are assigned based on how well the codon matches human codon usage (option <abbr title="selection">humanize</abbr>; default), alternative strategies include maximizing GC3 content (option <abbr title="selection">max-gc</abbr>) and matching the position-dependent GC3 content of human one- or two-exon genes (option <abbr title="selection">gc</abbr>). At sites in vicinity to deleted introns the codon score is a mixture of strategy-score and ESE resemblance-score. Should ESE motifs have been provided, a strategy to score by ESE resemblance only may also be chosen (<i>please note:</i> this will affect only sites near deleted introns, at all other sites the sequence will remain unchanged; option <abbr title="selection">raw</abbr>).
-    <div class="row without-left-margin">
-        <div class="well col-md-7">
-            <img src="/images/strategy-selection.png" class="img-responsive" alt="Select scoring strategy">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="well">
+                <img src="/images/strategy-selection.png" class="img-responsive" alt="Select scoring strategy">
+            </div>
         </div>
     </div>
 </p>
 <h5>Synonymous codons at 6-fold degenerate sites</h5>
 <p>
     At 6-fold degenerate sites (leucine, serine or alanine positions) all six synonymous codons are scored per default. You can specify to restrict codons to those of the respective 2- or 4-codon sub-box instead.
-    <div class="row without-left-margin">
-        <div class="well col-md-7">
-            <img src="/images/sixfold-selection.png" class="img-responsive" alt="Sixfold degenerate sites">
+    <div class="row">
+        <div class="col-md-7">
+            <div class="well">
+                <img src="/images/sixfold-selection.png" class="img-responsive" alt="Sixfold degenerate sites">
+            </div>
         </div>
     </div>
 </p>
