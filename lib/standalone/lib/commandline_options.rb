@@ -9,6 +9,7 @@ class CommandlineOptions
         :remove_first_intron,
         :ese,
         :ese_strategy,
+        :score_eses_at_all_sites,
         :stay_in_subbox_for_6folds,
         :restriction_enzymes_to_keep,
         :restriction_enzymes_to_avoid,
@@ -64,6 +65,7 @@ class CommandlineOptions
             @remove_first_intron
             @ese
             @ese_strategy
+            @score_eses_at_all_sites
             @stay_in_subbox_for_6folds
             @restriction_enzymes_to_keep
             @restriction_enzymes_to_avoid
@@ -202,6 +204,13 @@ class CommandlineOptions
                 "If not specified, defaults to 'deplete'.") do |opt|
                 @ese_strategy = opt
             end
+            opts.on("--ese-all-sites",
+                "Score every site ESE resemblance.",
+                "If not specified, only sites in vicinity to deleted introns ",
+                "will be scored by ESE resemblance.",
+                "Warning - tweaking ESE resemblance in exon cores is against our current understanding of ESEs.") do |opt|
+                @score_eses_at_all_sites = true
+            end
             opts.on("-c", "--stay-in-codon-box",
                 "6-fold degenerates: Stay in the respective (2- or 4-fold) codon box", "when selecting a synonymous codon.", "If not specified, all 6 codons are considered.") do |opt|
                 @stay_in_subbox_for_6folds = true
@@ -225,7 +234,7 @@ class CommandlineOptions
             opts.on("--motif-to-avoid FILE",
                 "Path to restriction enzyme file, one sequence per line.",
                 "Introducing the specified sequences will be avoided.",
-                "Warning -this will only avoid insertion of new sites,",
+                "Warning - this will only avoid insertion of new sites,",
                 "but is not guaranteed to delete sites already present.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @restriction_enzymes_to_avoid = path
