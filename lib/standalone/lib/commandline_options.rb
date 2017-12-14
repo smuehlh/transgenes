@@ -205,10 +205,11 @@ class CommandlineOptions
                 @ese_strategy = opt
             end
             opts.on("--ese-all-sites",
-                "Score every site ESE resemblance.",
+                "Score every site by ESE resemblance.",
                 "If not specified, only sites in vicinity to deleted introns ",
-                "will be scored by ESE resemblance.",
-                "Warning - tweaking ESE resemblance in exon cores is against our current understanding of ESEs.") do |opt|
+                "will be scored by ESE resemblance, and sites in exon cores by 'strategy' only.",
+                "Warning - tweaking ESE resemblance in exon cores is against ",
+                "our current understanding of ESEs but might be useful for one-exon genes.") do |opt|
                 @score_eses_at_all_sites = true
             end
             opts.on("-c", "--stay-in-codon-box",
@@ -275,6 +276,9 @@ class CommandlineOptions
         ErrorHandling.warn_with_error_message(
             "unused_ese_strategy", "CommandlineOptions"
         ) if ese_strategy_specified_without_ese_list
+        ErrorHandling.warn_with_error_message(
+            "unused_ese_all_sites", "CommandlineOptions"
+        ) if ese_all_sites_specified_without_ese_list
         ErrorHandling.abort_with_error_message(
             "invalid_argument_combination", "CommandlineOptions",
             "'max-gc'-strategy/ '#{@select_by}'-select best variant.\nSet strategy to select best variant to 'high'"
@@ -297,6 +301,10 @@ class CommandlineOptions
 
     def ese_strategy_specified_without_ese_list
         @ese_strategy && @ese.nil?
+    end
+
+    def ese_all_sites_specified_without_ese_list
+        @score_eses_at_all_sites && @ese.nil?
     end
 
     def strategy_max_gc_specified_without_select_by_set_to_high
