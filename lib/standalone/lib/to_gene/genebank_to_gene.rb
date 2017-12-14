@@ -21,13 +21,13 @@ class ToGene
             @current_feature = nil
             line_number = 0
             IO.foreach(@file) do |line|
-                line_number += 1
                 line = line.chomp
 
                 update_current_feature(line)
                 update_current_gene_start(line_number) if is_new_gene(line)
                 save_gene_record(line) if is_gene_record
                 save_gene_sequence(line, line_number) if is_gene_sequence
+                line_number += 1
             end
             @gene_records_by_gene_starts
         end
@@ -90,7 +90,8 @@ class ToGene
         end
 
         def update_current_gene_start(line_number)
-            @current_gene_start = line_number
+            humanized_line_number = Counting.ruby_to_human(line_number)
+            @current_gene_start = humanized_line_number
             $logger.debug("Identified line #{@current_gene_start} as feature line.")
         end
 
@@ -105,7 +106,8 @@ class ToGene
             line.strip!
             sequence = extract_sequence(line)
             if line == "ORIGIN"
-                $logger.debug("Identified line #{line_number} as ORIGIN. Will treat all following lines as sequence.")
+                humanized_line_number = Counting.ruby_to_human(line_number)
+                $logger.debug("Identified line #{humanized_line_number} as ORIGIN. Will treat all following lines as sequence.")
             else
                 @gene_sequence += sequence
             end

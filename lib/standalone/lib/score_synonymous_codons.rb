@@ -1,9 +1,10 @@
 class ScoreSynonymousCodons
 
-    def initialize(strategy, ese_strategy, synonymous_sites, ese_motifs)
+    def initialize(strategy, ese_strategy, score_eses_at_all_sites, synonymous_sites, ese_motifs)
         @strategy_scorer = StrategyScores.new(strategy)
         @synonymous_sites = synonymous_sites
         @ese_scorer = EseScores.new(ese_motifs, ese_strategy)
+        @is_scoring_eses_at_each_site = score_eses_at_all_sites
     end
 
     def select_synonymous_codon_at(cds_tweaked_up_to_pos, pos)
@@ -18,7 +19,7 @@ class ScoreSynonymousCodons
 
     def log_selected_codon_at(pos, best_codon)
         orig_codon = @synonymous_sites.original_codon_at(pos)
-        "Pos #{pos}: #{orig_codon} -> #{best_codon}"
+        "Pos #{Counting.ruby_to_human(pos)}: #{orig_codon} -> #{best_codon}"
     end
 
     private
@@ -32,8 +33,10 @@ class ScoreSynonymousCodons
                 score_by_strategy(pos)
             end
         scores =
-            if @synonymous_sites.is_in_proximity_to_deleted_intron(pos) &&
-                    @ese_scorer.has_ese_motifs_to_score_by
+            if @ese_scorer.has_ese_motifs_to_score_by &&
+                (@is_scoring_eses_at_each_site ||
+                @synonymous_sites.is_in_proximity_to_deleted_intron(pos))
+
                 # additionally score by ese resemblance
                 # NOTE: ese input is optional and might have been omitted
                 ese_scores = score_by_ese(cds_tweaked_up_to_pos, pos)

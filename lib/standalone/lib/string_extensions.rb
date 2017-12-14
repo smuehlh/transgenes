@@ -12,4 +12,12 @@ class String
         gsub(regexp, '')
     end
 
+    def all_indices(substring)
+        i = -1
+        all = []
+        while i = self.index(substring, i+1)
+            all << i
+        end
+        all
+    end
 end

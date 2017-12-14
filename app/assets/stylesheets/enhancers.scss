@@ -28,6 +28,18 @@ textarea {
     display: inline-block;
 }
 
+// display all sample data with same height
+.line-wrap {
+    height: 23.1em; // 22 lines x 1.1em height per line
+    line-height: 1.1;
+    overflow: auto;
+}
+.without-border {
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+}
+
 // display sequence stats
 .padding-between-cols td
 {
@@ -80,4 +92,21 @@ textarea {
             color: white;
         }
     }
+}
+
+// footer
+html{
+  position:relative;
+  min-height: 100%;
+}
+#main-container{
+  margin-bottom: 4em;
+}
+footer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3em;
+    background: #e5e5e5;
 }

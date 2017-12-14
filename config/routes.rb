@@ -1,10 +1,8 @@
 Rails.application.routes.draw do
 
   root 'enhancers#index'
-  get '/about' => 'pages#about'
   get '/contact' => 'pages#contact'
   get '/help' => 'pages#help'
-  get '/privacy' => 'pages#privacy'
   get '/download' => 'pages#download'
   get '/standalone' => 'pages#get_standalone_tool'
 

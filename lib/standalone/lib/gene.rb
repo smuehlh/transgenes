@@ -13,12 +13,15 @@ class Gene
         @gc3_count_per_synonymous_site = []
         @sequence_proportion_covered_by_eses = ""
 
+        @sites_to_keep_intact = []
+        @restriction_enzymes_to_avoid = []
+
         @ese_motifs = {} # save motifs as hash keys for faster lookup
     end
 
     def ese_motifs
         # NOTE - use custom getter to convert motifs hash to array
-        # (which is the more obvious, but slower way of storing eses)
+        # (which is the more obvious, but less performant way of storing eses)
         @ese_motifs.keys
     end
 
@@ -45,6 +48,29 @@ class Gene
     def add_ese_list(ese_motifs)
         ese_motifs.each {|motif| @ese_motifs[motif] = nil}
         @sequence_proportion_covered_by_eses = get_sequence_proporion_covered_by_eses if @exons.any?
+    end
+
+    def add_restriction_sites_to_keep_intact(enzymes)
+        cds = @exons.join
+        # determine which sites should be left intact
+        pos_covered_by_restriction_enzymes = enzymes.collect do |enzyme|
+            cds.all_indices(enzyme).collect do |start|
+                stop = start + enzyme.size - 1
+                (start..stop).to_a
+            end
+        end.flatten.uniq
+        @sites_to_keep_intact = SynonymousSites.all_sites(@exons) & pos_covered_by_restriction_enzymes
+
+        sites = @sites_to_keep_intact.map{|pos| Counting.ruby_to_human(pos)}
+        if sites.any?
+            $logger.info "Keep sites #{sites.join(", ")} mapping restriction enzymes intact."
+        end
+    end
+
+    def add_restriction_enzymes_to_avoid(enzymes)
+        @restriction_enzymes_to_avoid = enzymes
+
+        $logger.info "Avoid introducing restriction enzymes #{@restriction_enzymes_to_avoid.join(" ")}"
     end
 
     def remove_introns(is_remove_first_intron)
@@ -92,8 +118,9 @@ class Gene
         @synonymous_sites = SynonymousSites.new(@exons, @introns, stay_in_subbox_for_6folds)
     end
 
-    def tweak_exonic_sequence(strategy, ese_strategy)
-        scorer = ScoreSynonymousCodons.new(strategy, ese_strategy, @synonymous_sites, @ese_motifs)
+    def tweak_exonic_sequence(strategy, ese_strategy, score_eses_at_all_sites)
+        scorer = ScoreSynonymousCodons.new(strategy, ese_strategy, score_eses_at_all_sites,
+            @synonymous_sites, @ese_motifs)
         init_codon_replacement_log
         init_exon_copy
 
@@ -101,10 +128,17 @@ class Gene
             # NOTE - pass up-to-date tweaked exons to scorer:
             # ESE-scores considers the already tweaked sequence upstream of pos
             codon = scorer.select_synonymous_codon_at(@tweaked_exons.join, pos)
+            unless is_site_to_be_left_intact?(pos) ||
+                scorer.is_original_codon_selected_at(pos, codon)
 
-            if ! scorer.is_original_codon_selected_at(pos, codon)
-                replace_codon_at_pos(@tweaked_exons, pos, codon)
-                log_codon_replacement(scorer.log_selected_codon_at(pos, codon))
+                if is_introducing_unwanted_motif?(@tweaked_exons.join, pos,
+                    codon)
+                    log = "Cannot change site #{Counting.ruby_to_human(pos)}, would introduce a restriction site"
+                    log_missed_replacement(log)
+                else
+                    replace_codon_at_pos(@tweaked_exons, pos, codon)
+                    log_codon_replacement(scorer.log_selected_codon_at(pos, codon))
+                end
             end
         end
     end
@@ -192,5 +226,26 @@ class Gene
     def log_codon_replacement(log)
         @number_of_changed_sites += 1
         @changed_sites += "#{log}\n"
+    end
+
+    def log_missed_replacement(log)
+        @changed_sites += "#{log}\n"
+    end
+
+    def is_site_to_be_left_intact?(site)
+        @sites_to_keep_intact.include?(site)
+    end
+
+    def is_introducing_unwanted_motif?(cds, third_site, new_codon)
+        cds[third_site-2..third_site] = new_codon
+
+        @restriction_enzymes_to_avoid.any? do |enzyme|
+            len = enzyme.size
+
+            # construct maximal enzyme-sized window covering the new codon
+            window_start = third_site - len - 1
+            window_stop = third_site + len - 1
+            cds[window_start..window_stop].include?(enzyme)
+        end
     end
 end

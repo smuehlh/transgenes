@@ -27,6 +27,16 @@ end
 if options.ese
     gene.add_ese_list(EseToGene.init_and_parse(options.ese))
 end
+if options.restriction_enzymes_to_keep
+    gene.add_restriction_sites_to_keep_intact(
+        RestrictionEnzymeToGene.init_and_parse(options.restriction_enzymes_to_keep)
+    )
+end
+if options.restriction_enzymes_to_avoid
+    gene.add_restriction_enzymes_to_avoid(
+        RestrictionEnzymeToGene.init_and_parse(options.restriction_enzymes_to_avoid)
+    )
+end
 
 # remove unwanted introns
 gene.remove_introns(options.remove_first_intron)
@@ -41,7 +51,7 @@ end
 # tweak sequence
 enhancer = GeneEnhancer.new(
     options.strategy, options.ese_strategy, options.select_by,
-    options.stay_in_subbox_for_6folds
+    options.stay_in_subbox_for_6folds, options.score_eses_at_all_sites
 )
 enhancer.generate_synonymous_genes(gene)
 enhanced_gene = enhancer.select_best_gene

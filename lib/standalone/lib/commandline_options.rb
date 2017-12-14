@@ -9,7 +9,10 @@ class CommandlineOptions
         :remove_first_intron,
         :ese,
         :ese_strategy,
+        :score_eses_at_all_sites,
         :stay_in_subbox_for_6folds,
+        :restriction_enzymes_to_keep,
+        :restriction_enzymes_to_avoid,
         :verbose,
         :wildtype
 
@@ -62,7 +65,10 @@ class CommandlineOptions
             @remove_first_intron
             @ese
             @ese_strategy
+            @score_eses_at_all_sites
             @stay_in_subbox_for_6folds
+            @restriction_enzymes_to_keep
+            @restriction_enzymes_to_avoid
             @verbose
             @wildtype
         )
@@ -122,7 +128,13 @@ class CommandlineOptions
     def argument_specification
         OptionParser.new do |opts|
             opts.banner = "Enhance mammalian transgenes."
-            opts.separator "Contact: Laurence Hurst (l.d.hurst@bath.ac.uk)"
+            opts.separator ""
+            opts.separator "Copyright (c) 2017, by University of Bath"
+            opts.separator "Contributors: Stefanie Mühlhausen"
+            opts.separator "Affiliation: Laurence D Hurst"
+            opts.separator "Contact: l.d.hurst@bath.ac.uk"
+            opts.separator "This program comes with ABSOLUTELY NO WARRANTY"
+
             opts.separator ""
             opts.separator "Usage: ruby #{File.basename($PROGRAM_NAME)} -i input -o output -s strategy [options]"
 
@@ -192,6 +204,14 @@ class CommandlineOptions
                 "If not specified, defaults to 'deplete'.") do |opt|
                 @ese_strategy = opt
             end
+            opts.on("--ese-all-sites",
+                "Score every site by ESE resemblance.",
+                "If not specified, only sites in vicinity to deleted introns ",
+                "will be scored by ESE resemblance, and sites in exon cores by 'strategy' only.",
+                "Warning - tweaking ESE resemblance in exon cores is against ",
+                "our current understanding of ESEs but might be useful for one-exon genes.") do |opt|
+                @score_eses_at_all_sites = true
+            end
             opts.on("-c", "--stay-in-codon-box",
                 "6-fold degenerates: Stay in the respective (2- or 4-fold) codon box", "when selecting a synonymous codon.", "If not specified, all 6 codons are considered.") do |opt|
                 @stay_in_subbox_for_6folds = true
@@ -205,6 +225,20 @@ class CommandlineOptions
                 "low - Lowest GC3 of all variants.",
                 "If not specified, defaults to 'mean' ('high' if strategy is set to 'max-gc').") do |opt|
                 @select_by = opt
+            end
+            opts.on("--motif-to-keep FILE",
+                "Path to restriction enzyme file, one sequence per line.",
+                "All occurrences of the specified sequences will be kept intact.") do |path|
+                FileHelper.file_exist_or_die(path)
+                @restriction_enzymes_to_keep = path
+            end
+            opts.on("--motif-to-avoid FILE",
+                "Path to restriction enzyme file, one sequence per line.",
+                "Introducing the specified sequences will be avoided.",
+                "Warning - this will only avoid insertion of new sites,",
+                "but is not guaranteed to delete sites already present.") do |path|
+                FileHelper.file_exist_or_die(path)
+                @restriction_enzymes_to_avoid = path
             end
 
             opts.separator ""
@@ -242,6 +276,9 @@ class CommandlineOptions
         ErrorHandling.warn_with_error_message(
             "unused_ese_strategy", "CommandlineOptions"
         ) if ese_strategy_specified_without_ese_list
+        ErrorHandling.warn_with_error_message(
+            "unused_ese_all_sites", "CommandlineOptions"
+        ) if ese_all_sites_specified_without_ese_list
         ErrorHandling.abort_with_error_message(
             "invalid_argument_combination", "CommandlineOptions",
             "'max-gc'-strategy/ '#{@select_by}'-select best variant.\nSet strategy to select best variant to 'high'"
@@ -264,6 +301,10 @@ class CommandlineOptions
 
     def ese_strategy_specified_without_ese_list
         @ese_strategy && @ese.nil?
+    end
+
+    def ese_all_sites_specified_without_ese_list
+        @score_eses_at_all_sites && @ese.nil?
     end
 
     def strategy_max_gc_specified_without_select_by_set_to_high
