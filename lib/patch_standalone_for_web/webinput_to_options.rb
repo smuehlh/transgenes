@@ -1,6 +1,8 @@
 class WebinputToOptions
 
-    attr_reader :strategy, :ese_strategy, :select_by, :remove_first_intron, :stay_in_subbox_for_6folds
+    attr_reader :strategy, :ese_strategy, :select_by,
+        :remove_first_intron, :stay_in_subbox_for_6folds,
+        :score_eses_at_all_sites
 
     def initialize(submit_params)
         @remove_first_intron = ! submit_params[:keep_first_intron]
@@ -18,6 +20,7 @@ class WebinputToOptions
             end
         @select_by = submit_params[:select_by]
         @ese_strategy = submit_params[:ese_strategy]
+        @score_eses_at_all_sites = nil # not yet added to webinterface
     end
 
     def is_keep_first_intron
