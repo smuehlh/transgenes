@@ -49,10 +49,7 @@ if options.wildtype
 end
 
 # tweak sequence
-enhancer = GeneEnhancer.new(
-    options.strategy, options.ese_strategy, options.select_by,
-    options.stay_in_subbox_for_6folds, options.score_eses_at_all_sites
-)
+enhancer = GeneEnhancer.new(options)
 enhancer.generate_synonymous_genes(gene)
 enhanced_gene = enhancer.select_best_gene
 
