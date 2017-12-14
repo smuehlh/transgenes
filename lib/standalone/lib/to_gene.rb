@@ -122,6 +122,7 @@ class ToGene
 
     def ensure_feature_is_valid_cds
         ensure_exons_contain_valid_codons_only
+        ensure_exons_are_longer_than_sliding_window
     end
 
     def ensure_gene_name_is_found
@@ -142,6 +143,12 @@ class ToGene
         ErrorHandling.abort_with_error_message(
             "invalid_codons", "ToGene", @file_info
         ) unless are_codons_valid
+    end
+
+    def ensure_exons_are_longer_than_sliding_window
+        ErrorHandling.abort_with_error_message(
+            "sequence_too_short", "ToGene", @file_info
+        ) unless is_sequence_long_enough
     end
 
     def save_features
@@ -199,6 +206,12 @@ class ToGene
         no_invalid_codons = invalid_codons.empty?
         $logger.debug("Invalid codon(s): #{invalid_codons.join(", ")}") unless no_invalid_codons
         no_invalid_codons
+    end
+
+    def is_sequence_long_enough
+        # compare to max motif length rather than to window size to be on safe side
+        # (window size might change but won't exceed max motif length)
+        @exons.join("").size >= Constants.max_motif_length
     end
 
     def format_list_with_feature_starts

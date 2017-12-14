@@ -29,6 +29,8 @@ module ErrorHandling
             "Input may not be empty."
         when "invalid_codons"
             "Found invalid codon(s)"
+        when "sequence_too_short"
+            "Sequence is too short."
         when "invalid_ese_format"
             "Unrecognized format. Input might contain ESE motifs only (one per line)."
         when "variant_generation_error"
@@ -67,6 +69,8 @@ module ErrorHandling
             )
         when "invalid_codons"
             "Invalid codons: #{additional_error_message}"
+        when "sequence_too_short"
+            "Sequence is too short."
         when "invalid_ese_size"
             "Unrecognized ESE format: ESE size out of range."
         when "invalid_ese_format"
