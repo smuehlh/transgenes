@@ -21,7 +21,7 @@ class Gene
 
     def ese_motifs
         # NOTE - use custom getter to convert motifs hash to array
-        # (which is the more obvious, but slower way of storing eses)
+        # (which is the more obvious, but less performant way of storing eses)
         @ese_motifs.keys
     end
 
