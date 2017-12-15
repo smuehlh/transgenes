@@ -18,6 +18,7 @@ module Constants
     end
 
     def max_motif_length
+        # NOTE - determines minimum sequence length
         10
     end
 end

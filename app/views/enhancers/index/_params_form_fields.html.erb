@@ -17,7 +17,7 @@
 </div>
 
 <span data-toggle="tooltip" title="View (and change) default settings.">
-    <%= f.button("More options", {type: "button", disabled: true, class: "btn btn-primary btn-outline params-form", data: {toggle: "collapse", target: "#more-options", "alt-text" => "Less options", "text" => "More options"}}) %>
+    <%= f.button("More options", {type: "button", disabled: true, class: "btn btn-primary btn-outline btn-xs params-form", data: {toggle: "collapse", target: "#more-options", "alt-text" => "Less options", "text" => "More options"}}) %>
 </span>
 
 <div id="more-options" class="collapse">
@@ -44,6 +44,13 @@
     <div class="radio form-group">
         <%= f.radio_button :ese_strategy, 'enrich', {disabled: true, class: "params-form"} %>
         <%= f.label :ese_strategy_enrich, content_tag(:strong, 'enrich') + ' - Enrich ESEs' %>
+    </div>
+
+    <legend class="text-primary">Select which sites should be adjusted for ESE resemblance</legend>
+    <div class="checkbox form-group">
+        <%= f.check_box :score_eses_at_all_sites, {checked: false, disabled: true, class: "params-form"}, "true", "false" %>
+        <%= f.label :score_eses_at_all_sites, "Adjust ESE resemblance also in exon cores rather than just near removed introns <small class='text-muted'> - Selecting this option not recommended</small>".html_safe
+         %>
     </div>
 
     <legend class="text-primary">Select if first intron should be kept or removed</legend>

@@ -80,7 +80,7 @@ class EnhancersController < ApplicationController
     end
 
     def enhanced_gene_params
-        params.require(:enhanced_gene).permit(:strategy, :select_by, :keep_first_intron, :ese, :ese_strategy, :stay_in_subbox)
+        params.require(:enhanced_gene).permit(:strategy, :select_by, :keep_first_intron, :ese, :ese_strategy, :stay_in_subbox, :score_eses_at_all_sites)
     end
 
     def download_params
@@ -250,7 +250,8 @@ class EnhancersController < ApplicationController
                 select_by: options.select_by,
                 stay_in_subbox_for_6folds: options.stay_in_subbox_for_6folds,
                 destroy_ese_motifs: gene.ese_motifs.any?,
-                ese_strategy: options.ese_strategy
+                ese_strategy: options.ese_strategy,
+                score_eses_at_all_sites: options.score_eses_at_all_sites
             )
         else
             flash.now[:error] = optimizer.error.to_s

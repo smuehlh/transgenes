@@ -167,6 +167,7 @@ function set_defaults_params_partial() {
     params.filter("#enhanced_gene_keep_first_intron").prop('checked', true);
     params.filter(":input[value='humanize']").prop('checked', true);
     params.filter(":input[value='deplete']").prop('checked', true);
+    params.filter("#enhanced_gene_score_eses_at_all_sites").prop('checked', false);
 };
 
 function disable_params_partial() {
@@ -182,7 +183,8 @@ function enable_params_partial(enable_all_checkboxes) {
         params.filter(":input[value='raw']").prop("disabled", true);
         params.filter(":input[name='enhanced_gene[ese_strategy]']").prop('disabled', true);
         params.filter(":input[value='deplete']").prop('checked', true);
-
+        params.filter("#enhanced_gene_score_eses_at_all_sites").prop('disabled', true);
+        params.filter("#enhanced_gene_score_eses_at_all_sites").prop('checked', false);
         $(".params-strategy-inactive").show();
     }
     $(".params-inactive").hide();
