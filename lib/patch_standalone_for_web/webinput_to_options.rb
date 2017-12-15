@@ -20,7 +20,7 @@ class WebinputToOptions
             end
         @select_by = submit_params[:select_by]
         @ese_strategy = submit_params[:ese_strategy]
-        @score_eses_at_all_sites = nil # not yet added to webinterface
+        @score_eses_at_all_sites = submit_params[:score_eses_at_all_sites]
     end
 
     def is_keep_first_intron

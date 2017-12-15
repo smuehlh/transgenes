@@ -40,6 +40,9 @@
                                 <% if @enhanced_gene.destroy_ese_motifs %>
                                     <dt class="col-sm-8">Strategy for adjusting ESE resemblance:</dt>
                                     <dd class="col-sm-4"><i><%= @enhanced_gene.ese_strategy %></i></dd>
+
+                                    <dt class="col-sm-8">Adjust ESE resemblance at all sites?</dt>
+                                    <dd class="col-sm-4"><i><%= @enhanced_gene.score_eses_at_all_sites ? "yes" : "no"%></i></dd>
                                 <%end %>
                             </dl>
                         </div>

@@ -14,7 +14,8 @@ class EnhancedGene < ActiveRecord::Base
             ese_strategy: "",
             keep_first_intron: false,
             stay_in_subbox_for_6folds: false,
-            destroy_ese_motifs: false
+            destroy_ese_motifs: false,
+            score_eses_at_all_sites: false
         )
     end
 
