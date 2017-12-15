@@ -37,11 +37,21 @@
 </p>
 <h4>Scoring synonymous codons</h4>
 <p>
-    For each site, synonymous codons are assigned a score and selected with a probability equaling its score. Scores are assigned based on how well the codon matches human codon usage (option <abbr title="selection">humanize</abbr>; default), alternative strategies include maximizing GC3 content (option <abbr title="selection">max-gc</abbr>) and matching the position-dependent GC3 content of human one- or two-exon genes (option <abbr title="selection">gc</abbr>). At sites in vicinity to deleted introns the codon score is a mixture of strategy-score and ESE resemblance-score. Should ESE motifs have been provided, a strategy to score by ESE resemblance only may also be chosen (<i>please note:</i> this will affect only sites near deleted introns, at all other sites the sequence will remain unchanged; option <abbr title="selection">raw</abbr>).
+    For each site, synonymous codons are assigned a score and selected with a probability equaling its score. Scores are assigned based on how well the codon matches human codon usage (option <abbr title="selection">humanize</abbr>; default), alternative strategies include maximizing GC3 content (option <abbr title="selection">max-gc</abbr>) and matching the position-dependent GC3 content of human one- or two-exon genes (option <abbr title="selection">gc</abbr>). Should ESE motifs have been provided, a strategy to score by ESE resemblance only may also be chosen (<i>please note:</i> this will affect only sites near deleted introns, at all other sites the sequence will remain unchanged; option <abbr title="selection">raw</abbr>).
     <div class="row">
         <div class="col-md-7">
             <div class="well">
                 <img src="/images/strategy-selection.png" class="img-responsive" alt="Select scoring strategy">
+            </div>
+        </div>
+    </div>
+</p>
+<p>
+    At sites in vicinity to deleted introns the codon score is a mixture of strategy-score and ESE resemblance-score. You may chose to adjust ESE resemblance at all sites instead of only at sites near deleted introns. This is not recommended as it is against our current understanding of ESEs, but may prove useful at times, e.g. when tweaking natural one-exon genes.
+    <div class="row">
+        <div class="col-md-7">
+            <div class="well">
+                <img src="/images/ese-scoring-selection.png" class="img-responsive" alt="Select ESE scoring strategy">
             </div>
         </div>
     </div>
