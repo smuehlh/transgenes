@@ -34,6 +34,10 @@ class EnhancersController < ApplicationController
         @statistics = update_statistics
     end
 
+    def create_restriction_site
+
+    end
+
     def submit
         flash.clear
         @enhanced_gene = get_enhanced_gene

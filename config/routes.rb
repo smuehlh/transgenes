@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :enhancers, only: [:index] do
     post :create_enhancer, on: :collection
     post :create_ese, on: :collection
+    post :create_restriction_site, on: :collection
     post :submit, on: :collection
     get :submit, on: :collection, to: redirect('/')
     get :download, on: :collection
