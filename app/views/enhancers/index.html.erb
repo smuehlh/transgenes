@@ -62,17 +62,17 @@
         <div class="row">
             <div class="col-sm-2">
                 <ul class="nav nav-pills nav-stacked" data-tabs="tabs">
-                    <li class="active"><a href="#input-sites-keep" data-toggle="pill">Sites to be kept intact</a></li>
-                    <li><a href="#input-sites-avoid" data-toggle="pill">Sites to avoid introducing</a></li>
+                    <li class="active"><a href="#input-tab-sites-keep" data-toggle="pill">Sites to be kept intact</a></li>
+                    <li><a href="#input-tab-sites-avoid" data-toggle="pill">Sites to avoid introducing</a></li>
                 </ul>
             </div>
             <div class="col-sm-10">
                 <div class="row">
                     <div class="tab-content">
-                        <div class="tab-pane active" id="input-sites-keep">
+                        <div class="tab-pane active" id="input-tab-sites-keep">
                             <%= render partial: "enhancers/index/restriction_enzyme_form", locals: {action: "keep"} %>
                         </div>
-                        <div class="tab-pane" id="input-sites-avoid">
+                        <div class="tab-pane" id="input-tab-sites-avoid">
                             <%= render partial: "enhancers/index/restriction_enzyme_form", locals: {action: "avoid"} %>
                         </div>
                     </div>
