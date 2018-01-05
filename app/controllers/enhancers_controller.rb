@@ -308,6 +308,7 @@ class EnhancersController < ApplicationController
         if optimizer.was_success?
             gene, variants, overall_gc3 = optimizer.get_tweaked_gene
             options = optimizer.get_options
+            sites_to_keep, sites_to_avoid = get_restriction_enzymes
 
             @enhanced_gene.update_attributes(
                 gene_name: gene.description,
@@ -321,7 +322,9 @@ class EnhancersController < ApplicationController
                 stay_in_subbox_for_6folds: options.stay_in_subbox_for_6folds,
                 destroy_ese_motifs: gene.ese_motifs.any?,
                 ese_strategy: options.ese_strategy,
-                score_eses_at_all_sites: options.score_eses_at_all_sites
+                score_eses_at_all_sites: options.score_eses_at_all_sites,
+                keep_restriction_sites: ! sites_to_keep.data.blank?,
+                avoid_restriction_sites: ! sites_to_avoid.data.blank?
             )
         else
             flash.now[:error] = optimizer.error.to_s
