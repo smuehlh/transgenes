@@ -288,9 +288,20 @@ class EnhancersController < ApplicationController
         ese.data
     end
 
+    def prepare_restriction_enzymes_for_sequence_optimizer
+        sites_to_keep, sites_to_avoid = get_restriction_enzymes
+        {
+            restriction_enzymes_to_keep:
+                sites_to_keep.data ? sites_to_keep.data : nil,
+            restriction_enzymes_to_avoid:
+                sites_to_avoid.data ? sites_to_avoid.data : nil
+        }
+    end
+
     def tweak_gene
         optimizer = SequenceOptimizerForWeb.init_and_tweak_gene(
             prepare_gene_enhancers_for_sequence_optimizer,
+            prepare_restriction_enzymes_for_sequence_optimizer,
             prepare_ese_motifs_for_sequence_optimizer,
             enhanced_gene_params
         )

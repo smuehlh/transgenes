@@ -9,20 +9,20 @@ class SequenceOptimizerForWeb
         obj.stats
     end
 
-    def self.init_and_tweak_gene(web_genes, web_ese_motifs, web_params)
-        obj = SequenceOptimizerForWeb.new(web_genes, web_ese_motifs)
+    def self.init_and_tweak_gene(web_genes, web_restriction_sites, web_ese_motifs, web_params)
+        obj = SequenceOptimizerForWeb.new(web_genes, web_restriction_sites, web_ese_motifs)
         obj.tweak_gene(web_params)
 
         obj
     end
 
-    def initialize(web_genes, web_ese_motifs=nil)
+    def initialize(web_genes, web_restriction_sites=nil, web_ese_motifs=nil)
         CoreExtensions::Settings.setup # NOTE: no debugging output wanted!
         @error = ""
         @log = ""
         @stats = {}
 
-        init_gene_obj(web_genes, web_ese_motifs)
+        init_gene_obj(web_genes, web_restriction_sites, web_ese_motifs)
         init_gene_statistics
     rescue EnhancerError => exception
         @error = exception.to_s
@@ -59,12 +59,21 @@ class SequenceOptimizerForWeb
 
     private
 
-    def init_gene_obj(web_genes, web_ese_motifs=nil)
+    def init_gene_obj(web_genes, web_restriction_sites=nil, web_ese_motifs=nil)
         @gene = Gene.new
         @gene.add_cds(*web_genes[:cds]) if web_genes[:cds]
         @gene.add_five_prime_utr(*web_genes[:five_utr]) if web_genes[:five_utr]
         @gene.add_three_prime_utr(*web_genes[:three_utr]) if web_genes[:three_utr]
         @gene.add_ese_list(web_ese_motifs) if web_ese_motifs
+        if web_restriction_sites
+            if motifs = web_restriction_sites[:restriction_enzymes_to_keep]
+                @gene.add_restriction_sites_to_keep_intact(motifs)
+            end
+            if motifs = web_restriction_sites[:restriction_enzymes_to_avoid]
+                @gene.add_restriction_enzymes_to_avoid(motifs)
+            end
+        end
+
     rescue StandardError
         raise EnhancerError, "Cannot parse gene."
     end
