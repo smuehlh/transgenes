@@ -1,12 +1,4 @@
-<%
-    id = "sites-#{@kind}"
-    data =
-        if @kind == "keep"
-            @restriction_enzyme.to_keep
-        else
-            @restriction_enzyme.to_avoid
-        end
-%>
+<% id = "sites-#{@restriction_enzyme.name}" %>
 <%= render partial: 'enhancers/create/error', locals: {id: id} %>
 <%= render partial: 'enhancers/create/success', locals: {id: id} %>
-<%= render partial: 'enhancers/create/restriction_site/sequence', locals: {id: id, data: data} %>
+<%= render partial: 'enhancers/create/restriction_site/sequence', locals: {id: id} %>

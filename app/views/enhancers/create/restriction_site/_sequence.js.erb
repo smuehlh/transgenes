@@ -1,7 +1,7 @@
 // display info about current motifs
-<% if data %>
+<% if @restriction_enzyme.data %>
     $("#success-alert-text-<%= id %>").show();
     $("#success-alert-text-<%= id %>").html(
-        "<%= escape_javascript(render partial: 'enhancers/create/restriction_site/sequence_modal', locals: {data: data}) %>"
+        "<%= escape_javascript(render partial: 'enhancers/create/restriction_site/sequence_modal', locals: {id: id}) %>"
     );
 <% end %>

@@ -1,12 +1,9 @@
 class RestrictionEnzyme < ActiveRecord::Base
 
-    serialize :to_avoid
-    serialize :to_keep
+    serialize :data
 
     def reset
-        self.update_attributes(
-            to_keep: nil,
-            to_avoid: nil
-        )
+        # NOTE - don't update attribute "name"
+        self.update_attribute(:data, nil)
     end
 end

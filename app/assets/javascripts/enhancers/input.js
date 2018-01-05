@@ -231,11 +231,6 @@ function bind_validate_to_input() {
     var restrictionenzyme_validation = inputs.find("textarea[name^='restriction_enzyme']").data('valid');
     var restrictionenzyme_maxsize = inputs.find("textarea[name^='restriction_enzyme']").attr('maxlength');
     var restrictionenzyme_extension = inputs.find("input[name='restriction_enzyme[file]']").attr('accept') || 'txt';
-    var restriction_textarea_rules = {
-        regex: restrictionenzyme_validation,
-        maxlength: restrictionenzyme_maxsize
-    };
-    var restriction_textarea_msg = "Please enter a valid restriction enzyme motif.";
 
     inputs.each(function() {
         $(this).validate({
@@ -261,8 +256,10 @@ function bind_validate_to_input() {
                 "ese[file]": {
                     laxAccept: ese_extension
                 },
-                "restriction_enzyme[to_keep]": restriction_textarea_rules,
-                "restriction_enzyme[to_avoid]": restriction_textarea_rules,
+                "restriction_enzyme[data]": {
+                    regex: restrictionenzyme_validation,
+                    maxlength: restrictionenzyme_maxsize
+                },
                 "restriction_enzyme[file]": {
                     laxAccept: restrictionenzyme_extension
                 }
@@ -283,8 +280,9 @@ function bind_validate_to_input() {
                 "ese[file]": {
                     laxAccept: "Please enter a plain text file with a '.txt' extension."
                 },
-                "restriction_enzyme[to_keep]": restriction_textarea_msg,
-                "restriction_enzyme[to_avoid]": restriction_textarea_msg,
+                "restriction_enzyme[data]": {
+                    regex: "Please enter a valid restriction enzyme motif."
+                },
                 "restriction_enzyme[file]": {
                     laxAccept: "Please enter a plain text file with a '.txt' extension."
                 }

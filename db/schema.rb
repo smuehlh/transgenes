@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180104181334) do
+ActiveRecord::Schema.define(version: 20180105124051) do
 
   create_table "enhanced_genes", force: :cascade do |t|
     t.text     "gene_name"
@@ -81,11 +81,11 @@ ActiveRecord::Schema.define(version: 20180104181334) do
   add_index "records", ["enhancer_id"], name: "index_records_on_enhancer_id"
 
   create_table "restriction_enzymes", force: :cascade do |t|
-    t.text     "to_keep"
-    t.text     "to_avoid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string   "session_id"
+    t.text     "data"
+    t.string   "name"
   end
 
 end

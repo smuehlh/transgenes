@@ -34,8 +34,7 @@ class WebinputToRestrictionEnzyme
         else
             base = "motif"
             ext = ".txt"
-            data = params[:to_keep] || params[:to_avoid]
-            write_to_temp_file(base, ext, data)
+            write_to_temp_file(base, ext, params[:data])
         end
     end
 

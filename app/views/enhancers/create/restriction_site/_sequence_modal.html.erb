@@ -1,23 +1,23 @@
-<a data-toggle="modal" href="#view-modal-restriction-site-<%= @kind %>" class="alert-link">Click to inspect parsed motifs.</a>
-<div id="view-modal-restriction-site-<%= @kind %>" class="modal" role="dialog">
+<a data-toggle="modal" href="#view-modal-<%= id %>" class="alert-link">Click to inspect parsed motifs.</a>
+<div id="view-modal-<%= id %>" class="modal" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Restriciton enzyme motifs to <%= @kind.to_s %></h4>
+                <h4 class="modal-title">Restriciton enzyme motifs to <%= @restriction_enzyme.name %></h4>
                 <small class="text-muted">
                     <table class="padding-between-cols">
                         <tbody>
                             <tr>
                                 <th scope="row">Number of motifs:</th>
-                                <td><%= data.size %></td>
+                                <td><%= @restriction_enzyme.data.size %></td>
                             </tr>
                         </tbody>
                     </table>
                 </small>
             </div>
             <div class="modal-body">
-                <pre class="text-muted input-view-text"><%= data.join("\n") %></pre>
+                <pre class="text-muted input-view-text"><%= @restriction_enzyme.data.join("\n") %></pre>
             </div>
         </div>
     </div>

@@ -5,7 +5,7 @@ class EnhancersController < ApplicationController
         reset_session
         init_gene_enhancers
         init_ese
-        init_restriction_enzyme
+        init_restriction_enzymes
         init_enhanced_gene
     end
 
@@ -37,13 +37,12 @@ class EnhancersController < ApplicationController
 
     def create_restriction_site
         flash.clear
-        @restriction_enzyme = get_restriction_enzyme
+        @restriction_enzyme = get_restriction_enzyme_by_name(restriction_enzyme_params[:name])
         if restriction_enzyme_params[:commit] == "Save"
             update_restriction_enzyme
         else
             reset_restriction_enzyme
         end
-        @kind = restriction_enzyme_params[:to_keep] ? "keep" : "avoid"
         @statistics = update_statistics
     end
 
@@ -93,7 +92,7 @@ class EnhancersController < ApplicationController
     end
 
     def restriction_enzyme_params
-        params.fetch(:restriction_enzyme).permit(:to_keep, :to_avoid, :commit, :file)
+        params.fetch(:restriction_enzyme).permit(:data, :name, :commit, :file)
     end
 
     def enhanced_gene_params
@@ -123,8 +122,9 @@ class EnhancersController < ApplicationController
         Ese.create(session_id: session.id)
     end
 
-    def init_restriction_enzyme
-        RestrictionEnzyme.create(session_id: session.id)
+    def init_restriction_enzymes
+        RestrictionEnzyme.create(name: "keep", session_id: session.id)
+        RestrictionEnzyme.create(name: "avoid", session_id: session.id)
     end
 
     def init_enhanced_gene
@@ -147,8 +147,15 @@ class EnhancersController < ApplicationController
         Ese.where("session_id = ?", session.id).first
     end
 
-    def get_restriction_enzyme
-        RestrictionEnzyme.where("session_id = ?", session.id).first
+    def get_restriction_enzymes
+        [
+            get_restriction_enzyme_by_name("keep"),
+            get_restriction_enzyme_by_name("avoid")
+        ]
+    end
+
+    def get_restriction_enzyme_by_name(name)
+        RestrictionEnzyme.where("session_id = ? AND name = ?", session.id, name).first
     end
 
     def get_enhanced_gene
@@ -215,11 +222,7 @@ class EnhancersController < ApplicationController
         enzyme_parser = WebinputToRestrictionEnzyme.new(restriction_enzyme_params,remotipart_submitted?)
         list = enzyme_parser.get_motifs
         if enzyme_parser.was_success?
-            if restriction_enzyme_params[:to_keep]
-                @restriction_enzyme.update_attribute(:to_keep, list)
-            else
-                @restriction_enzyme.update_attribute(:to_avoid, list)
-            end
+            @restriction_enzyme.update_attribute(:data, list)
             flash.now[:success] = true
         else
             flash.now[:error] = enzyme_parser.error
@@ -265,10 +268,9 @@ class EnhancersController < ApplicationController
     end
 
     def get_restriction_enzyme_statistics
-        restriction_enzyme = get_restriction_enzyme
+        uploads = get_restriction_enzymes.collect{|e| e.name if e.data}.compact
         {
-            sites_to_avoid: ! restriction_enzyme.to_avoid.blank?,
-            sites_to_keep: ! restriction_enzyme.to_keep.blank?
+            uploaded_restriction_enzymes: uploads
         }
     end
 
