@@ -43,6 +43,7 @@ class EnhancersController < ApplicationController
         else
             reset_restriction_enzyme
         end
+        @kind = restriction_enzyme_params[:to_keep] ? "keep" : "avoid"
         @statistics = update_statistics
     end
 

@@ -1,0 +1,7 @@
+// display info about current motifs
+<% if data %>
+    $("#success-alert-text-<%= id %>").show();
+    $("#success-alert-text-<%= id %>").html(
+        "<%= escape_javascript(render partial: 'enhancers/create/restriction_site/sequence_modal', locals: {data: data}) %>"
+    );
+<% end %>
