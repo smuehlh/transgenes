@@ -1,5 +1,6 @@
 <%
-    valid_chars = "[#{Dna.valid_nucleotides.join("")}]+"
+    # restrict length (quite arbitrary) to 4-20 bps.
+    valid_chars = "[#{Dna.valid_nucleotides.join("")}]{4,20}"
     valid_textinput = "^(#{valid_chars}[\\n\\r]+)*(#{valid_chars}){1}$"
 
     id = "sites-#{resource_name}"
