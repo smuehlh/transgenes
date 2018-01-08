@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171215100139) do
+ActiveRecord::Schema.define(version: 20180105145619) do
 
   create_table "enhanced_genes", force: :cascade do |t|
     t.text     "gene_name"
@@ -29,6 +29,8 @@ ActiveRecord::Schema.define(version: 20171215100139) do
     t.boolean  "stay_in_subbox_for_6folds"
     t.string   "ese_strategy"
     t.boolean  "score_eses_at_all_sites"
+    t.boolean  "keep_restriction_sites"
+    t.boolean  "avoid_restriction_sites"
   end
 
   add_index "enhanced_genes", ["session_id"], name: "index_enhanced_genes_on_session_id"
@@ -79,5 +81,13 @@ ActiveRecord::Schema.define(version: 20171215100139) do
   end
 
   add_index "records", ["enhancer_id"], name: "index_records_on_enhancer_id"
+
+  create_table "restriction_enzymes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "session_id"
+    t.text     "data"
+    t.string   "name"
+  end
 
 end

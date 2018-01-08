@@ -57,6 +57,30 @@
     <% end %>
 </div>
 
+<h3>Enter restriction sites<small> Optional</small></h3>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-2">
+                <ul class="nav nav-pills nav-stacked" data-tabs="tabs">
+                    <li class="active"><a href="#input-tab-sites-keep" data-toggle="pill">Sites to be kept intact</a></li>
+                    <li><a href="#input-tab-sites-avoid" data-toggle="pill">Sites to avoid introducing</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-10">
+                <div class="row">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="input-tab-sites-keep">
+                            <%= render partial: "enhancers/index/restriction_enzyme_form", locals: {resource_name: "keep"} %>
+                        </div>
+                        <div class="tab-pane" id="input-tab-sites-avoid">
+                            <%= render partial: "enhancers/index/restriction_enzyme_form", locals: {resource_name: "avoid"} %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <h3>Select parameters <small class="params-inactive">Please provide a valid CDS sequence first</small></h3>
     <!-- open submit form -->
     <%= form_for EnhancedGene.new, :url => {:action => "submit"}, html: { style: "display:inline;", role: "form" } do |submit_form| %>

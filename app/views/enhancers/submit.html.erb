@@ -44,6 +44,12 @@
                                     <dt class="col-sm-8">Adjust ESE resemblance at all sites?</dt>
                                     <dd class="col-sm-4"><i><%= @enhanced_gene.score_eses_at_all_sites ? "yes" : "no"%></i></dd>
                                 <%end %>
+
+                                <dt class="col-sm-8">Keep given restriction enzymes intact?</dt>
+                                <dd class="col-sm-4"><i><%= @enhanced_gene.keep_restriction_sites ? "yes" : "no" %></i></dd>
+
+                                <dt class="col-sm-8">Avoid introducing given restriction enzymes?</dt>
+                                <dd class="col-sm-4"><i><%= @enhanced_gene.avoid_restriction_sites ? "yes" : "no" %></i></dd>
                             </dl>
                         </div>
                     </div>

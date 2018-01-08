@@ -1,0 +1,4 @@
+<% id = "sites-#{@restriction_enzyme.name}" %>
+<%= render partial: 'enhancers/create/error', locals: {id: id} %>
+<%= render partial: 'enhancers/create/success', locals: {id: id} %>
+<%= render partial: 'enhancers/create/restriction_site/sequence', locals: {id: id} %>

@@ -67,6 +67,16 @@
         </div>
     </div>
 </p>
+<h4>Dealing with restriction sites</h4>
+<p>
+To preserve restriction sites already present in the sequence, please provide the corresponding recognition sequence(s) in the <abbr title="input">keep intact</abbr> input tab. The <%= @archive.camelize%> software will leave those sites intact when tweaking the gene.
+</p>
+<p>
+Similarly, you may specify recognition sequences that are to be <abbr title="input">avoided</abbr>. <i>Please note:</i> this will not remove restriction sites that are already present in the gene.
+</p>
+<p>
+You may provide sites to keep intact and sites to avoid both combined or individually.
+</p>
 
 <h3>Sample data</h3>
 <p>
@@ -79,6 +89,7 @@
             <li ><a href="#sample-genbank" data-toggle="pill">Sequence input (Genbank)</a></li>
             <li ><a href="#sample-ensembl" data-toggle="pill">Sequence input (Ensembl)</a></li>
             <li ><a href="#sample-ese" data-toggle="pill">ESE input</a></li>
+            <li ><a href="#sample-restriction-enzyme" data-toggle="pill">Restriction enzyme input</a></li>
         </ul>
     </div>
     <div class="col-sm-8">
@@ -274,6 +285,9 @@ ORIGIN
             </div>
             <div class="tab-pane line-wrap" id="sample-ese">
                 CCTGGA<br>CGAGGA<br>CGAAGA<br>CTGAAG<br>CAGAAG<br>CAAGGA<br>CAAGAT<br>CAAGAA<br>CAAAGA<br>GCAGAA<br>GCAAGA<br>GGAGCA<br>GGAGGA<br>GGAGAT<br>GGAGAA<br>GGAAGA<br>GTGAAG<br>GTTGGA<br>GACCTG<br>GACCAG
+            </div>
+            <div class="tab-pane line-wrap" id="sample-restriction-enzyme">
+                GGATCC<br>GAATTC
             </div>
     </div>
 </div>

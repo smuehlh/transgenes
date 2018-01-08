@@ -1,0 +1,67 @@
+<%
+    # restrict length (quite arbitrary) to 4-20 bps.
+    valid_chars = "[#{Dna.valid_nucleotides.join("")}]{4,20}"
+    valid_textinput = "^(#{valid_chars}[\\n\\r]+)*(#{valid_chars}){1}$"
+
+    id = "sites-#{resource_name}"
+    header_text =
+        if resource_name == "keep"
+            "Enter sites that should be kept intact"
+        else
+            "Enter sites that should be avoided"
+        end
+%>
+
+<%= form_for RestrictionEnzyme.new, :url => {action: "create_restriction_site"}, remote: true, html: { style: "display:inline;", role: "form", multipart: true } do |f| %>
+
+    <%= f.hidden_field :name, value: resource_name %>
+    <%= f.hidden_field :commit, value: "" %>
+
+    <h4><%= header_text %>
+        <small id="unsaved-data-<%= id %>" class="bg-success" style="display: none;">
+            Please click "Save" when done with your motif input.
+        </small>
+        <div class="pull-right control-group">
+            <%# Use f.button instead of f.submit to change button-text later on%>
+            <%= f.button "", value: "Save", type: "submit", class: "btn btn-primary btn-outline btn-xs", title: "Save restriction data to #{resource_name}", data: {toggle: "tooltip"}, disabled: true do %>
+                Save
+            <% end %>
+            <%= f.submit "Reset", class: "btn btn-primary btn-outline btn-xs", title: "Delete restriction data to #{resource_name}", data: {toggle: "tooltip"}, disabled: true %>
+        </div>
+    </h4>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div id="error-alert-<%= id %>" class="alert alert-danger" role="alert" style="display: none;">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                <span id="error-alert-text-<%= id %>"></span>
+            </div>
+            <div id="success-alert-<%= id %>" class="alert alert-success" role="alert" style="display: none;">
+                <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+                <span class="sr-only">Success:</span>
+                Successfully read restriction sites to <%= resource_name %>.
+                <span id="success-alert-text-<%= id %>"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <legend class="text-primary">Enter motifs</legend>
+                <div class="form-group-validation">
+                    <%= f.text_area :data, rows: 6, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 2000, data: {valid: valid_textinput} %>
+                    <small class="form-text text-muted">DNA sequence motifs, one motif per line.
+                    </small>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="row">
+                    <legend class="text-primary">Or, upload file</legend>
+                    <div class="form-group-validation">
+                        <%= f.file_field :file, accept: ".txt" %>
+                        <small class="form-text text-muted">Plain text file containing one motif per line.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<% end %>

@@ -5,6 +5,7 @@ class EnhancersController < ApplicationController
         reset_session
         init_gene_enhancers
         init_ese
+        init_restriction_enzymes
         init_enhanced_gene
     end
 
@@ -30,6 +31,17 @@ class EnhancersController < ApplicationController
             update_ese
         else
             reset_ese
+        end
+        @statistics = update_statistics
+    end
+
+    def create_restriction_site
+        flash.clear
+        @restriction_enzyme = get_restriction_enzyme_by_name(restriction_enzyme_params[:name])
+        if restriction_enzyme_params[:commit] == "Save"
+            update_restriction_enzyme
+        else
+            reset_restriction_enzyme
         end
         @statistics = update_statistics
     end
@@ -79,6 +91,10 @@ class EnhancersController < ApplicationController
         params.fetch(:ese).permit(:data, :file, :dataset, :commit)
     end
 
+    def restriction_enzyme_params
+        params.fetch(:restriction_enzyme).permit(:data, :name, :commit, :file)
+    end
+
     def enhanced_gene_params
         params.require(:enhanced_gene).permit(:strategy, :select_by, :keep_first_intron, :ese, :ese_strategy, :stay_in_subbox, :score_eses_at_all_sites)
     end
@@ -106,6 +122,11 @@ class EnhancersController < ApplicationController
         Ese.create(session_id: session.id)
     end
 
+    def init_restriction_enzymes
+        RestrictionEnzyme.create(name: "keep", session_id: session.id)
+        RestrictionEnzyme.create(name: "avoid", session_id: session.id)
+    end
+
     def init_enhanced_gene
         EnhancedGene.create(session_id: session.id)
     end
@@ -126,6 +147,17 @@ class EnhancersController < ApplicationController
         Ese.where("session_id = ?", session.id).first
     end
 
+    def get_restriction_enzymes
+        [
+            get_restriction_enzyme_by_name("keep"),
+            get_restriction_enzyme_by_name("avoid")
+        ]
+    end
+
+    def get_restriction_enzyme_by_name(name)
+        RestrictionEnzyme.where("session_id = ? AND name = ?", session.id, name).first
+    end
+
     def get_enhanced_gene
         EnhancedGene.where("session_id = ?", session.id).first
     end
@@ -142,6 +174,10 @@ class EnhancersController < ApplicationController
 
     def reset_ese
         @ese.reset
+    end
+
+    def reset_restriction_enzyme
+        @restriction_enzyme.reset
     end
 
     def update_records_associated_with_active_enhancer
@@ -182,6 +218,18 @@ class EnhancersController < ApplicationController
         end
     end
 
+    def update_restriction_enzyme
+        enzyme_parser = WebinputToRestrictionEnzyme.new(restriction_enzyme_params,remotipart_submitted?)
+        list = enzyme_parser.get_motifs
+        if enzyme_parser.was_success?
+            @restriction_enzyme.update_attribute(:data, list)
+            flash.now[:success] = true
+        else
+            flash.now[:error] = enzyme_parser.error
+            flash.now[:debug_info] = enzyme_parser.log
+        end
+    end
+
     def get_wanted_record
         # use selected record (if any). default to first record.
         if @selected_line = record_params[:line]
@@ -193,7 +241,11 @@ class EnhancersController < ApplicationController
     end
 
     def update_statistics
-        get_gene_statistics.merge(get_ese_statistics)
+        [
+            get_gene_statistics,
+            get_ese_statistics,
+            get_restriction_enzyme_statistics
+        ].inject(&:merge)
     end
 
     def get_gene_statistics
@@ -215,6 +267,13 @@ class EnhancersController < ApplicationController
         }
     end
 
+    def get_restriction_enzyme_statistics
+        uploads = get_restriction_enzymes.collect{|e| e.name if e.data}.compact
+        {
+            uploaded_restriction_enzymes: uploads
+        }
+    end
+
     def prepare_gene_enhancers_for_sequence_optimizer
         five_enhancer, cds_enhancer, three_enhancer = get_gene_enhancers
         {
@@ -229,15 +288,27 @@ class EnhancersController < ApplicationController
         ese.data
     end
 
+    def prepare_restriction_enzymes_for_sequence_optimizer
+        sites_to_keep, sites_to_avoid = get_restriction_enzymes
+        {
+            restriction_enzymes_to_keep:
+                sites_to_keep.data ? sites_to_keep.data : nil,
+            restriction_enzymes_to_avoid:
+                sites_to_avoid.data ? sites_to_avoid.data : nil
+        }
+    end
+
     def tweak_gene
         optimizer = SequenceOptimizerForWeb.init_and_tweak_gene(
             prepare_gene_enhancers_for_sequence_optimizer,
+            prepare_restriction_enzymes_for_sequence_optimizer,
             prepare_ese_motifs_for_sequence_optimizer,
             enhanced_gene_params
         )
         if optimizer.was_success?
             gene, variants, overall_gc3 = optimizer.get_tweaked_gene
             options = optimizer.get_options
+            sites_to_keep, sites_to_avoid = get_restriction_enzymes
 
             @enhanced_gene.update_attributes(
                 gene_name: gene.description,
@@ -251,7 +322,9 @@ class EnhancersController < ApplicationController
                 stay_in_subbox_for_6folds: options.stay_in_subbox_for_6folds,
                 destroy_ese_motifs: gene.ese_motifs.any?,
                 ese_strategy: options.ese_strategy,
-                score_eses_at_all_sites: options.score_eses_at_all_sites
+                score_eses_at_all_sites: options.score_eses_at_all_sites,
+                keep_restriction_sites: ! sites_to_keep.data.blank?,
+                avoid_restriction_sites: ! sites_to_avoid.data.blank?
             )
         else
             flash.now[:error] = optimizer.error.to_s
