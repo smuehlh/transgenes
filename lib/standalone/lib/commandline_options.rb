@@ -149,13 +149,14 @@ class CommandlineOptions
                 "Path to output file, in FASTA format.") do |path|
                 @output = path
             end
-            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc", "max-gc"],
+            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc", "max-gc", "attenuate"],
                 "Strategy for altering the sequence.",
-                "Select one of: 'raw', 'humanize', 'gc' or 'max-gc'.",
+                "Select one of: 'raw', 'humanize', 'gc', 'max-gc' or 'attenuate'.",
                 "raw - Leave the sequence as is.", "May be specified only in combination with an ESE list (--ese).",
                 "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
                 "gc - Match position-dependent GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.",
-                "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.") do |opt|
+                "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.",
+                "attenuate - De-optimize sequence by increasing CpG and UpA.", "An ESE list must not be specified.") do |opt|
                 @strategy = opt
             end
 
