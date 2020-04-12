@@ -2,8 +2,7 @@ class GeneEnhancer
     attr_reader :cross_variant_gc3_per_pos, :fasta_formatted_gene_variants
 
     def initialize(options)
-        @n_variants = 1000
-
+        @n_variants = options.greedy ? 1 : 1000
         @strategy = options.strategy
         @ese_strategy = options.ese_strategy
         @select_best_by = options.select_by
@@ -23,6 +22,7 @@ class GeneEnhancer
         gene.prepare_for_tweaking(@stay_in_subbox_for_6folds)
 
         @n_variants.times do |ind|
+            print ind
             variant = generate_variant(gene, ind)
             log_variant(variant)
             collect_variant_data(variant)
@@ -38,7 +38,11 @@ class GeneEnhancer
     end
 
     def select_best_gene
-        ind_best_gene = find_index_of_best_gene
+        if @n_variants == 1
+            ind_best_gene = 0
+        else
+            ind_best_gene = find_index_of_best_gene
+        end
         log_selection(ind_best_gene)
 
         @gene_variants[ind_best_gene]
