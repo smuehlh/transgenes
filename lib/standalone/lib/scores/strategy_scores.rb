@@ -18,9 +18,9 @@ class StrategyScores
         @strategy == "attenuate"
     end
 
-    def normalised_scores(synonymous_codons, original_codon, pos, is_near_intron, dist_to_intron)
+    def normalised_scores(synonymous_codons, original_codon, next_codon, pos, is_near_intron, dist_to_intron)
         counts = synonymous_codons.collect do |synonymous_codon|
-            codon_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
+            codon_count(synonymous_codon, original_codon, next_codon, pos, is_near_intron, dist_to_intron)
         end
         Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(counts)
     end
@@ -42,7 +42,7 @@ class StrategyScores
         end
     end
 
-    def codon_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
+    def codon_count(synonymous_codon, original_codon, next_codon, pos, is_near_intron, dist_to_intron)
         case @strategy
         when "raw"
             raw_count(synonymous_codon, original_codon)

@@ -75,7 +75,7 @@ class ScoreSynonymousCodons
         distance_to_intron = @synonymous_sites.get_nt_distance_to_intron(pos)
         next_codon = @synonymous_sites.neighbouring_codon_at(pos)
 
-        @strategy_scorer.normalised_scores(syn_codons, orig_codon, pos, is_near_intron, distance_to_intron)
+        @strategy_scorer.normalised_scores(syn_codons, orig_codon, next_codon, pos, is_near_intron, distance_to_intron)
     end
 
     def score_by_ese(cds_tweaked_up_to_pos, pos)
