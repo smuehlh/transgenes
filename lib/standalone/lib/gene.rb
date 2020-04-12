@@ -127,7 +127,8 @@ class Gene
         @synonymous_sites.all_sites.each do |pos|
             # NOTE - pass up-to-date tweaked exons to scorer:
             # ESE-scores considers the already tweaked sequence upstream of pos
-            codon = scorer.select_synonymous_codon_at(@tweaked_exons.join, pos)
+            next_codon = @synonymous_sites.neighbouring_codon_at(pos)
+            codon = scorer.select_synonymous_codon_at(@tweaked_exons.join, pos, next_codon)
             unless is_site_to_be_left_intact?(pos) ||
                 scorer.is_original_codon_selected_at(pos, codon)
 

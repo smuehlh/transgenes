@@ -32,6 +32,11 @@ class SynonymousSites
         @syn_codons_by_site[pos]
     end
 
+    def neighbouring_codon_at(pos)
+        # returns nil if pos+3 is out of bounds (i.e. pos was last codon pos)
+        original_codon_at(pos+3)
+    end
+
     def is_stopcodon_at(pos)
         GeneticCode.is_stopcodon(original_codon_at(pos))
     end

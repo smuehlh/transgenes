@@ -7,8 +7,8 @@ class ScoreSynonymousCodons
         @is_scoring_eses_at_each_site = score_eses_at_all_sites
     end
 
-    def select_synonymous_codon_at(cds_tweaked_up_to_pos, pos)
-        syn_codons, scores = score_synonymous_codons_at(cds_tweaked_up_to_pos, pos)
+    def select_synonymous_codon_at(cds_tweaked_up_to_pos, pos, next_codon)
+        syn_codons, scores = score_synonymous_codons_at(cds_tweaked_up_to_pos, pos, next_codon)
         select_codon_matching_random_score(syn_codons, scores)
     end
 
@@ -24,7 +24,7 @@ class ScoreSynonymousCodons
 
     private
 
-    def score_synonymous_codons_at(cds_tweaked_up_to_pos, pos)
+    def score_synonymous_codons_at(cds_tweaked_up_to_pos, pos, next_codon)
         syn_codons = @synonymous_sites.synonymous_codons_at(pos)
         strategy_scores =
             if @synonymous_sites.is_stopcodon_at(pos)
