@@ -14,6 +14,10 @@ class StrategyScores
         @strategy == "raw"
     end
 
+    def is_strategy_to_select_for_pessimal_codon
+        @strategy == "attenuate"
+    end
+
     def normalised_scores(synonymous_codons, original_codon, pos, is_near_intron, dist_to_intron)
         counts = synonymous_codons.collect do |synonymous_codon|
             codon_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
@@ -24,14 +28,14 @@ class StrategyScores
     private
 
     def is_known_strategy
-        ["raw", "humanize", "gc", "max-gc"].include?(@strategy)
+        ["raw", "humanize", "gc", "max-gc", "attenuate"].include?(@strategy)
     end
 
     def is_strategy_data_defined
         case @strategy
         when "raw" then true
         when "humanize" then defined?(Human_codon_counts)
-        when "gc"
+        when "gc", "attenuate"
             defined?(Third_site_frequencies) &&
             defined?(Third_site_counts_near_intron)
         when "max-gc" then defined?(Maximal_gc3)
