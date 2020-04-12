@@ -14,6 +14,7 @@ class CommandlineOptions
         :restriction_enzymes_to_keep,
         :restriction_enzymes_to_avoid,
         :verbose,
+        :greedy,
         :wildtype
 
     def initialize(args)
@@ -70,6 +71,7 @@ class CommandlineOptions
             @restriction_enzymes_to_keep
             @restriction_enzymes_to_avoid
             @verbose
+            @greedy
             @wildtype
         )
     end
@@ -158,6 +160,7 @@ class CommandlineOptions
                 "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.",
                 "attenuate - De-optimize sequence by increasing CpG and UpA.", "An ESE list must not be specified.", "Generates a single pessimal variant and thus ignores any selection strategy settings.") do |opt|
                 @strategy = opt
+                @greedy = @strategy == "attenuate" ? true : false
             end
 
             # optional arguments
