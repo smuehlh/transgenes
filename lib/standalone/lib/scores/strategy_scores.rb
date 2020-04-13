@@ -91,8 +91,14 @@ class StrategyScores
     def attenuate_count(synonymous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         next_codon = "" unless next_codon # HOTFIX if codon is very last
         if _generates_CpG?(synonymous_codon, next_codon)
-            addend = synonymous_codon.count("AT")/3.to_f
-            1 + addend
+            # exception: upvote codon with both internal and cross-codon CpG
+            if _generates_internal_CpG?(synonymous_codon) &&
+                _generates_cross_neighbours_CpG?(synonymous_codon, next_codon)
+                2
+            else
+                addend = synonymous_codon.count("AT")/3.to_f
+                1 + addend
+            end
         elsif _generates_TpA?(synonymous_codon, next_codon)
             # exception: cross-codon TpA will hinder CpG in next_codon
             # => disfavour cross-codon TpA
