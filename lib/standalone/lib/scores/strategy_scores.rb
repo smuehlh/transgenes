@@ -89,9 +89,7 @@ class StrategyScores
     end
 
     def attenuate_count(synonymous_codon, next_codon, pos, is_near_intron, dist_to_intron)
-        # ensure there is a next codons before relying on it
-        # (although in practice this should only be a problem if the sequence
-        # does not end with a stop codon)
+        next_codon = "" unless next_codon # HOTFIX if codon is very last
         if _generates_CpG?(synonymous_codon, next_codon)
             addend = synonymous_codon.count("AT")/3.to_f
             1 + addend
@@ -117,7 +115,7 @@ class StrategyScores
     end
 
     def _generates_cross_neighbours_CpG?(synonymous_codon, next_codon)
-        next_codon && synonymous_codon.end_with?("C") && next_codon.start_with?("G")
+        synonymous_codon.end_with?("C") && next_codon.start_with?("G")
     end
 
     def _generates_interal_CpG?(synonymous_codon)
@@ -126,7 +124,7 @@ class StrategyScores
     end
 
     def _generates_cross_neighbours_TpA?(synonymous_codon, next_codon)
-        next_codon && synonymous_codon.end_with?("T") && next_codon.start_with?("A")
+        synonymous_codon.end_with?("T") && next_codon.start_with?("A")
     end
 
     def _generates_interal_TpA?(synonymous_codon)
