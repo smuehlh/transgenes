@@ -104,6 +104,9 @@ class Gene
         if @ese_motifs.any?
             str += "Sequence proportion covered by ESEs: #{Statistics.percents(@sequence_proportion_covered_by_eses)}%\n"
         end
+        str += "Total number of G and C: #{get_gc_counts}\n"
+        str += "Number of CpG dinucleotides: #{get_CpG_counts}\n"
+        str += "Number of UpA dinucleotides: #{get_UpA_counts}\n"
         $logger.info(str)
     end
 
@@ -192,6 +195,19 @@ class Gene
         end.flatten.compact.uniq
 
         pos_covering_eses.size/cds.size.to_f
+    end
+
+    def get_gc_counts
+        # NOTE - G's and C's at any pos, not to be confused with GC3
+        sequence.count("GC")
+    end
+
+    def get_CpG_counts
+        sequence.scan("CG").length
+    end
+
+    def get_UpA_counts
+        sequence.scan("TA").length
     end
 
     def replace_codon_at_pos(exons, third_site, new_codon)

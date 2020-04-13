@@ -116,6 +116,10 @@ class GeneEnhancer
         $logger.info "Target GC3 content: #{target_description}"
         $logger.info "Subsequent target: #{ese_target_description} ESE resemblance"
         $logger.info "Closest match: Variant #{variant_number} (#{gc3}% GC3; #{ese}% ESE resemblance)"
+
+        $logger.info "Full statistics selected variant:\n"
+        @gene_variants[variant_ind].log_statistics
+        $logger.info ""
     end
 
     def find_index_of_best_gene
