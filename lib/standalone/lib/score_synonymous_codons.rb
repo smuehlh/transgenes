@@ -26,7 +26,7 @@ class ScoreSynonymousCodons
 
     def score_synonymous_codons_at(cds_tweaked_up_to_pos, pos)
         if @strategy_scorer.has_first_site_that_must_be_left_alone(
-                @synonymous_sites.preceeding_codon_at(pos),
+                SynonymousSites.preceeding_codon_at(cds_tweaked_up_to_pos, pos),
                 @synonymous_sites.original_codon_at(pos))
             @synonymous_sites.reduce_synonymous_codons_to_same_subbox_at(pos)
         end
