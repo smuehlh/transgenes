@@ -9,7 +9,7 @@ class ScoreSynonymousCodons
 
     def select_synonymous_codon_at(cds_tweaked_up_to_pos, pos)
         syn_codons, scores = score_synonymous_codons_at(cds_tweaked_up_to_pos, pos)
-        select_codon_matching_random_score(syn_codons, scores)
+        select_codon(syn_codons, scores)
     end
 
     def is_original_codon_selected_at(pos, best_codon)
@@ -55,6 +55,18 @@ class ScoreSynonymousCodons
             end
 
         [syn_codons, scores]
+    end
+
+    def select_codon(syn_codons, scores)
+        if @strategy_scorer.is_strategy_to_select_for_pessimal_codon
+            select_codon_with_highest_score(syn_codons, scores)
+        else
+            select_codon_matching_random_score(syn_codons, scores)
+        end
+    end
+
+    def select_codon_with_highest_score(syn_codons, scores)
+        syn_codons[scores.index(scores.max)]
     end
 
     def select_codon_matching_random_score(syn_codons, scores)
