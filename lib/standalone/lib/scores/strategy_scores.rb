@@ -128,7 +128,7 @@ class StrategyScores
     end
 
     def _generates_interal_TpA?(synonymous_codon)
-        # must be 2nd/3rd site TpA, no 1st/2nd site TpA possible
-        synonymous_codon.end_with?("TA")
+        # might be 1st/2nd site CpG or 2nd/3rd site CpG
+        synonymous_codon.include?("TA")
     end
 end
