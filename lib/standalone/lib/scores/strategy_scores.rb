@@ -18,6 +18,13 @@ class StrategyScores
         @strategy == "attenuate"
     end
 
+    def has_first_site_that_must_be_left_alone(last_codon, codon)
+        # test codon is the second codon of a cross-codon CpG/ TpA pair
+        last_codon = "" unless last_codon # HOTFIX if codon is starting ATG
+        @strategy == "attenuate" &&
+            (_generates_cross_neighbours_CpG?(last_codon, codon) || _generates_cross_neighbours_TpA?(last_codon, codon))
+    end
+
     def normalised_scores(synonymous_codons, original_codon, next_codon, pos, is_near_intron, dist_to_intron)
         counts = synonymous_codons.collect do |synonymous_codon|
             codon_count(synonymous_codon, original_codon, next_codon, pos, is_near_intron, dist_to_intron)
@@ -102,15 +109,28 @@ class StrategyScores
     end
 
     def _generates_CpG?(synonymous_codon, next_codon)
-        ( next_codon && synonymous_codon.end_with?("C") && next_codon.start_with?("G")
-        ) || synonymous_codon.include?("CG")
-        # 'include' rather than 'end_with' to catch CpGs both
-        #   at first/second and at second/third position
-        # (not neccessary for TpAs due to structure of codon boxes)
+        _generates_cross_neighbours_CpG?(synonymous_codon, next_codon) || _generates_interal_CpG?(synonymous_codon)
     end
 
     def _generates_TpA?(synonymous_codon, next_codon)
-        ( next_codon && synonymous_codon.end_with?("T") && next_codon.start_with?("A")
-        ) || synonymous_codon.end_with?("TA")
+        _generates_cross_neighbours_TpA?(synonymous_codon, next_codon) || _generates_interal_TpA?(synonymous_codon)
+    end
+
+    def _generates_cross_neighbours_CpG?(synonymous_codon, next_codon)
+        next_codon && synonymous_codon.end_with?("C") && next_codon.start_with?("G")
+    end
+
+    def _generates_interal_CpG?(synonymous_codon)
+        # might be 1st/2nd site CpG or 2nd/3rd site CpG
+        synonymous_codon.include?("CG")
+    end
+
+    def _generates_cross_neighbours_TpA?(synonymous_codon, next_codon)
+        next_codon && synonymous_codon.end_with?("T") && next_codon.start_with?("A")
+    end
+
+    def _generates_interal_TpA?(synonymous_codon)
+        # must be 2nd/3rd site TpA, no 1st/2nd site TpA possible
+        synonymous_codon.end_with?("TA")
     end
 end

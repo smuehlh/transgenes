@@ -32,6 +32,11 @@ class SynonymousSites
         @syn_codons_by_site[pos]
     end
 
+    def preceeding_codon_at(pos)
+        # returns nil if pos-3 is out of bounds (i.e. pos was first codon pos)
+        original_codon_at(pos-3)
+    end
+
     def neighbouring_codon_at(pos)
         # returns nil if pos+3 is out of bounds (i.e. pos was last codon pos)
         original_codon_at(pos+3)
@@ -51,6 +56,16 @@ class SynonymousSites
 
     def get_nt_distance_to_intron(pos)
         @distances_to_introns_by_site[pos]
+    end
+
+    def reduce_synonymous_codons_to_same_subbox_at(pos)
+        # NOTE - use this method only in exceptional cases only as it will overwrite stay_in_subbox_for_6folds settings for a single position
+        codon = original_codon_at(pos)
+        if GeneticCode.is_6fold_degenerate(codon)
+            @syn_codons_by_site[pos] =
+                GeneticCode.get_synonymous_codons_in_codon_box(codon)
+        # else - nothing to do; this affects 6folds only
+        end
     end
 
     def sequence_windows_covering_syn_codons_at(cds, pos)
