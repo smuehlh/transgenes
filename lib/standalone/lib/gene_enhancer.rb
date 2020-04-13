@@ -22,7 +22,6 @@ class GeneEnhancer
         gene.prepare_for_tweaking(@stay_in_subbox_for_6folds)
 
         @n_variants.times do |ind|
-            print ind
             variant = generate_variant(gene, ind)
             log_variant(variant)
             collect_variant_data(variant)
