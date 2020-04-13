@@ -25,9 +25,9 @@ class StrategyScores
             (_generates_cross_neighbours_CpG?(last_codon, codon) || _generates_cross_neighbours_TpA?(last_codon, codon))
     end
 
-    def normalised_scores(synonymous_codons, original_codon, next_codon, pos, is_near_intron, dist_to_intron)
+    def normalised_scores(synonymous_codons, original_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         counts = synonymous_codons.collect do |synonymous_codon|
-            codon_count(synonymous_codon, original_codon, next_codon, pos, is_near_intron, dist_to_intron)
+            codon_count(synonymous_codon, original_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         end
         Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(counts)
     end
@@ -49,7 +49,7 @@ class StrategyScores
         end
     end
 
-    def codon_count(synonymous_codon, original_codon, next_codon, pos, is_near_intron, dist_to_intron)
+    def codon_count(synonymous_codon, original_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         case @strategy
         when "raw"
             raw_count(synonymous_codon, original_codon)
@@ -60,7 +60,7 @@ class StrategyScores
         when "max-gc"
             max_gc_count(synonymous_codon)
         when "attenuate"
-            attenuate_count(synonymous_codon, next_codon, pos, is_near_intron, dist_to_intron)
+            attenuate_count(synonymous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         end
     end
 
@@ -88,15 +88,21 @@ class StrategyScores
         Maximal_gc3[synonymous_codon]
     end
 
-    def attenuate_count(synonymous_codon, next_codon, pos, is_near_intron, dist_to_intron)
+    def attenuate_count(synonymous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         next_codon = "" unless next_codon # HOTFIX if codon is very last
         if _generates_CpG?(synonymous_codon, next_codon)
             addend = synonymous_codon.count("AT")/3.to_f
             1 + addend
         elsif _generates_TpA?(synonymous_codon, next_codon)
-            addend = synonymous_codon.count("AT")/3.to_f
-            # tweak addend to ensure CpGs still rank higher
-            0.99 + addend*(1-0.99)
+            # exception: cross-codon TpA will hinder CpG in next_codon
+            # => disfavour cross-codon TpA
+            if _hinders_CpG_in_next_codon?(synonymous_codon, next_codon, next_codon_synonyms)
+                0
+            else
+                addend = synonymous_codon.count("AT")/3.to_f
+                # tweak addend to ensure CpGs still rank higher
+                0.99 + addend*(1-0.99)
+            end
         else
             # score by usage in human genes while avoiding C's and G's
             multiplier = 1 - synonymous_codon.count("GC")/3.to_f
@@ -107,18 +113,18 @@ class StrategyScores
     end
 
     def _generates_CpG?(synonymous_codon, next_codon)
-        _generates_cross_neighbours_CpG?(synonymous_codon, next_codon) || _generates_interal_CpG?(synonymous_codon)
+        _generates_cross_neighbours_CpG?(synonymous_codon, next_codon) || _generates_internal_CpG?(synonymous_codon)
     end
 
     def _generates_TpA?(synonymous_codon, next_codon)
-        _generates_cross_neighbours_TpA?(synonymous_codon, next_codon) || _generates_interal_TpA?(synonymous_codon)
+        _generates_cross_neighbours_TpA?(synonymous_codon, next_codon) || _generates_internal_TpA?(synonymous_codon)
     end
 
     def _generates_cross_neighbours_CpG?(synonymous_codon, next_codon)
         synonymous_codon.end_with?("C") && next_codon.start_with?("G")
     end
 
-    def _generates_interal_CpG?(synonymous_codon)
+    def _generates_internal_CpG?(synonymous_codon)
         # might be 1st/2nd site CpG or 2nd/3rd site CpG
         synonymous_codon.include?("CG")
     end
@@ -127,8 +133,19 @@ class StrategyScores
         synonymous_codon.end_with?("T") && next_codon.start_with?("A")
     end
 
-    def _generates_interal_TpA?(synonymous_codon)
+    def _generates_internal_TpA?(synonymous_codon)
         # might be 1st/2nd site CpG or 2nd/3rd site CpG
         synonymous_codon.include?("TA")
+    end
+
+    def _hinders_CpG_in_next_codon?(synonymous_codon, next_codon, next_codon_synonyms)
+        # at least one of the codons synonymous to next_codon contains a CpG
+        # but could not be selected due to restrictions on 1st site
+
+        # NOTE - this checks if 1st site of _next_codon_ is restricted
+        has_first_site_that_must_be_left_alone(synonymous_codon, next_codon) &&
+            next_codon_synonyms.any? do |codon|
+                _generates_internal_CpG?(codon) && codon[0] != next_codon[0]
+            end
     end
 end

@@ -48,6 +48,10 @@ class SynonymousSites
         original_codon_at(pos+3)
     end
 
+    def neighbouring_synonymous_codons_at(pos)
+        synonymous_codons_at(pos+3)
+    end
+
     def is_stopcodon_at(pos)
         GeneticCode.is_stopcodon(original_codon_at(pos))
     end
