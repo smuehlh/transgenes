@@ -116,7 +116,7 @@ class CommandlineOptions
 
     def set_defaults_for_unset_optional_arguments_that_cant_remain_unset
         return if @wildtype # NOTE - no defaults needed if option wildtype is set
-        unless @select_by
+        if select_by_not_set_although_required_by_strategy
             @select_by = default_for_select_by_depending_on_strategy
             $logger.warn("Option select-by was not set. Defaults to '#{@select_by}'")
         end
@@ -313,5 +313,9 @@ class CommandlineOptions
 
     def strategy_max_gc_specified_without_select_by_set_to_high
         @strategy == "max-gc" && @select_by != "high"
+    end
+
+    def select_by_not_set_although_required_by_strategy
+        @strategy != "attenuate" && ! @select_by
     end
 end
