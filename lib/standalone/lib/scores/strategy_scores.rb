@@ -32,6 +32,15 @@ class StrategyScores
         Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(counts)
     end
 
+    def pessimal_scores_for_codons_producing_tie(synonymous_codons, pos, is_near_intron, dist_to_intron)
+        # exception for attenuate_count: multiple codons producing identical score
+        # => re-score solely by usage in human genes
+        counts = synonymous_codons.collect do |synonymous_codon|
+            _pessimal_human_score(synonymous_codon, pos, is_near_intron, dist_to_intron)
+        end
+        Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(counts)
+    end
+
     private
 
     def is_known_strategy
@@ -112,9 +121,7 @@ class StrategyScores
         else
             # score by usage in human genes while avoiding C's and G's
             multiplier = 1 - synonymous_codon.count("GC")/3.to_f
-            (1 - gc_count(
-                synonymous_codon, pos, is_near_intron, dist_to_intron)
-            )*multiplier
+            _pessimal_human_score(synonymous_codon, pos, is_near_intron, dist_to_intron)*multiplier
         end
     end
 
@@ -153,5 +160,9 @@ class StrategyScores
             next_codon_synonyms.any? do |codon|
                 _generates_internal_CpG?(codon) && codon[0] != next_codon[0]
             end
+    end
+
+    def _pessimal_human_score(synonymous_codon, pos, is_near_intron, dist_to_intron)
+        1 - gc_count(synonymous_codon, pos, is_near_intron, dist_to_intron)
     end
 end
