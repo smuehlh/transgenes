@@ -23,7 +23,8 @@ def characterise(gene)
     end.compact)
 
     OpenStruct.new(
-        seq: GeneticCode.translate(gene.sequence),
+        dnaseq: gene.sequence,
+        protseq: GeneticCode.translate(gene.sequence),
         GC: gene.sequence.count("GC"),
         CpG: gene.sequence.scan("CG").length,
         UpA: gene.sequence.scan("TA").length,
@@ -57,7 +58,11 @@ Logging.setup
     # check key characteristics
     has_one_flagged= false
     flags = []
-    unless before.seq == after.seq
+    unless before.dnaseq != after.dnaseq
+        flags.push "seq unchanged"
+        has_one_flagged = true
+    end
+    unless before.protseq == after.protseq
         flags.push "seq failed"
         has_one_flagged = true
     end
