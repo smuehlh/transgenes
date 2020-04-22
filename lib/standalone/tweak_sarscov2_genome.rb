@@ -41,7 +41,6 @@ end
 
 # define gene locations
 # NOTE - overlapping genes are ORF1a/b and ORF7a/b
-
 pos = {
     "orf1a" => [265, 13482],
     "orf1ab" => [[265, 13467], [13467, 21554]], # -1 ribosomal slippage
@@ -88,6 +87,7 @@ pos.each do |key, data|
     $logger.info("Tweaking gene #{key.upcase} located at [#{start}..#{stop}]")
     gene = Gene.new
     gene.add_cds([orf.upcase], [], key.upcase)
+    gene.log_statistics
 
     enhancer = GeneEnhancer.new(options)
     enhancer.generate_synonymous_genes(gene)
@@ -97,9 +97,3 @@ pos.each do |key, data|
 end
 
 FileHelper.write_to_file(output, "#{header}\n#{tweaked_seq}")
-
-# TODO - ultimate test - each tweaked sequece must translate into same seq. as listed in genebank file !!!
-# if all is good: git commit changes to strategy_scores.
-
-# TODO use gene.log_statistics to log stats of full sequence before/ after tweaking.
-
