@@ -41,9 +41,10 @@ end
 
 # define gene locations
 # NOTE - overlapping genes are ORF1a/b and ORF7a/b
+
 pos = {
     "orf1a" => [265, 13482],
-    "orf1ab" => [265, 21554],
+    "orf1ab" => [[265, 13467], [13467, 21554]], # -1 ribosomal slippage
     "s" => [21562, 25383],
     "orf3a" => [25392, 26219],
     "e" => [26244, 26471],
@@ -58,15 +59,33 @@ pos = {
 
 tweaked_seq = seq
 pos.each do |key, data|
-    next if key == "orf1ab" # 'merged' ORF1a and ORF1b
     start, stop = data
-    if  key == "orf7a"
+    if key == "orf1a"
+        # overlaps with orf1ab => end 1 nt before ribosomal slippage in orf1ab
+        stop = pos["orf1ab"][0][1] - 1
+    elsif key == "orf1ab"
+        # focus on sub-sequence not part of ORF1a, i.e. 2nd set of coordinates
+        start = pos["orf1a"][1] + 1
+        stop = data[1][1]
+    elsif  key == "orf7a"
         # overlaps with orf7b => end 1 nt before orf7b
         stop = pos["orf7b"][0] - 1
     end
+    mod = seq[start..stop].size % 3
+    if mod != 0
+        if key == "orf1a" || key == "orf7a"
+            # trim ORF at end of sequence (since stop pos was messed with)
+            stop -= mod
+        elsif key == "orf1ab"
+            # trim ORF at beginning of sequence (start pos was messed with)
+            start += mod
+        else
+            raise "should not happen!"
+        end
+    end
     orf = seq[start..stop]
-    $logger.info("Tweaking gene #{key.upcase} located at [#{start}..#{stop}]")
 
+    $logger.info("Tweaking gene #{key.upcase} located at [#{start}..#{stop}]")
     gene = Gene.new
     gene.add_cds([orf.upcase], [], key.upcase)
 
@@ -79,13 +98,8 @@ end
 
 FileHelper.write_to_file(output, "#{header}\n#{tweaked_seq}")
 
-# TODO - what to do about ORF1b?
-# length protein transcript: 2595 -> should start at pos 21554-2595*3+1
-# => doesn't start with ATG ...
-# slippage imideately upstream ORF1A stop => no ATG there
-# nearest ATGs: 13432, 13448, 13525, 15555
+# TODO - ultimate test - each tweaked sequece must translate into same seq. as listed in genebank file !!!
+# if all is good: git commit changes to strategy_scores.
 
-# => look into: https://www.ncbi.nlm.nih.gov/nuccore/NC_045512
-# for gene coordinates!
+# TODO use gene.log_statistics to log stats of full sequence before/ after tweaking.
 
-# TODO gene.log_statistics to log stats of full sequence before/ after tweaking.
