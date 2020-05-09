@@ -44,14 +44,16 @@ class StrategyScores
     private
 
     def is_known_strategy
-        ["raw", "humanize", "gc", "max-gc", "attenuate"].include?(@strategy)
+        ["raw", "humanize", "gc", "max-gc",
+            "attenuate", "attenuate-maxT"
+        ].include?(@strategy)
     end
 
     def is_strategy_data_defined
         case @strategy
         when "raw" then true
         when "humanize" then defined?(Human_codon_counts)
-        when "gc", "attenuate"
+        when "gc", "attenuate", "attenuate-maxT"
             defined?(Third_site_frequencies) &&
             defined?(Third_site_counts_near_intron)
         when "max-gc" then defined?(Maximal_gc3)
@@ -70,6 +72,8 @@ class StrategyScores
             max_gc_count(synonymous_codon)
         when "attenuate"
             attenuate_count(synonymous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
+        when "attenuate-maxT"
+            attenuate_maxT_count(synonymous_codon, pos, is_near_intron, dist_to_intron)
         end
     end
 
