@@ -166,6 +166,14 @@ class Gene
         copy
     end
 
+    def get_CpG_counts
+        sequence.scan("CG").length
+    end
+
+    def get_UpA_counts
+        sequence.scan("TA").length
+    end
+
     private
 
     def combine_exons_and_introns(exons, introns)
@@ -200,14 +208,6 @@ class Gene
     def get_gc_counts
         # NOTE - G's and C's at any pos, not to be confused with GC3
         sequence.count("GC")
-    end
-
-    def get_CpG_counts
-        sequence.scan("CG").length
-    end
-
-    def get_UpA_counts
-        sequence.scan("TA").length
     end
 
     def replace_codon_at_pos(exons, third_site, new_codon)

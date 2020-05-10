@@ -153,12 +153,18 @@ class GeneEnhancer
 
             end
 
-        if @ese_strategy == "deplete"
+        if @strategy == "attenuate-keep-GC3"
+            best_by_gc3 = best_by_gc3.sort_by{|i| @gc3_contents[i]}.reverse
+            best_by_gc3.max_by do |i|
+                [
+                    @gene_variants[i].get_CpG_counts,
+                    @gene_variants[i].get_UpA_counts
+                ]
+            end
+        elsif @ese_strategy == "deplete"
             best_by_gc3.min_by{|i| @ese_resemblance[i]}
-        elsif @ese_strategy == "enrich"
+        else @ese_strategy == "enrich"
             best_by_gc3.max_by{|i| @ese_resemblance[i]}
-        else
-            best_by_gc3.max_by{|i| @gc3_contents[i]}
         end
     end
 
