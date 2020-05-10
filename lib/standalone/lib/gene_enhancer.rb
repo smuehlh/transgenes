@@ -9,6 +9,7 @@ class GeneEnhancer
         @stay_in_subbox_for_6folds = options.stay_in_subbox_for_6folds
         @score_eses_at_all_sites = options.score_eses_at_all_sites
 
+        @original_gc3_content = nil # needed to select best variant; calc while generating variants
         @gene_variants = []
         @gc3_contents = [] # needed to select best variant
         @ese_resemblance = [] # need to select best variant (in case of a tie)
@@ -19,6 +20,7 @@ class GeneEnhancer
     end
 
     def generate_synonymous_genes(gene)
+        @original_gc3_content = gene.gc3_content
         gene.prepare_for_tweaking(@stay_in_subbox_for_6folds)
 
         @n_variants.times do |ind|
@@ -135,12 +137,16 @@ class GeneEnhancer
                 @gc3_contents.max
             when "low"
                 @gc3_contents.min
+            when "stabilise"
+                @original_gc3_content
             end
         best_by_gc3 =
             @gc3_contents.each_index.select do |ind|
                 if @select_best_by == "mean"
                     # use distance rather than gc3 for selection
                     distances_to_mean[ind] == gc3_selection_target
+                elsif @select_best_by == "stabilise"
+                    @gc3_contents[ind] <= gc3_selection_target
                 else
                     @gc3_contents[ind] == gc3_selection_target
                 end
@@ -149,8 +155,10 @@ class GeneEnhancer
 
         if @ese_strategy == "deplete"
             best_by_gc3.min_by{|i| @ese_resemblance[i]}
-        else
+        elsif @ese_strategy == "enrich"
             best_by_gc3.max_by{|i| @ese_resemblance[i]}
+        else
+            best_by_gc3.max_by{|i| @gc3_contents[i]}
         end
     end
 
@@ -163,6 +171,8 @@ class GeneEnhancer
             "highest"
         when "low"
             "lowest"
+        when "stabilise"
+            "original GC3 (#{Statistics.percents(@original_gc3_content)}%)"
         end
     end
 
