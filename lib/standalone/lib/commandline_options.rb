@@ -151,14 +151,15 @@ class CommandlineOptions
                 "Path to output file, in FASTA format.") do |path|
                 @output = path
             end
-            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc", "max-gc", "attenuate", "attenuate-maxT"],
+            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc", "max-gc", "attenuate", "attenuate-maxT", "attenuate-keep-GC3"],
                 "Strategy for altering the sequence.",
-                "Select one of: 'raw', 'humanize', 'gc', 'max-gc' or 'attenuate'.",
+                "Select one of: 'raw', 'humanize', 'gc', 'max-gc', 'attenuate', 'attenuate-keep-GC3' or 'attenuate-maxT'.",
                 "raw - Leave the sequence as is.", "May be specified only in combination with an ESE list (--ese).",
                 "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
                 "gc - Match position-dependent GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.",
                 "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.",
                 "attenuate - De-optimize sequence by increasing CpG and UpA.", "An ESE list must not be specified.", "Generates a single pessimal variant and thus ignores any selection strategy settings.",
+                "attenuate-keep-GC3 - De-optimize sequence by increasing CpG and UpA while keeping GC3 stable.", "An ESE list must not be specified.", "Must be combined with a strategy to select the best variant and this must be set to 'stabilise'.",
                 "attenuate-maxT - De-optimize sequence by increasing T (or A) and decreasing G and C.", "An ESE list must not be specified.", "Generates a single pessimal variant and thus ignores any selection strategy settings.") do |opt|
                 @strategy = opt
                 @greedy = @strategy.start_with?("attenuate") ? true : false
@@ -221,13 +222,14 @@ class CommandlineOptions
                 "6-fold degenerates: Stay in the respective (2- or 4-fold) codon box", "when selecting a synonymous codon.", "If not specified, all 6 codons are considered.") do |opt|
                 @stay_in_subbox_for_6folds = true
             end
-            opts.on("-b", "--select-by STRATEGY", ["mean", "high", "low"],
+            opts.on("-b", "--select-by STRATEGY", ["mean", "high", "low", "stabilise"],
                 "Strategy for selecting which of the generated variants is best.",
                 "Take ESE coverage into account when multiple variants have same GC3.",
-                "Select one of: 'mean', 'high' or 'low'.",
+                "Select one of: 'mean', 'high', 'low' or 'stabilise'.",
                 "mean - Closest GC3 to the average human GC3 content.",
                 "high - Highest GC3 of all variants.",
                 "low - Lowest GC3 of all variants.",
+                "stabilise - Closest to original GC3 content (same or lower).",
                 "If not specified, defaults to 'mean' ('high' if strategy is set to 'max-gc').") do |opt|
                 @select_by = opt
             end
