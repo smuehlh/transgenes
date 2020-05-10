@@ -279,6 +279,9 @@ class CommandlineOptions
             "Nothing to do for the combination: 'raw'-strategy/ no ESEs"
         ) if strategy_raw_specified_without_ese_list
         ErrorHandling.warn_with_error_message(
+            "unused_selection_strategy", "CommandlineOptions"
+        ) if select_by_set_with_attenuate_strategy
+        ErrorHandling.warn_with_error_message(
             "unused_ese_strategy", "CommandlineOptions"
         ) if ese_strategy_specified_without_ese_list
         ErrorHandling.warn_with_error_message(
@@ -318,5 +321,9 @@ class CommandlineOptions
 
     def select_by_not_set_although_required_by_strategy
         ! @strategy.start_with?("attenuate") && ! @select_by
+    end
+
+    def select_by_set_with_attenuate_strategy
+        @select_by && @strategy.start_with?("attenuate")
     end
 end
