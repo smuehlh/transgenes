@@ -32,6 +32,42 @@ def characterise(gene)
     )
 end
 
+def tweak_gene_by(gene, strategy)
+    options = OpenStruct.new(
+        greedy: true, strategy: "attenuate", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
+    )
+    enhancer = GeneEnhancer.new(options)
+    enhancer.generate_synonymous_genes(gene)
+    enhancer.select_best_gene
+end
+
+def check_key_characteristics_for_attenuate_strategy(before, after)
+    flags = []
+    unless before.dnaseq != after.dnaseq
+        flags.push "seq unchanged"
+    end
+    unless before.protseq == after.protseq
+        flags.push "seq failed"
+    end
+    unless after.CpG >= before.CpG
+        flags.push "CpG failed"
+    end
+    unless after.UpA >= before.UpA || after.CpG > before.CpG
+        # if UpA could not be increased, CpG should
+        flags.push "UpA failed"
+    end
+    unless after.GC <= before.GC || after.CpG > before.CpG
+        # if GC could not be decreased, CpGs should be increased
+        flags.push "GC/ at least CpG failed"
+    end
+    unless after.score <= before.score || after.CpG > before.CpG || after.UpA > before.UpA
+        # if score cound not be decreased, CpGs or UpAs should be increased
+        flags.push "score/ at least CpG/UpA failed"
+    end
+    flags
+end
+
+
 Logging.setup
 
 100.times do |n|
@@ -47,46 +83,12 @@ Logging.setup
     gene.add_cds([seq], [], "test")
     before = characterise(gene)
 
-    options = OpenStruct.new(
-        greedy: true, strategy: "attenuate", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
-    )
-    enhancer = GeneEnhancer.new(options)
-    enhancer.generate_synonymous_genes(gene)
-    enhanced_gene = enhancer.select_best_gene
+    enhanced_gene = tweak_gene_by(gene, "attenuate")
     after = characterise(enhanced_gene)
 
-    # check key characteristics
-    has_one_flagged= false
-    flags = []
-    unless before.dnaseq != after.dnaseq
-        flags.push "seq unchanged"
-        has_one_flagged = true
-    end
-    unless before.protseq == after.protseq
-        flags.push "seq failed"
-        has_one_flagged = true
-    end
-    unless after.CpG >= before.CpG
-        flags.push "CpG failed"
-        has_one_flagged = true
-    end
-    unless after.UpA >= before.UpA || after.CpG > before.CpG
-        # if UpA could not be increased, CpG should
-        flags.push "UpA failed"
-        has_one_flagged = true
-    end
-    unless after.GC <= before.GC || after.CpG > before.CpG
-        # if GC could not be decreased, CpGs should be increased
-        flags.push "GC/ at least CpG failed"
-        has_one_flagged = true
-    end
-    unless after.score <= before.score || after.CpG > before.CpG || after.UpA > before.UpA
-        # if score cound not be decreased, CpGs or UpAs should be increased
-        flags.push "score/ at least CpG/UpA failed"
-        has_one_flagged = true
-    end
-    if has_one_flagged
-        puts "##{n} failed [#{flags.join("")}]: "
-        puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
+    flags = check_key_characteristics_for_attenuate_strategy(before, after)
+    if flags.any?
+        puts "::attenuate:: ##{n} failed [#{flags.join("")}]: "
+            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
     end
 end
