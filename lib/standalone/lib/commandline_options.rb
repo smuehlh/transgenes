@@ -162,7 +162,12 @@ class CommandlineOptions
                 "attenuate-keep-GC3 - De-optimize sequence by increasing CpG and UpA while keeping GC3 stable.", "An ESE list must not be specified.", "Must be combined with a strategy to select the best variant and this must be set to 'stabilise'.",
                 "attenuate-maxT - De-optimize sequence by increasing T (or A) and decreasing G and C.", "An ESE list must not be specified.", "Generates a single pessimal variant and thus ignores any selection strategy settings.") do |opt|
                 @strategy = opt
-                @greedy = @strategy.start_with?("attenuate") ? true : false
+                @greedy =
+                    if @strategy == "attenuate" || @strategy == "attenuate-maxT"
+                        true
+                    else
+                        false
+                    end
             end
 
             # optional arguments
