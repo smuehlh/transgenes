@@ -281,6 +281,10 @@ class CommandlineOptions
         ErrorHandling.warn_with_error_message(
             "unused_selection_strategy", "CommandlineOptions"
         ) if select_by_set_with_attenuate_strategy
+        ErrorHandling.abort_with_error_message(
+            "invalid_argument_combination", "CommandlineOptions",
+            "Cannot score by ESE resemblance with '#{@strategy}'-strategy"
+        ) if ese_strategy_specified_with_attenuate_strategy
         ErrorHandling.warn_with_error_message(
             "unused_ese_strategy", "CommandlineOptions"
         ) if ese_strategy_specified_without_ese_list
@@ -325,5 +329,9 @@ class CommandlineOptions
 
     def select_by_set_with_attenuate_strategy
         @select_by && @strategy.start_with?("attenuate")
+    end
+
+    def ese_strategy_specified_with_attenuate_strategy
+        @ese_strategy && @strategy.start_with?("attenuate")
     end
 end
