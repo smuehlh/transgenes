@@ -15,7 +15,7 @@ class StrategyScores
     end
 
     def is_strategy_to_select_for_pessimal_codon
-        @strategy.start_with?("attenuate")
+        @strategy == "attenuate" || @strategy == "attenuate-maxT"
     end
 
     def has_first_site_that_must_be_left_alone(last_codon, codon)
