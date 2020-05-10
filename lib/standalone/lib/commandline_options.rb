@@ -282,7 +282,7 @@ class CommandlineOptions
         ) if strategy_raw_specified_without_ese_list
         ErrorHandling.warn_with_error_message(
             "unused_selection_strategy", "CommandlineOptions"
-        ) if select_by_set_with_attenuate_strategy
+        ) if select_by_set_with_attenuate_or_attenuate_maxT_strategy
         ErrorHandling.abort_with_error_message(
             "invalid_argument_combination", "CommandlineOptions",
             "Cannot score by ESE resemblance with '#{@strategy}'-strategy"
@@ -297,6 +297,10 @@ class CommandlineOptions
             "invalid_argument_combination", "CommandlineOptions",
             "'max-gc'-strategy/ '#{@select_by}'-select best variant.\nSet strategy to select best variant to 'high'"
         ) if strategy_max_gc_specified_without_select_by_set_to_high
+        ErrorHandling.abort_with_error_message(
+            "invalid_argument_combination", "CommandlineOptions",
+            "'attenuate-keep-GC3'-strategy/ '#{@select_by}'-select best variant.\nSet strategy to select best variant to 'stabilise'"
+        ) if strategy_attenuate_keep_gc3_specified_without_select_by_set_to_stabilise
         ErrorHandling.warn_with_error_message(
             "unused_utr_line", "CommandlineOptions", "5'UTR"
         ) if utr_line_specified_without_file(@utr5prime, @utr5prime_line)
@@ -325,12 +329,16 @@ class CommandlineOptions
         @strategy == "max-gc" && @select_by != "high"
     end
 
-    def select_by_not_set_although_required_by_strategy
-        ! @strategy.start_with?("attenuate") && ! @select_by
+    def strategy_attenuate_keep_gc3_specified_without_select_by_set_to_stabilise
+        @strategy == "attenuate-keep-GC3" && @select_by != "stabilise"
     end
 
-    def select_by_set_with_attenuate_strategy
-        @select_by && @strategy.start_with?("attenuate")
+    def select_by_not_set_although_required_by_strategy
+        @strategy != "attenuate" && @strategy != "attenuate-maxT" && ! @select_by
+    end
+
+    def select_by_set_with_attenuate_or_attenuate_maxT_strategy
+        @select_by && (@strategy == "attenuate" || @strategy == "attenuate-maxT")
     end
 
     def ese_strategy_specified_with_attenuate_strategy
