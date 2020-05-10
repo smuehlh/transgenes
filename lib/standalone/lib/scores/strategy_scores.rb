@@ -15,7 +15,7 @@ class StrategyScores
     end
 
     def is_strategy_to_select_for_pessimal_codon
-        @strategy == "attenuate"
+        @strategy.start_with?("attenuate")
     end
 
     def has_first_site_that_must_be_left_alone(last_codon, codon)
@@ -130,10 +130,12 @@ class StrategyScores
     end
 
     def attenuate_maxT_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
+        multiplierT = 0.33
+        multiplierA = 0.3
         if _increases_T?(synonymous_codon, original_codon)
-            2
+            2 + multiplierT*_numT(synonymous_codon) + multiplierA*_numA(synonymous_codon)
         elsif _increases_A?(synonymous_codon, original_codon)
-            0.99
+            0.99 + multiplierT*_numT(synonymous_codon) + multiplierA*_numA(synonymous_codon)
         else
             _pessimal_human_score(synonymous_codon, pos, is_near_intron, dist_to_intron)
         end
@@ -187,10 +189,18 @@ class StrategyScores
     end
 
     def _increases_T?(synonymous_codon, original_codon)
-        synonymous_codon.count("T") > original_codon.count("T")
+        _numT(synonymous_codon) >= _numT(original_codon)
     end
 
     def _increases_A?(synonymous_codon, original_codon)
-        synonymous_codon.count("A") > original_codon.count("A")
+        _numA(synonymous_codon) >= _numA(original_codon)
+    end
+
+    def _numT(synonymous_codon)
+        synonymous_codon.count("T")
+    end
+
+    def _numA(synonymous_codon)
+        synonymous_codon.count("A")
     end
 end
