@@ -35,7 +35,7 @@ end
 
 def tweak_gene_by(gene, strategy)
     options = OpenStruct.new(
-        greedy: true, strategy: "attenuate", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
+        greedy: true, strategy: strategy, select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
     )
     enhancer = GeneEnhancer.new(options)
     enhancer.generate_synonymous_genes(gene)
