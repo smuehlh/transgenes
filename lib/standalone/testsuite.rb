@@ -26,6 +26,7 @@ def characterise(gene)
         dnaseq: gene.sequence,
         protseq: GeneticCode.translate(gene.sequence),
         GC: gene.sequence.count("GC"),
+        T: gene.sequence.count("T"),
         CpG: gene.sequence.scan("CG").length,
         UpA: gene.sequence.scan("TA").length,
         score: score
@@ -67,6 +68,22 @@ def check_key_characteristics_for_attenuate_strategy(before, after)
     flags
 end
 
+def check_key_characteristics_for_attenuate_maxT_strategy(before, after)
+    flags = []
+    unless before.dnaseq != after.dnaseq
+        flags.push "seq unchanged"
+    end
+    unless before.protseq == after.protseq
+        flags.push "seq failed"
+    end
+    unless after.T >= before.T
+        flags.push "T failed"
+    end
+    unless after.GC <= before.GC
+        flags.push "GC failed"
+    end
+    flags
+end
 
 Logging.setup
 
@@ -83,12 +100,23 @@ Logging.setup
     gene.add_cds([seq], [], "test")
     before = characterise(gene)
 
+    # strategy attenuate
     enhanced_gene = tweak_gene_by(gene, "attenuate")
     after = characterise(enhanced_gene)
 
     flags = check_key_characteristics_for_attenuate_strategy(before, after)
     if flags.any?
-        puts "::attenuate:: ##{n} failed [#{flags.join("")}]: "
+        puts "::attenuate:: ##{n} failed [#{flags.join(", ")}]: "
+            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
+    end
+
+    # strategy attenuate-maxT
+    enhanced_gene = tweak_gene_by(gene, "attenuate-maxT")
+    after = characterise(enhanced_gene)
+
+    flags = check_key_characteristics_for_attenuate_maxT_strategy(before, after)
+    if flags.any?
+        puts "::attenuate-maxT:: ##{n} failed [#{flags.join(", ")}]: "
             puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
     end
 end
