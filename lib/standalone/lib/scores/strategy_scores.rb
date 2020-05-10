@@ -73,7 +73,7 @@ class StrategyScores
         when "attenuate"
             attenuate_count(synonymous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         when "attenuate-maxT"
-            attenuate_maxT_count(synonymous_codon, pos, is_near_intron, dist_to_intron)
+            attenuate_maxT_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
         end
     end
 
@@ -129,6 +129,16 @@ class StrategyScores
         end
     end
 
+    def attenuate_maxT_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
+        if _increases_T?(synonymous_codon, original_codon)
+            2
+        elsif _increases_A?(synonymous_codon, original_codon)
+            0.99
+        else
+            _pessimal_human_score(synonymous_codon, pos, is_near_intron, dist_to_intron)
+        end
+    end
+
     def _generates_CpG?(synonymous_codon, next_codon)
         _generates_cross_neighbours_CpG?(synonymous_codon, next_codon) || _generates_internal_CpG?(synonymous_codon)
     end
@@ -174,5 +184,13 @@ class StrategyScores
         else
             score
         end
+    end
+
+    def _increases_T?(synonymous_codon, original_codon)
+        synonymous_codon.count("T") > original_codon.count("T")
+    end
+
+    def _increases_A?(synonymous_codon, original_codon)
+        synonymous_codon.count("A") > original_codon.count("A")
     end
 end
