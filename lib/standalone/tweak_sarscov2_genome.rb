@@ -23,8 +23,14 @@ end
 Logging.setup
 
 # standard sequence optimiser options
-options = OpenStruct.new(
+attenuate_options = OpenStruct.new(
     greedy: true, strategy: "attenuate", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
+)
+attenuate_maxT_options = OpenStruct.new(
+    greedy: true, strategy: "attenuate-maxT", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
+)
+attenuate_keep_GC3_options = OpenStruct.new(
+    greedy: false, strategy: "attenuate-keep-GC3", select_by: "stabilise", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
 )
 
 # read in file
@@ -82,6 +88,7 @@ pos.each do |key, data|
             raise "should not happen!"
         end
     end
+    puts "#{key}: [#{Counting.ruby_to_human(start)} - #{Counting.ruby_to_human(stop)}]"
     orf = seq[start..stop]
 
     $logger.info("Tweaking gene #{key.upcase} located at [#{start}..#{stop}]")
@@ -89,9 +96,25 @@ pos.each do |key, data|
     gene.add_cds([orf.upcase], [], key.upcase)
     gene.log_statistics
 
+    options =
+        if ["orf1a", "orf1ab", "orf6", "orf7b", "s"].include?(key)
+            attenuate_options
+        elsif ["e", "orf10"].include?(key)
+            attenuate_maxT_options
+        else
+            attenuate_keep_GC3_options
+        end
     enhancer = GeneEnhancer.new(options)
+
     enhancer.generate_synonymous_genes(gene)
-    enhanced_gene = enhancer.select_best_gene
+    begin
+        enhanced_gene = enhancer.select_best_gene
+    rescue
+        # NOTE - this requires fail-saveness in method select_best_gene to be commented
+        # failed if all generated variants have higher GC3 than original seq
+        puts "Cannot tweak: #{key}; GC3 target cannot be met"
+        next
+    end
 
     tweaked_seq[start..stop] = enhanced_gene.sequence
 end
