@@ -163,7 +163,7 @@ class GeneEnhancer
             end
         elsif @ese_strategy == "deplete"
             best_by_gc3.min_by{|i| @ese_resemblance[i]}
-        else @ese_strategy == "enrich"
+        else
             best_by_gc3.max_by{|i| @ese_resemblance[i]}
         end
     end
