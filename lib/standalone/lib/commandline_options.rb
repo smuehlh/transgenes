@@ -10,6 +10,7 @@ class CommandlineOptions
         :ese,
         :ese_strategy,
         :score_eses_at_all_sites,
+        :sites_to_keep,
         :stay_in_subbox_for_6folds,
         :restriction_enzymes_to_keep,
         :restriction_enzymes_to_avoid,
@@ -67,6 +68,7 @@ class CommandlineOptions
             @ese
             @ese_strategy
             @score_eses_at_all_sites
+            @sites_to_keep
             @stay_in_subbox_for_6folds
             @restriction_enzymes_to_keep
             @restriction_enzymes_to_avoid
@@ -251,6 +253,12 @@ class CommandlineOptions
                 "but is not guaranteed to delete sites already present.") do |path|
                 FileHelper.file_exist_or_die(path)
                 @restriction_enzymes_to_avoid = path
+            end
+            opts.on("--sites-to-keep FILE",
+                "Path to positional data file, one site (1-based) per line.",
+                "All specified sites will be kept intact and not be tweaked.") do |path|
+                FileHelper.file_exist_or_die(path)
+                @sites_to_keep = path
             end
 
             opts.separator ""
