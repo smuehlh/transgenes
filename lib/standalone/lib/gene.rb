@@ -73,6 +73,11 @@ class Gene
         $logger.info "Avoid introducing restriction enzymes #{@restriction_enzymes_to_avoid.join(" ")}"
     end
 
+    def add_sites_to_keep_intact(pos_to_keep_intact)
+        additional_sites_to_keep_intact = SynonymousSites.all_sites(@exons) & pos_to_keep_intact
+        @sites_to_keep_intact |= additional_sites_to_keep_intact
+    end
+
     def remove_introns(is_remove_first_intron)
         @introns =
             if is_remove_first_intron || @introns.empty?
