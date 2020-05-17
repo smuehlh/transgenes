@@ -5,6 +5,8 @@ require 'ostruct'
 =begin
     Tweak coding regions individually and paste tweaked sequence into original location.
 
+    Calculate key characteristics of tweaked sequence.
+
     Gene locations are extracted from location tags in "coding sequences" file.
     NOTE:
         NCBI feature records are 1-based and thus converted to 0-based ruby counting.
@@ -15,6 +17,7 @@ require 'ostruct'
 
 input = "/Users/sm2547/Documents/sars-cov2/data/GISAID_EPI_ISL_402124_complete_genome.fasta"
 output = "/Users/sm2547/Documents/sars-cov2/data/tweaked_GISAID_EPI_ISL_402124_complete_genome.fasta"
+csv = "/Users/sm2547/Documents/sars-cov2/data/tweaked_GISAID_EPI_ISL_402124_complete_genome_stats.csv"
 
 # require .rb files in library (including all subfolders)
 Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
@@ -62,6 +65,7 @@ pos = {
     "n" => [28273, 29532],
     "orf10" => [29557, 29673]
 }
+gene_desc = {} # characteristics of tweaked sequence
 
 tweaked_seq = seq
 pos.each do |key, data|
@@ -99,6 +103,36 @@ pos.each do |key, data|
     end
 
     tweaked_seq[start..stop] = enhanced_gene.sequence
+
+    # collect sequence characteristics
+    gene_desc[key] = {
+        dnaseq: enhanced_gene.sequence,
+        GC3: enhanced_gene.gc3_content,
+        changed_sites: enhanced_gene.log_changed_sites[0],
+        A: enhanced_gene.sequence.count("A"),
+        T: enhanced_gene.sequence.count("T"),
+        C: enhanced_gene.sequence.count("C"),
+        G: enhanced_gene.sequence.count("G"),
+        GC: enhanced_gene.sequence.count("GC"),
+        AT: enhanced_gene.sequence.count("AT"),
+        CpG: enhanced_gene.sequence.scan("CG").length,
+        UpA: enhanced_gene.sequence.scan("TA").length,
+    }
+
 end
 
 FileHelper.write_to_file(output, "#{header}\n#{tweaked_seq}")
+
+data = "Gene,Start-Stop,A,T,C,G,GC,AT,CpG,UpA,GC3,changed sites,sites,seq length,seq\n"
+gene_desc.each do |key, desc|
+    data += key.upcase + ","
+    data += "#{Counting.ruby_to_human(pos[key][0])} - #{Counting.ruby_to_human(pos[key][1])},"
+    data += [desc[:A], desc[:T], desc[:C], desc[:G]].join(",") + ","
+    data += [desc[:GC], desc[:AT]].join(",") + ","
+    data += [desc[:CpG], desc[:UpA], desc[:GC3]].join(",") + ","
+    data += desc[:changed_sites].to_s + ","
+    data += (desc[:dnaseq].size/3).to_s + ","
+    data += desc[:dnaseq].size.to_s + ","
+    data += desc[:dnaseq] + "\n"
+end
+FileHelper.write_to_file(csv, data)
