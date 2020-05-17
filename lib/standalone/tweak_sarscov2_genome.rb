@@ -13,8 +13,8 @@ require 'ostruct'
 
 =end
 
-input = "/Users/sm2547/Documents/sars-cov2/data/SARS-CoV-2_refseq_NC_045512_complete_genome.fasta"
-output = "/Users/sm2547/Documents/sars-cov2/data/tweaked_SARS-CoV-2_refseq_NC_045512_complete_genome.fasta"
+input = "/Users/sm2547/Documents/sars-cov2/data/GISAID_EPI_ISL_402124_complete_genome.fasta"
+output = "/Users/sm2547/Documents/sars-cov2/data/tweaked_GISAID_EPI_ISL_402124_complete_genome.fasta"
 
 # require .rb files in library (including all subfolders)
 Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
@@ -47,16 +47,17 @@ end
 
 # define gene locations
 # NOTE - overlapping genes are ORF1a/b and ORF7a/b
+# positions are according to manuscript
 pos = {
-    "orf1a" => [265, 13482],
-    "orf1ab" => [[265, 13467], [13467, 21554]], # -1 ribosomal slippage
+    "orf1a" => [265, 13464],
+    "orf1b" => [13470, 21551],
     "s" => [21562, 25383],
     "orf3a" => [25392, 26219],
     "e" => [26244, 26471],
     "m" => [26522, 27190],
     "orf6" => [27201, 27386],
-    "orf7a" => [27393, 27758],
-    "orf7b" => [27755, 27886],
+    "orf7a" => [27393, 27752],
+    "orf7b" => [27761, 27886],
     "orf8" => [27893, 28258],
     "n" => [28273, 29532],
     "orf10" => [29557, 29673]
@@ -65,28 +66,9 @@ pos = {
 tweaked_seq = seq
 pos.each do |key, data|
     start, stop = data
-    if key == "orf1a"
-        # overlaps with orf1ab => end 1 nt before ribosomal slippage in orf1ab
-        stop = pos["orf1ab"][0][1] - 1
-    elsif key == "orf1ab"
-        # focus on sub-sequence not part of ORF1a, i.e. 2nd set of coordinates
-        start = pos["orf1a"][1] + 1
-        stop = data[1][1]
-    elsif  key == "orf7a"
-        # overlaps with orf7b => end 1 nt before orf7b
-        stop = pos["orf7b"][0] - 1
-    end
     mod = seq[start..stop].size % 3
     if mod != 0
-        if key == "orf1a" || key == "orf7a"
-            # trim ORF at end of sequence (since stop pos was messed with)
-            stop -= mod
-        elsif key == "orf1ab"
-            # trim ORF at beginning of sequence (start pos was messed with)
-            start += mod
-        else
-            raise "should not happen!"
-        end
+        raise "should not happen!"
     end
     puts "#{key}: [#{Counting.ruby_to_human(start)} - #{Counting.ruby_to_human(stop)}]"
     orf = seq[start..stop]
@@ -97,7 +79,7 @@ pos.each do |key, data|
     gene.log_statistics
 
     options =
-        if ["orf1a", "orf1ab", "orf6", "orf7b", "s"].include?(key)
+        if ["orf1a", "orf1b", "orf6", "orf7b", "s"].include?(key)
             attenuate_options
         elsif ["e", "orf10"].include?(key)
             attenuate_maxT_options
