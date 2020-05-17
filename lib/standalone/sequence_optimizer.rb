@@ -37,6 +37,9 @@ if options.restriction_enzymes_to_avoid
         RestrictionEnzymeToGene.init_and_parse(options.restriction_enzymes_to_avoid)
     )
 end
+if options.sites_to_keep
+    gene.add_sites_to_keep_intact(SynonymousSitesToKeepToGene.init_and_parse(options.sites_to_keep))
+end
 
 # remove unwanted introns
 gene.remove_introns(options.remove_first_intron)

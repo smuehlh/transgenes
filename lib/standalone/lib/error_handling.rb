@@ -77,6 +77,8 @@ module ErrorHandling
             "Unrecognized file format: #{additional_error_message}.\nInput must contain ESE motifs only, one per line."
         when "invalid_enzyme_format"
             "Unrecognized file format: #{additional_error_message}.\nInput must contain restriction enzyme sequences only, one per line."
+        when "invalid_site_to_keep_format"
+            "Unrecognized file format: #{additional_error_message}.\nInput must contain synonymous sites only, one per line."
         when "unknown_strategy"
             error_message_with_reference_to_commandline_option_help(
                 "Unknown strategy for altering the sequence."
