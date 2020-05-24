@@ -26,9 +26,9 @@ class StrategyScores
         (@strategy == "attenuate-wo-UpA" && _generates_cross_neighbours_CpG?(last_codon, codon))
     end
 
-    def normalised_scores(synonymous_codons, original_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
+    def normalised_scores(synonymous_codons, original_codon, previous_codon,next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         counts = synonymous_codons.collect do |synonymous_codon|
-            codon_count(synonymous_codon, original_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
+            codon_count(synonymous_codon, original_codon, previous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         end
         Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(counts)
     end
@@ -61,7 +61,7 @@ class StrategyScores
         end
     end
 
-    def codon_count(synonymous_codon, original_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
+    def codon_count(synonymous_codon, original_codon, previous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         case @strategy
         when "raw"
             raw_count(synonymous_codon, original_codon)
@@ -74,7 +74,7 @@ class StrategyScores
         when "attenuate", "attenuate-keep-GC3"
             attenuate_count(synonymous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         when "attenuate-wo-UpA"
-            attenuate_maxT_maxCpG(synonymous_codon, next_codon)
+            attenuate_maxT_maxCpG(synonymous_codon, next_codon, previous_codon)
         when "attenuate-maxT"
             attenuate_maxT_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
         end
@@ -132,14 +132,15 @@ class StrategyScores
         end
     end
 
-    def attenuate_maxT_maxCpG(synonymous_codon, next_codon)
+    def attenuate_maxT_maxCpG(synonymous_codon, next_codon, previous_codon)
+        previous_codon = "" unless previous_codon # HOTFIX if codon is first
         next_codon = "" unless next_codon # HOTFIX if codon is very last
         score = 1
         multiplier = 1/3.to_f
         score += _numT(synonymous_codon) * multiplier
         score += 2 * multiplier if _generates_CpG?(synonymous_codon, next_codon)
         score -= _numC_not_part_of_CpG(synonymous_codon, next_codon) * multiplier
-        score -= _numG_not_part_of_CpG(synonymous_codon, next_codon) * multiplier
+        score -= _numG_not_part_of_CpG(synonymous_codon, previous_codon) * multiplier
 
         score
     end
@@ -220,16 +221,21 @@ class StrategyScores
     end
 
     def _numC_not_part_of_CpG(synonymous_codon, next_codon)
-        count = synonymous_codon.count("C")
-        count - 1 if _generates_internal_CpG?(synonymous_codon)
-        count - 1 if _generates_cross_neighbours_CpG?(synonymous_codon, next_codon)
+        count = 0
+        (synonymous_codon + next_codon[0]).chars.each_cons(2) do |aa1, aa2|
+            count += 1 if aa1 == "C" && aa2 != "G"
+        end
         count
     end
 
-    def _numG_not_part_of_CpG(synonymous_codon, next_codon)
-        count = synonymous_codon.count("G")
-        count - 1 if _generates_internal_CpG?(synonymous_codon)
-        count - 1 if _generates_cross_neighbours_CpG?(synonymous_codon, next_codon)
+    def _numG_not_part_of_CpG(synonymous_codon, previous_codon)
+        count = 0
+        # inspect first codon position
+        count += 1 if synonymous_codon[0] == "G" && previous_codon[2] != "C"
+        # inspect second/third codon position
+        synonymous_codon.chars.each_cons(2) do |aa1, aa2|
+            count += 1 if aa2 == "G" && aa1 != "C"
+        end
         count
     end
 end
