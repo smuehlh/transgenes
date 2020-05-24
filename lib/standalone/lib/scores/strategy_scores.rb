@@ -132,6 +132,18 @@ class StrategyScores
         end
     end
 
+    def attenuate_maxT_maxCpG(synonymous_codon, next_codon)
+        next_codon = "" unless next_codon # HOTFIX if codon is very last
+        score = 1
+        multiplier = 1/3.to_f
+        score += _numT(synonymous_codon) * multiplier
+        score += 2 * multiplier if _generates_CpG?(synonymous_codon, next_codon)
+        score -= _numC_not_part_of_CpG(synonymous_codon, next_codon) * multiplier
+        score -= _numG_not_part_of_CpG(synonymous_codon, next_codon) * multiplier
+
+        score
+    end
+
     def attenuate_maxT_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
         multiplierT = 0.33
         multiplierA = 0.3
@@ -205,5 +217,19 @@ class StrategyScores
 
     def _numA(synonymous_codon)
         synonymous_codon.count("A")
+    end
+
+    def _numC_not_part_of_CpG(synonymous_codon, next_codon)
+        count = synonymous_codon.count("C")
+        count - 1 if _generates_internal_CpG?(synonymous_codon)
+        count - 1 if _generates_cross_neighbours_CpG?(synonymous_codon, next_codon)
+        count
+    end
+
+    def _numG_not_part_of_CpG(synonymous_codon, next_codon)
+        count = synonymous_codon.count("G")
+        count - 1 if _generates_internal_CpG?(synonymous_codon)
+        count - 1 if _generates_cross_neighbours_CpG?(synonymous_codon, next_codon)
+        count
     end
 end
