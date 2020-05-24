@@ -15,14 +15,15 @@ class StrategyScores
     end
 
     def is_strategy_to_select_for_pessimal_codon
-        @strategy == "attenuate" || @strategy == "attenuate-maxT"
+        @strategy == "attenuate" || @strategy == "attenuate-maxT" || @strategy == "attenuate-wo-UpA"
     end
 
     def has_first_site_that_must_be_left_alone(last_codon, codon)
         # test codon is the second codon of a cross-codon CpG/ TpA pair
         last_codon = "" unless last_codon # HOTFIX if codon is starting ATG
-        @strategy == "attenuate" &&
-            (_generates_cross_neighbours_CpG?(last_codon, codon) || _generates_cross_neighbours_TpA?(last_codon, codon))
+        (@strategy == "attenuate" &&
+            (_generates_cross_neighbours_CpG?(last_codon, codon) || _generates_cross_neighbours_TpA?(last_codon, codon))) ||
+        (@strategy == "attenuate-wo-UpA" && _generates_cross_neighbours_CpG?(last_codon, codon))
     end
 
     def normalised_scores(synonymous_codons, original_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
@@ -45,7 +46,7 @@ class StrategyScores
 
     def is_known_strategy
         ["raw", "humanize", "gc", "max-gc",
-            "attenuate", "attenuate-maxT", "attenuate-keep-GC3"
+            "attenuate", "attenuate-maxT", "attenuate-keep-GC3", "attenuate-wo-UpA"
         ].include?(@strategy)
     end
 
@@ -53,7 +54,7 @@ class StrategyScores
         case @strategy
         when "raw" then true
         when "humanize" then defined?(Human_codon_counts)
-        when "gc", "attenuate", "attenuate-maxT", "attenuate-keep-GC3"
+        when "gc", "attenuate", "attenuate-maxT", "attenuate-keep-GC3", "attenuate-wo-UpA"
             defined?(Third_site_frequencies) &&
             defined?(Third_site_counts_near_intron)
         when "max-gc" then defined?(Maximal_gc3)
@@ -72,6 +73,8 @@ class StrategyScores
             max_gc_count(synonymous_codon)
         when "attenuate", "attenuate-keep-GC3"
             attenuate_count(synonymous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
+        when "attenuate-wo-UpA"
+            attenuate_maxT_maxCpG(synonymous_codon, next_codon)
         when "attenuate-maxT"
             attenuate_maxT_count(synonymous_codon, original_codon, pos, is_near_intron, dist_to_intron)
         end
