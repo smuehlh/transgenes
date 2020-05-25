@@ -71,6 +71,8 @@ class ScoreSynonymousCodons
     end
 
     def select_codon_with_highest_score_at(syn_codons, scores, pos)
+        # round to 10th digital number to avoid float imprecision
+        scores = scores.collect{|score| score.round(10)}
         max_score = scores.max
         inds_highest_score = scores.each_index.select do |i|
             scores[i] == max_score
@@ -81,7 +83,6 @@ class ScoreSynonymousCodons
             tied_syn_codons = syn_codons.values_at(*inds_highest_score)
             is_near_intron = @synonymous_sites.is_in_proximity_to_intron(pos)
             dist_to_intron = @synonymous_sites.get_nt_distance_to_intron(pos)
-
             tied_scores = @strategy_scorer.pessimal_scores_for_codons_producing_tie(tied_syn_codons, pos, is_near_intron, dist_to_intron)
             tied_syn_codons[tied_scores.index(tied_scores.max)]
         else
