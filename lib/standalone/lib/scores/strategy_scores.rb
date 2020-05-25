@@ -222,7 +222,8 @@ class StrategyScores
 
     def _numC_not_part_of_CpG(synonymous_codon, next_codon)
         count = 0
-        (synonymous_codon + next_codon[0]).chars.each_cons(2) do |aa1, aa2|
+        # next_codon.chr returns first char of next_codon or ""
+        (synonymous_codon + next_codon.chr).chars.each_cons(2) do |aa1, aa2|
             count += 1 if aa1 == "C" && aa2 != "G"
         end
         count
