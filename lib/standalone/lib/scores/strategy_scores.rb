@@ -137,7 +137,7 @@ class StrategyScores
         next_codon = "" unless next_codon # HOTFIX if codon is very last
         score = 1
         multiplier = 1/3.to_f
-        score += _numT(synonymous_codon) * multiplier
+        score += _numT(synonymous_codon) * multiplier * 2
         score += 2 * multiplier if _generates_CpG?(synonymous_codon, next_codon)
         score -= _numC_not_part_of_CpG(synonymous_codon, next_codon) * multiplier
         score -= _numG_not_part_of_CpG(synonymous_codon, previous_codon) * multiplier
