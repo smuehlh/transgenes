@@ -120,7 +120,7 @@ class GeneEnhancer
         variant_number = Counting.ruby_to_human(variant_ind)
         gc3 = Statistics.percents(@gc3_contents[variant_ind])
         ese = Statistics.percents(@ese_resemblance[variant_ind])
-        $logger.info "Target GC3 content: #{target_description}"
+        $logger.info "Target #{target_key} content: #{target_description}"
         $logger.info "Subsequent target: #{ese_target_description} ESE resemblance"
         $logger.info "Closest match: Variant #{variant_number} (#{gc3}% GC3; #{ese}% ESE resemblance)"
 
@@ -160,6 +160,10 @@ class GeneEnhancer
         end
     end
 
+    def target_key
+        @select_best_by ? "GC3" : "CpG"
+    end
+
     def target_description
         case @select_best_by
         when "mean"
@@ -171,6 +175,9 @@ class GeneEnhancer
             "lowest"
         when "stabilise"
             "original GC3 (#{Statistics.percents(@original_gc3_content)}%)"
+        else
+            # must be CpG
+            "highest"
         end
     end
 
