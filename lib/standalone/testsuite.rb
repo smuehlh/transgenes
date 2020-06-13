@@ -34,17 +34,17 @@ def characterise(gene)
     )
 end
 
-def tweak_gene_by(gene, strategy, select_by="")
-    greedy = true
+def tweak_gene_by(gene, strategy, cpg_enrichment="")
+    greedy = strategy == "attenuate-maxT"
     options = OpenStruct.new(
-        greedy: greedy, strategy: strategy, select_by: select_by, stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
+        greedy: greedy, strategy: strategy, CpG_enrichment: cpg_enrichment, stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
     )
     enhancer = GeneEnhancer.new(options)
     enhancer.generate_synonymous_genes(gene)
     enhancer.select_best_gene
 end
 
-def check_key_characteristics_for_attenuate_strategy(before, after)
+def check_key_characteristics_for_attenuate_max_CpG_strategy(before, after)
     flags = []
     unless before.dnaseq != after.dnaseq
         flags.push "seq unchanged"
@@ -66,6 +66,17 @@ def check_key_characteristics_for_attenuate_strategy(before, after)
     unless after.score <= before.score || after.CpG > before.CpG || after.UpA > before.UpA
         # if score cound not be decreased, CpGs or UpAs should be increased
         flags.push "score/ at least CpG/UpA failed"
+    end
+    flags
+end
+
+def check_key_characteristics_for_attenuate_stabilise_GC3_strategy(before, after)
+    flags = check_key_characteristics_for_attenuate_max_CpG_strategy(before, after)
+    unless before.GC3 - after.GC3 >= 0
+        flags.push "decrease GC3 failed"
+    end
+    if (before.GC3 - after.GC3).round(2) > 0
+        flags.push "GC3 diff: #{(before.GC3 - after.GC3).round(2)}"
     end
     flags
 end
@@ -102,13 +113,23 @@ Logging.setup
     gene.add_cds([seq], [], "test")
     before = characterise(gene)
 
-    # strategy attenuate
-    enhanced_gene = tweak_gene_by(gene, "attenuate")
+    # strategy attenuate; select by max_CpG
+    enhanced_gene = tweak_gene_by(gene, "attenuate", 0)
     after = characterise(enhanced_gene)
 
-    flags = check_key_characteristics_for_attenuate_strategy(before, after)
+    flags = check_key_characteristics_for_attenuate_max_CpG_strategy(before, after)
     if flags.any?
-        puts "::attenuate:: ##{n} failed [#{flags.join(", ")}]: "
+        puts "::attenuate/ max CpG:: ##{n} failed [#{flags.join(", ")}]: "
+            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
+    end
+
+    # strategy attenuate; select by stabilise GC3
+    enhanced_gene = tweak_gene_by(gene, "attenuate", 1)
+    after = characterise(enhanced_gene)
+
+    flags = check_key_characteristics_for_attenuate_stabilise_GC3_strategy(before, after)
+    if flags.any?
+        puts "::attenuate/ stabilise GC3:: ##{n} failed [#{flags.join(", ")}]: "
             puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
     end
 
