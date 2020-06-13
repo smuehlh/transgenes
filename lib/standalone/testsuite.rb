@@ -87,27 +87,6 @@ def check_key_characteristics_for_attenuate_maxT_strategy(before, after)
     flags
 end
 
-def check_key_characteristics_for_attenuate_wo_UpA_strategy(before, after)
-    flags = []
-    unless before.dnaseq != after.dnaseq
-        flags.push "seq unchanged"
-    end
-    unless before.protseq == after.protseq
-        flags.push "seq failed"
-    end
-    unless after.CpG >= before.CpG
-        flags.push "CpG failed"
-    end
-    unless after.T >= before.T
-        flags.push "T failed"
-    end
-    unless after.GC <= before.GC || after.CpG > before.CpG
-        # if GC could not be decreased, CpGs should be increased
-        flags.push "GC/ at least CpG failed"
-    end
-    flags
-end
-
 def check_key_characteristics_for_attenuate_keep_GC3_strategy(before, after)
     flags = check_key_characteristics_for_attenuate_strategy(before, after)
     unless before.GC3 - after.GC3 >= 0
@@ -151,16 +130,6 @@ Logging.setup
     flags = check_key_characteristics_for_attenuate_maxT_strategy(before, after)
     if flags.any?
         puts "::attenuate-maxT:: ##{n} failed [#{flags.join(", ")}]: "
-            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
-    end
-
-    # strategy attenuate-wo-UpA
-    enhanced_gene = tweak_gene_by(gene, "attenuate-wo-UpA")
-    after = characterise(enhanced_gene)
-
-    flags = check_key_characteristics_for_attenuate_wo_UpA_strategy(before, after)
-    if flags.any?
-        puts "::attenuate-wo-UpA:: ##{n} failed [#{flags.join(", ")}]: "
             puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
     end
 

@@ -153,23 +153,21 @@ class CommandlineOptions
                 "Path to output file, in FASTA format.") do |path|
                 @output = path
             end
-            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc", "max-gc", "attenuate", "attenuate-maxT", "attenuate-keep-GC3", "attenuate-wo-UpA"],
+            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc", "max-gc", "attenuate", "attenuate-maxT", "attenuate-keep-GC3"],
                 "Strategy for altering the sequence.",
                 "Select one of: 'raw', 'humanize', 'gc', 'max-gc',",
-                "'attenuate', 'attenuate-keep-GC3', 'attenuate-maxT' or 'attenuate-wo-UpA'.",
+                "'attenuate', 'attenuate-keep-GC3' or 'attenuate-maxT'.",
                 "raw - Leave the sequence as is.", "May be specified only in combination with an ESE list (--ese).",
                 "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
                 "gc - Match position-dependent GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.",
                 "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.",
                 "attenuate - De-optimize sequence by increasing CpG and UpA.", "An ESE list must not be specified.", "Generates a single pessimal variant and thus ignores any selection strategy settings.",
-                "attenuate-wo-UpA - De-optimize sequence by increasing T and CpG.", "An ESE list must not be specified.", "Generates a single pessimal variant and thus ignores any selection strategy settings.",
                 "attenuate-keep-GC3 - De-optimize sequence by increasing CpG and UpA while keeping GC3 stable.", "An ESE list must not be specified.", "Must be combined with a strategy to select the best variant and this must be set to 'stabilise'.",
                 "attenuate-maxT - De-optimize sequence by increasing T (or A) and decreasing G and C.", "An ESE list must not be specified.", "Generates a single pessimal variant and thus ignores any selection strategy settings.") do |opt|
                 @strategy = opt
                 @greedy =
                     if @strategy == "attenuate" ||
-                        @strategy == "attenuate-maxT" ||
-                        @strategy == "attenuate-wo-UpA"
+                        @strategy == "attenuate-maxT"
                         true
                     else
                         false
@@ -351,11 +349,11 @@ class CommandlineOptions
     end
 
     def select_by_not_set_although_required_by_strategy
-        @strategy != "attenuate" && @strategy != "attenuate-maxT" && @strategy != "attenuate-wo-UpA" && ! @select_by
+        @strategy != "attenuate" && @strategy != "attenuate-maxT" && ! @select_by
     end
 
     def select_by_set_with_attenuate_or_attenuate_maxT_strategy
-        @select_by && (@strategy == "attenuate" || @strategy == "attenuate-maxT" || @strategy == "attenuate-wo-UpA")
+        @select_by && (@strategy == "attenuate" || @strategy == "attenuate-maxT")
     end
 
     def ese_strategy_specified_with_attenuate_strategy

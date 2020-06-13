@@ -27,7 +27,7 @@ Logging.setup
 
 # standard sequence optimiser options
 attenuate_options = OpenStruct.new(
-    greedy: true, strategy: "attenuate-wo-UpA", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
+    greedy: true, strategy: "attenuate", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
 )
 attenuate_maxT_options = OpenStruct.new(
     greedy: true, strategy: "attenuate-maxT", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
