@@ -8,6 +8,7 @@ class GeneEnhancer
         @select_best_by = options.select_by
         @stay_in_subbox_for_6folds = options.stay_in_subbox_for_6folds
         @score_eses_at_all_sites = options.score_eses_at_all_sites
+        @CpG_enrichment_score = options.CpG_enrichment
 
         @original_gc3_content = nil # needed to select best variant; calc while generating variants
         @original_cpg_content = nil # needed to select best variant; calc while generating variants
@@ -134,14 +135,18 @@ class GeneEnhancer
 
         best_by_target =
             if @strategy == "attenuate"
-                select_variants_meeting_cpg_target
+                if decided_to_select_by_gc3_content
+                    @select_best_by = "stabilise"
+                    selection = select_variants_meeting_gc3_target
+                    selection.sort_by{|i| @gc3_contents[i]}.reverse
+               else
+                    select_variants_meeting_cpg_target
+                end
             else
                 select_variants_meeting_gc3_target
             end
 
         if @strategy == "attenuate"
-            # TODO - only sort by GC3 if that was target
-            best_by_target = best_by_target.sort_by{|i| @gc3_contents[i]}.reverse
             best_by_target.max_by do |i|
                 [
                     @gene_variants[i].get_CpG_counts,
@@ -211,5 +216,10 @@ class GeneEnhancer
 
     def is_one_exon_genes
         @gene_variants.first.introns.size == 0
+    end
+
+    def decided_to_select_by_gc3_content
+        random_score = rand()
+        random_score <= @CpG_enrichment_score
     end
 end
