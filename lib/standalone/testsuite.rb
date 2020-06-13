@@ -35,7 +35,7 @@ def characterise(gene)
 end
 
 def tweak_gene_by(gene, strategy, select_by="")
-    greedy = strategy == "attenuate-keep-GC3" ? false: true
+    greedy = true
     options = OpenStruct.new(
         greedy: greedy, strategy: strategy, select_by: select_by, stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
     )
@@ -87,17 +87,6 @@ def check_key_characteristics_for_attenuate_maxT_strategy(before, after)
     flags
 end
 
-def check_key_characteristics_for_attenuate_keep_GC3_strategy(before, after)
-    flags = check_key_characteristics_for_attenuate_strategy(before, after)
-    unless before.GC3 - after.GC3 >= 0
-        flags.push "decrease GC3 failed"
-    end
-    if (before.GC3 - after.GC3).round(2) > 0
-        flags.push "GC3 diff: #{(before.GC3 - after.GC3).round(2)}"
-    end
-    flags
-end
-
 Logging.setup
 
 100.times do |n|
@@ -130,16 +119,6 @@ Logging.setup
     flags = check_key_characteristics_for_attenuate_maxT_strategy(before, after)
     if flags.any?
         puts "::attenuate-maxT:: ##{n} failed [#{flags.join(", ")}]: "
-            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
-    end
-
-    # strategy attenuate-keep-GC3
-    enhanced_gene = tweak_gene_by(gene, "attenuate-keep-GC3", "stabilise")
-    after = characterise(enhanced_gene)
-
-    flags = check_key_characteristics_for_attenuate_keep_GC3_strategy(before, after)
-    if flags.any?
-        puts "::attenuate-keep-GC3:: ##{n} failed [#{flags.join(", ")}]: "
             puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
     end
 end
