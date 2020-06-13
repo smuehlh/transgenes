@@ -161,7 +161,7 @@ class GeneEnhancer
     end
 
     def target_key
-        @select_best_by ? "GC3" : "CpG"
+        @select_best_by && ! @select_best_by.empty? ? "GC3" : "CpG"
     end
 
     def target_description
