@@ -15,7 +15,7 @@ class StrategyScores
     end
 
     def is_strategy_to_select_for_pessimal_codon
-        @strategy == "attenuate" || @strategy == "attenuate-maxT"
+        @strategy == "attenuate-maxT"
     end
 
     def has_first_site_that_must_be_left_alone(last_codon, codon)
@@ -33,7 +33,7 @@ class StrategyScores
     end
 
     def pessimal_scores_for_codons_producing_tie(synonymous_codons, pos, is_near_intron, dist_to_intron)
-        # exception for attenuate_count: multiple codons producing identical score
+        # exception for attenuate_maxT_count: multiple codons producing identical score
         # => re-score solely by usage in human genes
         counts = synonymous_codons.collect do |synonymous_codon|
             _pessimal_human_score(synonymous_codon, pos, is_near_intron, dist_to_intron)

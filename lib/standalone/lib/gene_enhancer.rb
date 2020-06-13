@@ -70,7 +70,7 @@ class GeneEnhancer
     def generate_variant(gene, variant_ind)
         variant_number = Counting.ruby_to_human(variant_ind)
 
-        # NOTE - 'attenuate'/ 'attenuate-maxT' strategy and @greedy option go hand in hand
+        # NOTE - 'attenuate-maxT' strategy and @greedy option go hand in hand
         # thus it is not neccessary to pass @greedy on to variant generation
         gene.tweak_exonic_sequence(@strategy, @ese_strategy, @score_eses_at_all_sites)
         gene.deep_copy_using_tweaked_sequence(variant_number)
