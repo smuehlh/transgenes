@@ -4,6 +4,7 @@ class CommandlineOptions
     attr_reader :input, :output, :strategy,
         # optional params
         :select_by,
+        :CpG_enrichment,
         :utr5prime, :utr3prime,
         :input_line, :utr5prime_line, :utr3prime_line,
         :remove_first_intron,
@@ -64,6 +65,7 @@ class CommandlineOptions
             @select_by
             @input_line
             @utr5prime @utr5prime_line @utr3prime @utr3prime_line
+            @CpG_enrichment
             @remove_first_intron
             @ese
             @ese_strategy
@@ -160,7 +162,7 @@ class CommandlineOptions
                 "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
                 "gc - Match position-dependent GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.",
                 "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.",
-                "attenuate - De-optimize sequence by increasing CpG and UpA.", "An ESE list must not be specified.", "Must be combined with a decision score to modulate between inherent selection strategies",
+                "attenuate - De-optimize sequence by increasing CpG and UpA.", "An ESE list must not be specified.", "Must be combined with a 'CpG-enrichment-score' to modulate between inherent selection strategies",
                 "(maximise CpG vs stabilise GC3).", "A selection strategy must not be provided separately.",
                 "attenuate-maxT - De-optimize sequence by increasing T (or A) and decreasing G and C.", "An ESE list must not be specified.", "Generates a single pessimal variant and thus ignores any selection strategy settings.") do |opt|
                 @strategy = opt
@@ -235,6 +237,12 @@ class CommandlineOptions
                 "If not specified, defaults to 'mean' ('high' if strategy is set to 'max-gc').") do |opt|
                 @select_by = opt
             end
+            opts.on("--CpG-enrichment-score SCORE", Float,
+                "CpG enrichment score with value in [0,1].", "Must be specified with 'attenuate' strategy.",
+                "Modulates variant selection from 'maximum CpG' (score=0) to",
+                "'closest to original GC3 content' (score=1).") do |opt|
+                @CpG_enrichment = opt
+            end
             opts.on("--motif-to-keep FILE",
                 "Path to restriction enzyme file, one sequence per line.",
                 "All occurrences of the specified sequences will be kept intact.") do |path|
@@ -294,7 +302,11 @@ class CommandlineOptions
         ErrorHandling.abort_with_error_message(
             "invalid_argument_combination", "CommandlineOptions",
             "Cannot score by ESE resemblance with '#{@strategy}'-strategy"
-        ) if ese_strategy_specified_with_attenuate_strategy
+        ) if ese_strategy_specified_with_attenuate_or_attenuate_maxT_strategy
+        ErrorHandling.abort_with_error_message(
+            "invalid_argument_combination", "CommandlineOptions",
+            "Cannot select best variant in 'attenuate' strategy without CpG enrichment score"
+        ) if attenuate_strategy_specified_without_cpg_enrichment
         ErrorHandling.warn_with_error_message(
             "unused_ese_strategy", "CommandlineOptions"
         ) if ese_strategy_specified_without_ese_list
@@ -311,6 +323,9 @@ class CommandlineOptions
         ErrorHandling.warn_with_error_message(
             "unused_utr_line", "CommandlineOptions", "3'UTR"
         ) if utr_line_specified_without_file(@utr3prime, @utr3prime_line)
+        ErrorHandling.warn_with_error_message(
+            "unused_cpg_enrichment", "CommandlineOptions"
+        ) if cpg_enrichment_set_without_attenuate_strategy
     end
 
     def utr_line_specified_without_file(file, line)
@@ -341,7 +356,15 @@ class CommandlineOptions
         @select_by && @strategy.start_with?("attenuate")
     end
 
-    def ese_strategy_specified_with_attenuate_strategy
+    def ese_strategy_specified_with_attenuate_or_attenuate_maxT_strategy
         @ese_strategy && @strategy.start_with?("attenuate")
+    end
+
+    def attenuate_strategy_specified_without_cpg_enrichment
+        @strategy == "attenuate" && ! @CpG_enrichment
+    end
+
+    def cpg_enrichment_set_without_attenuate_strategy
+        @CpG_enrichment && @strategy != "attenuate"
     end
 end
