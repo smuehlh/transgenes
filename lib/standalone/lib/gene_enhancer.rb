@@ -10,8 +10,10 @@ class GeneEnhancer
         @score_eses_at_all_sites = options.score_eses_at_all_sites
 
         @original_gc3_content = nil # needed to select best variant; calc while generating variants
+        @original_cpg_content = nil # needed to select best variant; calc while generating variants
         @gene_variants = []
         @gc3_contents = [] # needed to select best variant
+        @cpg_contents = [] # needed to select best variant (attenuate strategy)
         @ese_resemblance = [] # need to select best variant (in case of a tie)
         @gc3_counts_per_pos = [] # needed to calc cross-variant GC3 per pos
 
@@ -21,6 +23,7 @@ class GeneEnhancer
 
     def generate_synonymous_genes(gene)
         @original_gc3_content = gene.gc3_content
+        @original_cpg_content = gene.get_CpG_counts
         gene.prepare_for_tweaking(@stay_in_subbox_for_6folds)
 
         @n_variants.times do |ind|
@@ -85,6 +88,7 @@ class GeneEnhancer
     def collect_variant_data(variant)
         @gene_variants.push variant
         @gc3_contents.push variant.gc3_content
+        @cpg_contents.push variant.get_CpG_counts
         @ese_resemblance.push variant.sequence_proportion_covered_by_eses
         @gc3_counts_per_pos.push variant.gc3_count_per_synonymous_site
         @fasta_formatted_gene_variants.push convert_variant_to_fasta(variant)
@@ -125,37 +129,29 @@ class GeneEnhancer
     end
 
     def find_index_of_best_gene
-        # (mainly) select by GC3
+        # (mainly) select by GC3 or, with attenuate strategy, by CpG
         # in case of a tie: additional selection by ESE resemblance
-        gc3_selection_target =
-            case @select_best_by
-            when "mean"
-                distances_to_mean = @gc3_contents.collect{|gc3| (gc3 - mean_gc3).abs}
-                distances_to_mean.min
-            when "high"
-                @gc3_contents.max
-            when "low"
-                @gc3_contents.min
-            when "stabilise"
-                @original_gc3_content
-            end
-        best_by_gc3 =
-            @gc3_contents.each_index.select do |ind|
-                if @select_best_by == "mean"
-                    # use distance rather than gc3 for selection
-                    distances_to_mean[ind] == gc3_selection_target
-                elsif @select_best_by == "stabilise"
-                    @gc3_contents[ind] <= gc3_selection_target
-                else
-                    @gc3_contents[ind] == gc3_selection_target
-                end
 
+        best_by_target =
+            if @strategy == "attenuate"
+                select_variants_meeting_cpg_target
+            else
+                select_variants_meeting_gc3_target
             end
 
-        if @ese_strategy == "deplete"
-            best_by_gc3.min_by{|i| @ese_resemblance[i]}
+        if @strategy == "attenuate"
+            # TODO - only sort by GC3 if that was target
+            best_by_target = best_by_target.sort_by{|i| @gc3_contents[i]}.reverse
+            best_by_target.max_by do |i|
+                [
+                    @gene_variants[i].get_CpG_counts,
+                    @gene_variants[i].get_UpA_counts
+                ]
+            end
+        elsif @ese_strategy == "deplete"
+            best_by_target.min_by{|i| @ese_resemblance[i]}
         else
-            best_by_gc3.max_by{|i| @ese_resemblance[i]}
+            best_by_target.max_by{|i| @ese_resemblance[i]}
         end
     end
 
@@ -178,6 +174,38 @@ class GeneEnhancer
             "minimal"
         else
             "maximal"
+        end
+    end
+
+    def select_variants_meeting_cpg_target
+        # filter out variants with less CpG than wild type
+        @cpg_contents.each_index.select do |ind|
+            @cpg_contents[ind] >= @original_cpg_content
+        end
+    end
+
+    def select_variants_meeting_gc3_target
+        gc3_selection_target =
+            case @select_best_by
+            when "mean"
+                distances_to_mean = @gc3_contents.collect{|gc3| (gc3 - mean_gc3).abs}
+                distances_to_mean.min
+            when "high"
+                @gc3_contents.max
+            when "low"
+                @gc3_contents.min
+            when "stabilise"
+                @original_gc3_content
+            end
+        @gc3_contents.each_index.select do |ind|
+            if @select_best_by == "mean"
+                # use distance rather than gc3 for selection
+                distances_to_mean[ind] == gc3_selection_target
+            elsif @select_best_by == "stabilise"
+                @gc3_contents[ind] <= gc3_selection_target
+            else
+                @gc3_contents[ind] == gc3_selection_target
+            end
         end
     end
 
