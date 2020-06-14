@@ -27,13 +27,10 @@ Logging.setup
 
 # standard sequence optimiser options
 attenuate_options = OpenStruct.new(
-    greedy: true, strategy: "attenuate", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
+    greedy: false, strategy: "attenuate", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
 )
 attenuate_maxT_options = OpenStruct.new(
     greedy: true, strategy: "attenuate-maxT", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
-)
-attenuate_keep_GC3_options = OpenStruct.new(
-    greedy: false, strategy: "attenuate", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
 )
 
 # read in file
@@ -51,9 +48,10 @@ end
 # define gene locations
 # NOTE - overlapping genes are ORF1a/b and ORF7a/b
 # positions are according to manuscript
+# in addition, advoid mutating region forming pseudonot between 13476 and 13542
 pos = {
     "orf1a" => [265, 13464],
-    "orf1b" => [13470, 21551],
+    "orf1b" => [13542, 21551],
     "s" => [21562, 25383],
     "orf3a" => [25392, 26219],
     "e" => [26244, 26471],
@@ -64,6 +62,18 @@ pos = {
     "orf8" => [27893, 28258],
     "n" => [28273, 29532],
     "orf10" => [29557, 29673]
+}
+cpg_enrichment = {
+    "orf1a" => 0.3423539707737651,
+    "orf1b" => 0.4127108603224809,
+    "s" => 0.21812663685889996,
+    "orf3a" => 0.5293749739398741,
+    "m" => 0.6602951581807313,
+    "orf6" => 0.27663521509675365,
+    "orf7a" => 0.5331021328246923,
+    "orf7b" => 0.32599910193084863,
+    "orf8" => 0.684706603966469,
+    "n" => 0.5575853852263701,
 }
 gene_desc = {} # characteristics of tweaked sequence
 
@@ -82,14 +92,12 @@ pos.each do |key, data|
     gene.add_cds([orf.upcase], [], key.upcase)
     gene.log_statistics
 
-    options =
-        if ["orf1a", "orf1b", "orf6", "orf7b", "s"].include?(key)
-            attenuate_options
-        elsif ["e", "orf10"].include?(key)
-            attenuate_maxT_options
-        else
-            attenuate_keep_GC3_options
-        end
+    if ["e", "orf10"].include?(key)
+        options = attenuate_maxT_options
+    else
+        options = attenuate_options
+        options.CpG_enrichment = cpg_enrichment[key]
+    end
     enhancer = GeneEnhancer.new(options)
 
     enhancer.generate_synonymous_genes(gene)
@@ -98,7 +106,7 @@ pos.each do |key, data|
     rescue
         # NOTE - this requires fail-saveness in method select_best_gene to be commented
         # failed if all generated variants have higher GC3 than original seq
-        puts "Cannot tweak: #{key}; GC3 target cannot be met"
+        puts "Cannot tweak: #{key}; target cannot be met"
         next
     end
 
