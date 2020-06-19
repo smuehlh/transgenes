@@ -160,7 +160,7 @@ class CommandlineOptions
                 "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
                 "gc - Match position-dependent GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.",
                 "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.",
-                "attenuate - De-optimize sequence by increasing CpG+UpA or T+A.", "Must be combined with a 'CpG-enrichment-score'", "to modulate CpG and T content as a function of CpG enrichment.") do |opt|
+                "attenuate - De-optimize sequence by increasing CpG+TpA or T+A.", "Must be combined with a 'CpG-enrichment-score'", "to modulate CpG and T content as a function of CpG enrichment.") do |opt|
                 @strategy = opt
             end
 

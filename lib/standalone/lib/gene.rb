@@ -111,7 +111,7 @@ class Gene
         end
         str += "Total number of G and C: #{get_gc_counts}\n"
         str += "Number of CpG dinucleotides: #{get_CpG_counts}\n"
-        str += "Number of UpA dinucleotides: #{get_UpA_counts}\n"
+        str += "Number of TpA dinucleotides: #{get_TpA_counts}\n"
         $logger.info(str)
     end
 
@@ -175,7 +175,7 @@ class Gene
         sequence.scan("CG").length
     end
 
-    def get_UpA_counts
+    def get_TpA_counts
         sequence.scan("TA").length
     end
 
