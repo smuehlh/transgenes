@@ -9,7 +9,7 @@ class ScoreSynonymousCodons
 
     def select_synonymous_codon_at(cds_tweaked_up_to_pos, pos)
         syn_codons, scores = score_synonymous_codons_at(cds_tweaked_up_to_pos, pos)
-        select_codon_at(syn_codons, scores, pos)
+        select_codon_matching_random_score(syn_codons, scores)
     end
 
     def is_original_codon_selected_at(pos, best_codon)
@@ -60,34 +60,6 @@ class ScoreSynonymousCodons
             end
 
         [syn_codons, scores]
-    end
-
-    def select_codon_at(syn_codons, scores, pos)
-        if @strategy_scorer.is_strategy_to_select_for_pessimal_codon
-            select_codon_with_highest_score_at(syn_codons, scores, pos)
-        else
-            select_codon_matching_random_score(syn_codons, scores)
-        end
-    end
-
-    def select_codon_with_highest_score_at(syn_codons, scores, pos)
-        # round to 10th digital number to avoid float imprecision
-        scores = scores.collect{|score| score.round(10)}
-        max_score = scores.max
-        inds_highest_score = scores.each_index.select do |i|
-            scores[i] == max_score
-        end
-        if inds_highest_score.size > 1 &&
-                @strategy_scorer.is_strategy_to_select_for_pessimal_codon
-            # get additional scores to choose between those codons
-            tied_syn_codons = syn_codons.values_at(*inds_highest_score)
-            is_near_intron = @synonymous_sites.is_in_proximity_to_intron(pos)
-            dist_to_intron = @synonymous_sites.get_nt_distance_to_intron(pos)
-            tied_scores = @strategy_scorer.pessimal_scores_for_codons_producing_tie(tied_syn_codons, pos, is_near_intron, dist_to_intron)
-            tied_syn_codons[tied_scores.index(tied_scores.max)]
-        else
-            syn_codons[inds_highest_score[0]]
-        end
     end
 
     def select_codon_matching_random_score(syn_codons, scores)

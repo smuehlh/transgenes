@@ -2,7 +2,7 @@ class GeneEnhancer
     attr_reader :cross_variant_gc3_per_pos, :fasta_formatted_gene_variants
 
     def initialize(options)
-        @n_variants = options.greedy ? 1 : 1000
+        @n_variants = 1000
         @strategy = options.strategy
         @ese_strategy = options.ese_strategy
         @select_best_by = options.select_by
@@ -74,8 +74,6 @@ class GeneEnhancer
     def generate_variant(gene, variant_ind)
         variant_number = Counting.ruby_to_human(variant_ind)
 
-        # NOTE - 'attenuate-maxT' strategy and @greedy option go hand in hand
-        # thus it is not neccessary to pass @greedy on to variant generation
         gene.tweak_exonic_sequence(@strategy, @ese_strategy, @score_eses_at_all_sites)
         gene.deep_copy_using_tweaked_sequence(variant_number)
     end

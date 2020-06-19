@@ -16,7 +16,6 @@ class CommandlineOptions
         :restriction_enzymes_to_keep,
         :restriction_enzymes_to_avoid,
         :verbose,
-        :greedy,
         :wildtype
 
     def initialize(args)
@@ -75,7 +74,6 @@ class CommandlineOptions
             @restriction_enzymes_to_keep
             @restriction_enzymes_to_avoid
             @verbose
-            @greedy
             @wildtype
         )
     end
@@ -155,18 +153,16 @@ class CommandlineOptions
                 "Path to output file, in FASTA format.") do |path|
                 @output = path
             end
-            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc", "max-gc", "attenuate", "attenuate-maxT"],
+            opts.on("-s", "--strategy STRATEGY", ["raw", "humanize", "gc", "max-gc", "attenuate"],
                 "Strategy for altering the sequence.",
-                "Select one of: 'raw', 'humanize', 'gc', 'max-gc', 'attenuate' or 'attenuate-maxT'.",
+                "Select one of: 'raw', 'humanize', 'gc', 'max-gc' or 'attenuate'.",
                 "raw - Leave the sequence as is.", "May be specified only in combination with an ESE list (--ese).",
                 "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
                 "gc - Match position-dependent GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.",
                 "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.",
                 "attenuate - De-optimize sequence by increasing CpG and UpA.", "An ESE list must not be specified.", "Must be combined with a 'CpG-enrichment-score' to modulate between inherent selection strategies",
-                "(maximise CpG vs stabilise GC3).", "A selection strategy must not be provided separately.",
-                "attenuate-maxT - De-optimize sequence by increasing T (or A) and decreasing G and C.", "An ESE list must not be specified.", "Generates a single pessimal variant and thus ignores any selection strategy settings.") do |opt|
+                "(maximise CpG vs stabilise GC3).", "A selection strategy must not be provided separately.") do |opt|
                 @strategy = opt
-                @greedy = @strategy == "attenuate-maxT"
             end
 
             # optional arguments
@@ -349,14 +345,14 @@ class CommandlineOptions
     end
 
     def select_by_not_set_although_required_by_strategy
-        @strategy != "attenuate" && @strategy != "attenuate-maxT" && ! @select_by
+        @strategy != "attenuate" && ! @select_by
     end
 
-    def select_by_set_with_attenuate_or_attenuate_maxT_strategy
+    def select_by_set_with_attenuate_strategy
         @select_by && @strategy.start_with?("attenuate")
     end
 
-    def ese_strategy_specified_with_attenuate_or_attenuate_maxT_strategy
+    def ese_strategy_specified_with_attenuate_strategy
         @ese_strategy && @strategy.start_with?("attenuate")
     end
 
