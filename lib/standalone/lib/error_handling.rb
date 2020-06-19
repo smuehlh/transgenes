@@ -102,8 +102,6 @@ module ErrorHandling
         case code
         when "partial_gene"
             "Gene is partial."
-        when "unused_selection_strategy"
-            "A selection strategy was provided but chosen sequence alternation strategy does not require one. Will ignore select-by settings."
         when "unused_utr_line"
             "#{additional_warning_message}: A starting line but no file was provided. Will ignore starting line."
         when "unused_ese_strategy"

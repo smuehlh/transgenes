@@ -118,7 +118,7 @@ class CommandlineOptions
 
     def set_defaults_for_unset_optional_arguments_that_cant_remain_unset
         return if @wildtype # NOTE - no defaults needed if option wildtype is set
-        if select_by_not_set_although_required_by_strategy
+        unless @select_by
             @select_by = default_for_select_by_depending_on_strategy
             $logger.warn("Option select-by was not set. Defaults to '#{@select_by}'")
         end
@@ -160,8 +160,7 @@ class CommandlineOptions
                 "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
                 "gc - Match position-dependent GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.",
                 "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.",
-                "attenuate - De-optimize sequence by increasing CpG and UpA.", "An ESE list must not be specified.", "Must be combined with a 'CpG-enrichment-score' to modulate between inherent selection strategies",
-                "(maximise CpG vs stabilise GC3).", "A selection strategy must not be provided separately.") do |opt|
+                "attenuate - De-optimize sequence by increasing CpG+UpA or T+A.", "Must be combined with a 'CpG-enrichment-score'", "to modulate CpG and T content as a function of CpG enrichment.") do |opt|
                 @strategy = opt
             end
 
@@ -292,16 +291,9 @@ class CommandlineOptions
             "invalid_argument_combination", "CommandlineOptions",
             "Nothing to do for the combination: 'raw'-strategy/ no ESEs"
         ) if strategy_raw_specified_without_ese_list
-        ErrorHandling.warn_with_error_message(
-            "unused_selection_strategy", "CommandlineOptions"
-        ) if select_by_set_with_attenuate_or_attenuate_maxT_strategy
         ErrorHandling.abort_with_error_message(
             "invalid_argument_combination", "CommandlineOptions",
-            "Cannot score by ESE resemblance with '#{@strategy}'-strategy"
-        ) if ese_strategy_specified_with_attenuate_or_attenuate_maxT_strategy
-        ErrorHandling.abort_with_error_message(
-            "invalid_argument_combination", "CommandlineOptions",
-            "Cannot select best variant in 'attenuate' strategy without CpG enrichment score"
+            "Cannot alter sequence by 'attenuate' strategy without CpG enrichment score"
         ) if attenuate_strategy_specified_without_cpg_enrichment
         ErrorHandling.warn_with_error_message(
             "unused_ese_strategy", "CommandlineOptions"
@@ -342,18 +334,6 @@ class CommandlineOptions
 
     def strategy_max_gc_specified_without_select_by_set_to_high
         @strategy == "max-gc" && @select_by != "high"
-    end
-
-    def select_by_not_set_although_required_by_strategy
-        @strategy != "attenuate" && ! @select_by
-    end
-
-    def select_by_set_with_attenuate_strategy
-        @select_by && @strategy.start_with?("attenuate")
-    end
-
-    def ese_strategy_specified_with_attenuate_strategy
-        @ese_strategy && @strategy.start_with?("attenuate")
     end
 
     def attenuate_strategy_specified_without_cpg_enrichment
