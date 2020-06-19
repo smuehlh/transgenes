@@ -35,7 +35,7 @@ class ScoreSynonymousCodons
             if @synonymous_sites.is_stopcodon_at(pos)
                 score_stopcodons(pos)
             else
-                score_by_strategy(pos, cds_tweaked_up_to_pos)
+                score_by_strategy(pos)
             end
         scores =
             if @ese_scorer.has_ese_motifs_to_score_by &&
@@ -73,16 +73,15 @@ class ScoreSynonymousCodons
         end
     end
 
-    def score_by_strategy(pos, cds_tweaked_up_to_pos)
+    def score_by_strategy(pos)
         orig_codon = @synonymous_sites.original_codon_at(pos)
         syn_codons = @synonymous_sites.synonymous_codons_at(pos)
         is_near_intron = @synonymous_sites.is_in_proximity_to_intron(pos)
         distance_to_intron = @synonymous_sites.get_nt_distance_to_intron(pos)
-        previous_codon = SynonymousSites.preceeding_codon_at(cds_tweaked_up_to_pos, pos)
         next_codon = @synonymous_sites.neighbouring_codon_at(pos)
         next_codon_synonyms = @synonymous_sites.neighbouring_synonymous_codons_at(pos)
 
-        @strategy_scorer.normalised_scores(syn_codons, orig_codon, previous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, distance_to_intron)
+        @strategy_scorer.normalised_scores(syn_codons, orig_codon, next_codon, next_codon_synonyms, pos, is_near_intron, distance_to_intron)
     end
 
     def score_by_ese(cds_tweaked_up_to_pos, pos)

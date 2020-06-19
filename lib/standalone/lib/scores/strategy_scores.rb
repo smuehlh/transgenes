@@ -21,9 +21,9 @@ class StrategyScores
             (_generates_cross_neighbours_CpG?(last_codon, codon) || _generates_cross_neighbours_TpA?(last_codon, codon)))
     end
 
-    def normalised_scores(synonymous_codons, original_codon, previous_codon,next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
+    def normalised_scores(synonymous_codons, original_codon,next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         counts = synonymous_codons.collect do |synonymous_codon|
-            codon_count(synonymous_codon, original_codon, previous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
+            codon_count(synonymous_codon, original_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         end
         Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(counts)
     end
@@ -46,7 +46,7 @@ class StrategyScores
         end
     end
 
-    def codon_count(synonymous_codon, original_codon, previous_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
+    def codon_count(synonymous_codon, original_codon, next_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         case @strategy
         when "raw"
             raw_count(synonymous_codon, original_codon)
