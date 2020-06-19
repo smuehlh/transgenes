@@ -7,6 +7,17 @@ class SynonymousSites
         (first_synonymous_site..last_synonymous_site).step(3).to_a
     end
 
+    def self.preceeding_codon_at(cds_tweaked_up_to_pos, pos)
+        # NOTE - codon at pos-3 might have been changed,
+        # thus, cannot use original_codon_at(pos-3)
+        if pos-5 < 0
+            # out of bounds case analogous to get_neighbouring_codon_at()
+            nil
+        else
+            cds_tweaked_up_to_pos[pos-5..pos-3]
+        end
+    end
+
     def initialize(exons, introns, stay_in_subbox_for_6folds)
         @syn_sites = get_third_codon_positions(exons)
         @orig_codons_by_site = collect_original_codons(exons)
