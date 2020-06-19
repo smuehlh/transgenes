@@ -222,14 +222,13 @@ class CommandlineOptions
                 "6-fold degenerates: Stay in the respective (2- or 4-fold) codon box", "when selecting a synonymous codon.", "If not specified, all 6 codons are considered.") do |opt|
                 @stay_in_subbox_for_6folds = true
             end
-            opts.on("-b", "--select-by STRATEGY", ["mean", "high", "low", "stabilise"],
+            opts.on("-b", "--select-by STRATEGY", ["mean", "high", "low"],
                 "Strategy for selecting which of the generated variants is best.",
                 "Take ESE coverage into account when multiple variants have same GC3.",
-                "Select one of: 'mean', 'high', 'low' or 'stabilise'.",
+                "Select one of: 'mean', 'high' or 'low'.",
                 "mean - Closest GC3 to the average human GC3 content.",
                 "high - Highest GC3 of all variants.",
                 "low - Lowest GC3 of all variants.",
-                "stabilise - Closest to original GC3 content (same or lower).",
                 "If not specified, defaults to 'mean' ('high' if strategy is set to 'max-gc').") do |opt|
                 @select_by = opt
             end
