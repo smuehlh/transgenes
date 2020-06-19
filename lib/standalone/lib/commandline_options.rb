@@ -234,9 +234,10 @@ class CommandlineOptions
                 @select_by = opt
             end
             opts.on("--CpG-enrichment-score SCORE", Float,
-                "CpG enrichment score with value in [0,1].", "Must be specified with 'attenuate' strategy.",
-                "Modulates variant selection from 'maximum CpG' (score=0) to",
-                "'closest to original GC3 content' (score=1).") do |opt|
+                "CpG enrichment score with value best in interval [0,1].",
+                "Must be specified with 'attenuate' strategy only.",
+                "Modulates attenuation strategy from 'increasing CpG' (low score)",
+                "to 'increasing T' (high score).") do |opt|
                 @CpG_enrichment = opt
             end
             opts.on("--motif-to-keep FILE",
