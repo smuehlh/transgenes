@@ -8,7 +8,7 @@ class GeneEnhancer
         @select_best_by = options.select_by
         @stay_in_subbox_for_6folds = options.stay_in_subbox_for_6folds
         @score_eses_at_all_sites = options.score_eses_at_all_sites
-        @CpG_enrichment_score = options.CpG_enrichment
+        @cpg_enrichment_score = options.CpG_enrichment
 
         @gene_variants = []
         @gc3_contents = [] # needed to select best variant
@@ -65,7 +65,7 @@ class GeneEnhancer
     def generate_variant(gene, variant_ind)
         variant_number = Counting.ruby_to_human(variant_ind)
 
-        gene.tweak_exonic_sequence(@strategy, @ese_strategy, @score_eses_at_all_sites)
+        gene.tweak_exonic_sequence(@strategy, @ese_strategy, @score_eses_at_all_sites, @cpg_enrichment_score)
         gene.deep_copy_using_tweaked_sequence(variant_number)
     end
 

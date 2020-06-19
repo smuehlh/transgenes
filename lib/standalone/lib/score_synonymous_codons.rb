@@ -1,7 +1,7 @@
 class ScoreSynonymousCodons
 
-    def initialize(strategy, ese_strategy, score_eses_at_all_sites, synonymous_sites, ese_motifs)
-        @strategy_scorer = StrategyScores.new(strategy)
+    def initialize(strategy, ese_strategy, score_eses_at_all_sites, cpg_enrichment_score, synonymous_sites, ese_motifs)
+        @strategy_scorer = StrategyScores.new(strategy, cpg_enrichment_score)
         @synonymous_sites = synonymous_sites
         @ese_scorer = EseScores.new(ese_motifs, ese_strategy)
         @is_scoring_eses_at_each_site = score_eses_at_all_sites
