@@ -20,11 +20,15 @@ class StrategyScores
         @strategy == "attenuate"
     end
 
-    def has_first_site_that_must_be_left_alone(last_codon, codon)
-        # test codon is the second codon of a cross-codon CpG/ TpA pair
-        last_codon = "" unless last_codon # HOTFIX if codon is starting ATG
-        (@strategy == "attenuate" &&
-            (generates_cross_neighbours_CpG?(last_codon, codon) || generates_cross_neighbours_TpA?(last_codon, codon)))
+    def is_strategy_dictating_first_site_to_be_A(previous_codon, synonymous_codons)
+        # check if previous_codon has been selected to add a cross-codon TpA
+        # with one of the synonymous codons
+        # this is only relevant for 6-folds and only for TpA (as no 6-fold )
+        # (no 6-fold codon starts with G)
+        previous_codon = "" unless previous_codon # HOTFIX if codon is starting ATG
+        @strategy == "attenuate" &&
+            synonymous_codons.size == 6 &&
+            previous_codon.end_with?("T") && at_least_one_synonymous_codon_starts_with_A(synonymous_codons)
     end
 
     def normalised_scores(synonymous_codons, original_codon, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
@@ -124,7 +128,7 @@ class StrategyScores
     def yields_most_TpA(codon, codon_synonyms, next_codon_synonyms)
         # set to A if some codons of box start with A, else set to ""
         first_site_next_codon =
-            if next_codon_synonyms.any?{|c| c.start_with?("A")}
+            if at_least_one_synonymous_codon_starts_with_A(next_codon_synonyms)
                 "A"
             else
                 ""
@@ -156,11 +160,7 @@ class StrategyScores
         end
     end
 
-    def generates_cross_neighbours_CpG?(synonymous_codon, next_codon)
-        synonymous_codon.end_with?("C") && next_codon.start_with?("G")
-    end
-
-    def generates_cross_neighbours_TpA?(synonymous_codon, next_codon)
-        synonymous_codon.end_with?("T") && next_codon.start_with?("A")
+    def at_least_one_synonymous_codon_starts_with_A(synonymous_codons)
+        synonymous_codons.any?{|c| c.start_with?("A")}
     end
 end
