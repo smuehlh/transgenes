@@ -68,16 +68,6 @@ class SynonymousSites
         @distances_to_introns_by_site[pos]
     end
 
-    def reduce_synonymous_codons_to_same_subbox_at(pos)
-        # NOTE - use this method only in exceptional cases only as it will overwrite stay_in_subbox_for_6folds settings for a single position
-        codon = original_codon_at(pos)
-        if GeneticCode.is_6fold_degenerate(codon)
-            @syn_codons_by_site[pos] =
-                GeneticCode.get_synonymous_codons_in_codon_box(codon)
-        # else - nothing to do; this affects 6folds only
-        end
-    end
-
     def sequence_windows_covering_syn_codons_at(cds, pos)
         # NOTE - use up-to-date cds as it might contain tweaks just before pos
         start, stop = @windows_covering_site[pos]

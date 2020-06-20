@@ -25,12 +25,14 @@ class ScoreSynonymousCodons
     private
 
     def score_synonymous_codons_at(cds_tweaked_up_to_pos, pos)
+        syn_codons = @synonymous_sites.synonymous_codons_at(pos)
         if @strategy_scorer.has_first_site_that_must_be_left_alone(
                 SynonymousSites.preceeding_codon_at(cds_tweaked_up_to_pos, pos),
                 @synonymous_sites.original_codon_at(pos))
-            @synonymous_sites.reduce_synonymous_codons_to_same_subbox_at(pos)
+            # reduce syn_codons to those of same sub-box
+            syn_codons = GeneticCode.get_synonymous_codons_in_codon_box(
+                @synonymous_sites.original_codon_at(pos))
         end
-        syn_codons = @synonymous_sites.synonymous_codons_at(pos)
         if @strategy_scorer.is_strategy_calling_for_shuffled_synonymous_codons_list
             syn_codons = syn_codons.shuffle
         end

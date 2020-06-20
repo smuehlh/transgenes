@@ -65,10 +65,6 @@ module GeneticCode
         table.fetch(codon, "") == "*"
     end
 
-    def is_6fold_degenerate(codon)
-        get_synonymous_codons(codon).size == 6
-    end
-
     def translate(cdna)
         codons = split_cdna_into_codons(cdna)
         delete_trailing_stopcodon_if_present(codons)
