@@ -3,9 +3,7 @@ require 'byebug'
 require 'ostruct'
 
 =begin
-    Tweak coding regions individually and paste tweaked sequence into original location.
-
-    Calculate key characteristics of tweaked sequence.
+    Tweak coding regions individually and output generated variants.
 
     Gene locations are extracted from location tags in "coding sequences" file.
     NOTE:
@@ -16,8 +14,7 @@ require 'ostruct'
 =end
 
 input = "/Users/sm2547/Documents/sars-cov2/data/GISAID_EPI_ISL_402124_complete_genome.fasta"
-output = "/Users/sm2547/Documents/sars-cov2/data/tweaked_GISAID_EPI_ISL_402124_complete_genome.fasta"
-csv = "/Users/sm2547/Documents/sars-cov2/data/tweaked_GISAID_EPI_ISL_402124_complete_genome_stats.csv"
+output = "/Users/sm2547/Documents/sars-cov2/data/tweaked_GISAID_EPI_ISL_402124_genes.csv"
 
 # require .rb files in library (including all subfolders)
 Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
@@ -25,13 +22,31 @@ Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
 end
 Logging.setup
 
-# standard sequence optimiser options
-attenuate_options = OpenStruct.new(
-    greedy: false, strategy: "attenuate", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
-)
-attenuate_maxT_options = OpenStruct.new(
-    greedy: true, strategy: "attenuate-maxT", select_by: "", stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
-)
+def set_attenuate_options(cpg_enrichment)
+    # standard sequence optimiser options
+    OpenStruct.new(
+        strategy: "attenuate", stay_in_subbox_for_6folds: false,
+        CpG_enrichment: cpg_enrichment
+    )
+end
+
+def select_variants_by_GC(gene, enhancer, cpg_enrichment)
+    # extract variant seqs from fasta
+    variants = []
+    enhancer.fasta_formatted_gene_variants.each do |fasta|
+        lines = fasta.split("\n")
+        variants.push lines[1..-1].join("")
+    end
+
+    # calculate target G+C content
+    original_GC = gene.sequence.count("GC") / gene.sequence.size.to_f
+    max_GC = original_GC + original_GC * (1 - cpg_enrichment)
+
+    # select variants below maximum tolerable GC
+    variants.select do
+        |variant| variant.count("GC") / gene.sequence.size.to_f <= max_GC
+    end
+end
 
 # read in file
 header, seq = "", ""
@@ -74,10 +89,11 @@ cpg_enrichment = {
     "orf7b" => 0.32599910193084863,
     "orf8" => 0.684706603966469,
     "n" => 0.5575853852263701,
+    "e" => 1.3328298720369205,
+    "orf10" => 1.4788047705470573,
 }
-gene_desc = {} # characteristics of tweaked sequence
 
-tweaked_seq = seq
+fh = File.open(output, "w")
 pos.each do |key, data|
     start, stop = data
     mod = seq[start..stop].size % 3
@@ -86,61 +102,22 @@ pos.each do |key, data|
     end
     puts "#{key}: [#{Counting.ruby_to_human(start)} - #{Counting.ruby_to_human(stop)}]"
     orf = seq[start..stop]
+next unless key == 's'
 
     $logger.info("Tweaking gene #{key.upcase} located at [#{start}..#{stop}]")
     gene = Gene.new
     gene.add_cds([orf.upcase], [], key.upcase)
     gene.log_statistics
 
-    if ["e", "orf10"].include?(key)
-        options = attenuate_maxT_options
-    else
-        options = attenuate_options
-        options.CpG_enrichment = cpg_enrichment[key]
-    end
+    options = set_attenuate_options(cpg_enrichment[key])
     enhancer = GeneEnhancer.new(options)
 
     enhancer.generate_synonymous_genes(gene)
-    begin
-        enhanced_gene = enhancer.select_best_gene
-    rescue
-        # NOTE - this requires fail-saveness in method select_best_gene to be commented
-        # failed if all generated variants have higher GC3 than original seq
-        puts "Cannot tweak: #{key}; target cannot be met"
-        next
-    end
+    variants = select_variants_by_GC(gene, enhancer, options.CpG_enrichment)
 
-    tweaked_seq[start..stop] = enhanced_gene.sequence
+    puts variants.size
 
-    # collect sequence characteristics
-    gene_desc[key] = {
-        dnaseq: enhanced_gene.sequence,
-        GC3: enhanced_gene.gc3_content,
-        changed_sites: enhanced_gene.log_changed_sites[0],
-        A: enhanced_gene.sequence.count("A"),
-        T: enhanced_gene.sequence.count("T"),
-        C: enhanced_gene.sequence.count("C"),
-        G: enhanced_gene.sequence.count("G"),
-        GC: enhanced_gene.sequence.count("GC"),
-        AT: enhanced_gene.sequence.count("AT"),
-        CpG: enhanced_gene.sequence.scan("CG").length,
-        UpA: enhanced_gene.sequence.scan("TA").length,
-    }
-
+    fh.puts gene
+    fh.puts variants.join("")
 end
-
-FileHelper.write_to_file(output, "#{header}\n#{tweaked_seq}")
-
-data = "Gene,Start-Stop,A,T,C,G,GC,AT,CpG,UpA,GC3,changed sites,sites,seq length,seq\n"
-gene_desc.each do |key, desc|
-    data += key.upcase + ","
-    data += "#{Counting.ruby_to_human(pos[key][0])} - #{Counting.ruby_to_human(pos[key][1])},"
-    data += [desc[:A], desc[:T], desc[:C], desc[:G]].join(",") + ","
-    data += [desc[:GC], desc[:AT]].join(",") + ","
-    data += [desc[:CpG], desc[:UpA], desc[:GC3]].join(",") + ","
-    data += desc[:changed_sites].to_s + ","
-    data += (desc[:dnaseq].size/3).to_s + ","
-    data += desc[:dnaseq].size.to_s + ","
-    data += desc[:dnaseq] + "\n"
-end
-FileHelper.write_to_file(csv, data)
+fh.close
