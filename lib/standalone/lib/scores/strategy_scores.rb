@@ -115,8 +115,14 @@ class StrategyScores
     end
 
     def yields_most_CpG(codon, codon_synonyms, next_codon_synonyms)
-        # in all codon boxes, either all codons start with G or none does
-        first_site_next_codon = next_codon_synonyms[0][0]
+        first_site_next_codon =
+            if next_codon_synonyms
+                # in all codon boxes, either all codons start with G or none does
+                next_codon_synonyms[0][0]
+            else
+                # HOTFIX if codon is last codon
+                ""
+            end
         max_CpG = codon_synonyms.collect do |c|
             (c + first_site_next_codon).scan("CG").size
         end.max
@@ -161,6 +167,6 @@ class StrategyScores
     end
 
     def at_least_one_synonymous_codon_starts_with_A(synonymous_codons)
-        synonymous_codons.any?{|c| c.start_with?("A")}
+        synonymous_codons && synonymous_codons.any?{|c| c.start_with?("A")}
     end
 end
