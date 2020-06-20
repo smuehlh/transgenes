@@ -15,6 +15,11 @@ class StrategyScores
         @strategy == "raw"
     end
 
+    def is_strategy_calling_for_shuffled_synonymous_codons_list
+        # explanation: otherwise, codons with same score are selected deterministically
+        @strategy == "attenuate"
+    end
+
     def has_first_site_that_must_be_left_alone(last_codon, codon)
         # test codon is the second codon of a cross-codon CpG/ TpA pair
         last_codon = "" unless last_codon # HOTFIX if codon is starting ATG

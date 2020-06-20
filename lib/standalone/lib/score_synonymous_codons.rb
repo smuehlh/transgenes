@@ -31,11 +31,14 @@ class ScoreSynonymousCodons
             @synonymous_sites.reduce_synonymous_codons_to_same_subbox_at(pos)
         end
         syn_codons = @synonymous_sites.synonymous_codons_at(pos)
+        if @strategy_scorer.is_strategy_calling_for_shuffled_synonymous_codons_list
+            syn_codons = syn_codons.shuffle
+        end
         strategy_scores =
             if @synonymous_sites.is_stopcodon_at(pos)
                 score_stopcodons(pos)
             else
-                score_by_strategy(pos)
+                score_by_strategy(pos, syn_codons)
             end
         scores =
             if @ese_scorer.has_ese_motifs_to_score_by &&
@@ -73,9 +76,8 @@ class ScoreSynonymousCodons
         end
     end
 
-    def score_by_strategy(pos)
+    def score_by_strategy(pos, syn_codons)
         orig_codon = @synonymous_sites.original_codon_at(pos)
-        syn_codons = @synonymous_sites.synonymous_codons_at(pos)
         is_near_intron = @synonymous_sites.is_in_proximity_to_intron(pos)
         distance_to_intron = @synonymous_sites.get_nt_distance_to_intron(pos)
         next_codon_synonyms = @synonymous_sites.neighbouring_synonymous_codons_at(pos)
