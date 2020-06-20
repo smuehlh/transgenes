@@ -26,6 +26,7 @@ class StrategyScores
         counts = synonymous_codons.collect do |synonymous_codon|
             codon_count(synonymous_codon, original_codon, synonymous_codons, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         end
+        counts = Statistics.shift_into_positive_range_if_negative(counts)
         Statistics.normalise_scores_or_set_equal_if_all_scores_are_zero(counts)
     end
 
