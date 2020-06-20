@@ -106,7 +106,7 @@ class StrategyScores
             score = @cpg_enrichment_score
         else
             # inverse usage in human genes
-            pessimal_human_score(codon, pos, is_near_intron, dist_to_intron)
+            inverted_human_score(codon, pos, is_near_intron, dist_to_intron)
         end
     end
 
@@ -146,7 +146,7 @@ class StrategyScores
         codon.include?("A") && codon.count("A") == max_A
     end
 
-    def pessimal_human_score(synonymous_codon, pos, is_near_intron, dist_to_intron)
+    def inverted_human_score(synonymous_codon, pos, is_near_intron, dist_to_intron)
         score = 1 - gc_count(synonymous_codon, pos, is_near_intron, dist_to_intron)
         if score.infinite?
             # fix non-existing scores
