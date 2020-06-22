@@ -102,7 +102,6 @@ pos.each do |key, data|
     end
     puts "#{key}: [#{Counting.ruby_to_human(start)} - #{Counting.ruby_to_human(stop)}]"
     orf = seq[start..stop]
-next unless key == 's'
 
     $logger.info("Tweaking gene #{key.upcase} located at [#{start}..#{stop}]")
     gene = Gene.new
