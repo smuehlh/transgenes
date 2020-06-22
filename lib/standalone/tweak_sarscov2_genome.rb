@@ -37,10 +37,16 @@ def select_variants_by_GC(gene, enhancer, cpg_enrichment)
         lines = fasta.split("\n")
         variants.push lines[1..-1].join("")
     end
+    variants = variants.uniq
 
     # calculate target G+C content
     original_GC = gene.sequence.count("GC") / gene.sequence.size.to_f
-    max_GC = original_GC + original_GC * (1 - cpg_enrichment)
+    max_GC =
+        if cpg_enrichment < 1
+            original_GC + original_GC * (1 - cpg_enrichment)
+        else
+            original_GC
+        end
 
     # select variants below maximum tolerable GC
     variants.select do
@@ -116,7 +122,7 @@ pos.each do |key, data|
 
     puts variants.size
 
-    fh.puts gene
-    fh.puts variants.join("")
+    fh.puts key
+    fh.puts variants.join("\n")
 end
 fh.close
