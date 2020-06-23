@@ -14,37 +14,51 @@ Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
     require File.absolute_path(file)
 end
 
-def characterise(gene)
-    codons = GeneticCode.split_cdna_into_codons(gene.sequence)
-    score = Statistics.sum(codons.collect.with_index do |codon, pos|
-        unless GeneticCode.is_stopcodon(codon)
-            Third_site_frequencies[codon].(pos)
-        end
-    end.compact)
-
+def characterise(sequence)
     OpenStruct.new(
-        dnaseq: gene.sequence,
-        protseq: GeneticCode.translate(gene.sequence),
-        GC: gene.sequence.count("GC"),
-        GC3: gene.gc3_content,
-        T: gene.sequence.count("T"),
-        CpG: gene.sequence.scan("CG").length,
-        UpA: gene.sequence.scan("TA").length,
-        score: score
+        dnaseq: sequence,
+        protseq: GeneticCode.translate(sequence),
+        GC: sequence.count("GC"),
+        T: sequence.count("T"),
+        CpG: sequence.scan("CG").length,
+        UpA: sequence.scan("TA").length,
     )
 end
 
-def tweak_gene_by(gene, strategy, cpg_enrichment="")
-    greedy = strategy == "attenuate-maxT"
+def characterise_variants(seqs)
+    OpenStruct.new(
+        dnaseq: seqs.first,
+        protseq: GeneticCode.translate(seqs.first),
+        GC: Statistics.mean(seqs.collect{|s| s.count("GC")}),
+        T: Statistics.mean(seqs.collect{|s| s.count("T")}),
+        CpG: Statistics.mean(seqs.collect{|s| s.scan("CG").size}),
+        UpA: Statistics.mean(seqs.collect{|s| s.scan("TA").size}),
+    )
+end
+
+def tweak_gene_by(gene, strategy, cpg_enrichment)
     options = OpenStruct.new(
-        greedy: greedy, strategy: strategy, CpG_enrichment: cpg_enrichment, stay_in_subbox_for_6folds: false, score_eses_at_all_sites: false
+        strategy: strategy, CpG_enrichment: cpg_enrichment, stay_in_subbox_for_6folds: false
     )
     enhancer = GeneEnhancer.new(options)
     enhancer.generate_synonymous_genes(gene)
-    enhancer.select_best_gene
+
+    variants = []
+    enhancer.fasta_formatted_gene_variants.each do |fasta|
+        lines = fasta.split("\n")
+        variants.push lines[1..-1].join("")
+    end
+    # calculate target G+C content
+    original_GC = gene.sequence.count("GC") / gene.sequence.size.to_f
+    max_GC = original_GC + original_GC * (1 - cpg_enrichment)
+
+    # select variants below maximum tolerable GC
+    variants.select do
+        |variant| variant.count("GC") / gene.sequence.size.to_f <= max_GC
+    end
 end
 
-def check_key_characteristics_for_attenuate_max_CpG_strategy(before, after)
+def check_key_characteristics_for_attenuate_strategy_low_CpGe(before, after)
     flags = []
     unless before.dnaseq != after.dnaseq
         flags.push "seq unchanged"
@@ -55,33 +69,16 @@ def check_key_characteristics_for_attenuate_max_CpG_strategy(before, after)
     unless after.CpG >= before.CpG
         flags.push "CpG failed"
     end
-    unless after.UpA >= before.UpA || after.CpG > before.CpG
-        # if UpA could not be increased, CpG should
-        flags.push "UpA failed"
+    unless after.T <= before.T
+        flags.push "T failed"
     end
-    unless after.GC <= before.GC || after.CpG > before.CpG
-        # if GC could not be decreased, CpGs should be increased
-        flags.push "GC/ at least CpG failed"
-    end
-    unless after.score <= before.score || after.CpG > before.CpG || after.UpA > before.UpA
-        # if score cound not be decreased, CpGs or UpAs should be increased
-        flags.push "score/ at least CpG/UpA failed"
+    unless after.GC <= before.GC * 2
+        flags.push "selection by GC failed"
     end
     flags
 end
 
-def check_key_characteristics_for_attenuate_stabilise_GC3_strategy(before, after)
-    flags = check_key_characteristics_for_attenuate_max_CpG_strategy(before, after)
-    unless before.GC3 - after.GC3 >= 0
-        flags.push "decrease GC3 failed"
-    end
-    if (before.GC3 - after.GC3).round(2) > 0
-        flags.push "GC3 diff: #{(before.GC3 - after.GC3).round(2)}"
-    end
-    flags
-end
-
-def check_key_characteristics_for_attenuate_maxT_strategy(before, after)
+def check_key_characteristics_for_attenuate_strategy_mean_CpGe(before, after)
     flags = []
     unless before.dnaseq != after.dnaseq
         flags.push "seq unchanged"
@@ -89,11 +86,34 @@ def check_key_characteristics_for_attenuate_maxT_strategy(before, after)
     unless before.protseq == after.protseq
         flags.push "seq failed"
     end
+    # unless after.CpG = before.CpG
+    #     flags.push "CpG failed"
+    # end
+    # unless after.T <= before.T
+    #     flags.push "T failed"
+    # end
+    unless after.GC <= before.GC + before.GC * 0.5
+        flags.push "selection by GC failed"
+    end
+    flags
+end
+
+def check_key_characteristics_for_attenuate_strategy_high_CpGe(before, after)
+    flags = []
+    unless before.dnaseq != after.dnaseq
+        flags.push "seq unchanged"
+    end
+    unless before.protseq == after.protseq
+        flags.push "seq failed"
+    end
+    unless after.CpG <= before.CpG
+        flags.push "CpG failed"
+    end
     unless after.T >= before.T
         flags.push "T failed"
     end
     unless after.GC <= before.GC
-        flags.push "GC failed"
+        flags.push "selection by GC failed"
     end
     flags
 end
@@ -111,35 +131,43 @@ Logging.setup
 
     gene = Gene.new
     gene.add_cds([seq], [], "test")
-    before = characterise(gene)
+    before = characterise(gene.sequence)
 
-    # strategy attenuate; select by max_CpG
-    enhanced_gene = tweak_gene_by(gene, "attenuate", 0)
-    after = characterise(enhanced_gene)
+    # strategy attenuate
+    enhanced_gene_seqs = tweak_gene_by(gene, "attenuate", 0)
+    after = characterise_variants(enhanced_gene_seqs)
 
-    flags = check_key_characteristics_for_attenuate_max_CpG_strategy(before, after)
+    flags = check_key_characteristics_for_attenuate_strategy_low_CpGe(before, after)
     if flags.any?
-        puts "::attenuate/ max CpG:: ##{n} failed [#{flags.join(", ")}]: "
-            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
+        puts "::attenuate/ CpGe = 0:: ##{n} failed [#{flags.join(", ")}]: "
+            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene_seqs.first).join(" ")}\n"
     end
 
-    # strategy attenuate; select by stabilise GC3
-    enhanced_gene = tweak_gene_by(gene, "attenuate", 1)
-    after = characterise(enhanced_gene)
-
-    flags = check_key_characteristics_for_attenuate_stabilise_GC3_strategy(before, after)
+    enhanced_gene_seqs = tweak_gene_by(gene, "attenuate", 0.5)
+    after = characterise_variants(enhanced_gene_seqs)
+    flags = check_key_characteristics_for_attenuate_strategy_mean_CpGe(before, after)
     if flags.any?
-        puts "::attenuate/ stabilise GC3:: ##{n} failed [#{flags.join(", ")}]: "
-            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
+        puts "::attenuate/ CpGe = 0.5:: ##{n} failed [#{flags.join(", ")}]: "
+            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene_seqs.first).join(" ")}\n"
     end
 
-    # strategy attenuate-maxT
-    enhanced_gene = tweak_gene_by(gene, "attenuate-maxT")
-    after = characterise(enhanced_gene)
-
-    flags = check_key_characteristics_for_attenuate_maxT_strategy(before, after)
+    enhanced_gene_seqs = tweak_gene_by(gene, "attenuate", 1)
+    after = characterise_variants(enhanced_gene_seqs)
+    flags = check_key_characteristics_for_attenuate_strategy_high_CpGe(before, after)
     if flags.any?
-        puts "::attenuate-maxT:: ##{n} failed [#{flags.join(", ")}]: "
-            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene.sequence).join(" ")}\n"
+        puts "::attenuate/ CpGe = 1:: ##{n} failed [#{flags.join(", ")}]: "
+            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene_seqs.first).join(" ")}\n"
+    end
+
+    enhanced_gene_seqs = tweak_gene_by(gene, "attenuate", 1.4)
+    if enhanced_gene_seqs.size == 0
+        puts "::attenuate/ CpGe > 1:: ##{n} failed: none remaining"
+        next
+    end
+    after = characterise_variants(enhanced_gene_seqs)
+    flags = check_key_characteristics_for_attenuate_strategy_high_CpGe(before, after)
+    if flags.any?
+        puts "::attenuate/ CpGe > 1:: ##{n} failed [#{flags.join(", ")}]: "
+            puts "\t#{GeneticCode.split_cdna_into_codons(gene.sequence).join(" ")} => #{GeneticCode.split_cdna_into_codons(enhanced_gene_seqs.first).join(" ")}\n"
     end
 end
