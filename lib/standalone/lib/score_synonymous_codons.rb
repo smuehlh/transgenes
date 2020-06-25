@@ -35,7 +35,7 @@ class ScoreSynonymousCodons
         end
         strategy_scores =
             if @synonymous_sites.is_stopcodon_at(pos)
-                score_stopcodons(pos)
+                score_stopcodons(syn_codons)
             else
                 score_by_strategy(pos, syn_codons)
             end
@@ -90,9 +90,7 @@ class ScoreSynonymousCodons
         @ese_scorer.normalised_scores(windows)
     end
 
-    def score_stopcodons(pos)
-        syn_codons = @synonymous_sites.synonymous_codons_at(pos)
-
+    def score_stopcodons(syn_codons)
         StopcodonScores.normalised_scores(syn_codons)
     end
 
