@@ -14,7 +14,7 @@ require 'ostruct'
 =end
 
 input = "/Users/sm2547/Documents/sars-cov2/data/GISAID_EPI_ISL_402124_complete_genome.fasta"
-output = "/Users/sm2547/Documents/sars-cov2/data/tweaked_GISAID_EPI_ISL_402124_genes.csv"
+output_basepath = "/Users/sm2547/Documents/sars-cov2/data/tweaked_GISAID_EPI_ISL_402124"
 
 # require .rb files in library (including all subfolders)
 Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
@@ -99,7 +99,7 @@ cpg_enrichment = {
     "orf10" => 1.4788047705470573,
 }
 
-fh = File.open(output, "w")
+
 pos.each do |key, data|
     start, stop = data
     mod = seq[start..stop].size % 3
@@ -121,8 +121,8 @@ pos.each do |key, data|
     variants = select_variants_by_GC(gene, enhancer, options.CpG_enrichment)
 
     puts variants.size
-
+    fh = File.open(output_basepath + "_#{key}.csv", "w")
     fh.puts key
     fh.puts variants.join("\n")
+    fh.close
 end
-fh.close

@@ -100,14 +100,21 @@ class StrategyScores
         # NOTE:
         # if / elsif means that order of checks determines score
         # however, there is not better solution as scores can't be added either (due to potentially negative score)
+        scores = []
         if yields_most_CpG(codon, codon_synonyms, next_codon_synonyms)
-            score = 2 * (1 - @cpg_enrichment_score)
-        elsif yields_most_T(codon, codon_synonyms)
-            score = 2 * @cpg_enrichment_score
-        elsif yields_most_TpA(codon, codon_synonyms, next_codon_synonyms)
-            score = (1 - @cpg_enrichment_score)
-        elsif yields_most_A(codon, codon_synonyms)
-            score = @cpg_enrichment_score
+            scores.push 2 / @cpg_enrichment_score.to_f
+        end
+        if yields_most_T(codon, codon_synonyms)
+            scores.push 2 / @cpg_enrichment_score.to_f
+        end
+        if yields_most_TpA(codon, codon_synonyms, next_codon_synonyms)
+            scores.push 1 / @cpg_enrichment_score.to_f
+        end
+        if yields_most_A(codon, codon_synonyms)
+            scores.push 1 / @cpg_enrichment_score.to_f
+        end
+        if scores.any?
+            scores.max
         else
             # inverse usage in human genes
             inverted_human_score(codon, pos, is_near_intron, dist_to_intron)
