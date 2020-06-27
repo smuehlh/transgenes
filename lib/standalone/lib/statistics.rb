@@ -11,14 +11,6 @@ module Statistics
         arr.inject(0, :+) # 0 as "base case" for empty arrays
     end
 
-    def shift_into_positive_range_if_negative(arr)
-        min = arr.min
-        if min < 0
-            arr = arr.collect{|val| val + min.abs}
-        end
-        arr
-    end
-
     def normalise_scores_or_set_equal_if_all_scores_are_zero(arr)
         sum = sum(arr)
         if sum == 0
