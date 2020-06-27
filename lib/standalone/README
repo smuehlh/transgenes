@@ -13,7 +13,7 @@ Usage: ruby tweak_sarscov2_genome.rb
 
 Test suite
 ----------
-A test suite for testing sequence characteristics of single variants. It is not capable of performing statitical tests on a variant cloud.
+A test suite for testing key characteristics of generated variants.
 Usage: ruby testsuite.rb
 
 
