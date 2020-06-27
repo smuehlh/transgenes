@@ -234,14 +234,14 @@ class CommandlineOptions
                 @select_by = opt
             end
             opts.on("--CpG-enrichment-score SCORE", Float,
-                "CpG enrichment score with value in interval [0,1.5].",
+                "CpG enrichment score with value in interval (0,1.5].",
                 "Must be specified with 'attenuate' strategy only.",
                 "Modulates attenuation strategy from 'increasing CpG' (low score)",
                 "to 'increasing T' (high score).") do |opt|
                 @CpG_enrichment = opt
             end
             opts.on("--TpA-enrichment-score SCORE", Float,
-                "TpA enrichment score with value in interval [0,1.5].",
+                "TpA enrichment score with value in interval (0,1.5].",
                 "Must be specified with 'attenuate' strategy only.",
                 "Modulates attenuation strategy from 'increasing TpA' (low score)",
                 "to 'increasing T' (high score).") do |opt|
@@ -326,6 +326,10 @@ class CommandlineOptions
         ErrorHandling.warn_with_error_message(
             "unused_TpA_enrichment", "CommandlineOptions"
         ) if tpa_enrichment_set_without_attenuate_strategy
+        ErrorHandling.abort_with_error_message(
+            "invalid_argument_combination", "CommandlineOptions",
+            "Enrichment scores must be greater than 0"
+        ) if negative_enrichment_scores
     end
 
     def utr_line_specified_without_file(file, line)
@@ -358,5 +362,9 @@ class CommandlineOptions
 
     def tpa_enrichment_set_without_attenuate_strategy
         @TpA_enrichment && @strategy != "attenuate"
+    end
+
+    def negative_enrichment_scores
+        @CpG_enrichment <= 0 || @TpA_enrichment <= 0
     end
 end
