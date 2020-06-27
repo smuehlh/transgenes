@@ -3,6 +3,26 @@ Sequence Optimiser
 A script to enhance mammalian transgenes.
 Usage: ruby sequence_optimizer.rb -i input -o output -s strategy [options]
 
+
+Tweak SARS-CoV-2
+================
+A script to attenuate each individual gene in SARS-CoV-2 genome in direction opposite to its selection pressure for optimum fitness.
+Usage: ruby tweak_sarscov2_genome.rb
+
+*Adjust input and output_basepath variables to local file system*
+
+Test suite
+----------
+A test suite for testing sequence characteristics of single variants. It is not capable of performing statitical tests on a variant cloud.
+Usage: ruby testsuite.rb
+
+
+Requirements
+============
+ruby version 2.4
+byebug gem
+
+
 Contact
 =======
 Laurence Hurst (l.d.hurst@bath.ac.uk)
