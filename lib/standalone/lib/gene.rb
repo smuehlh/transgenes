@@ -126,8 +126,8 @@ class Gene
         @synonymous_sites = SynonymousSites.new(@exons, @introns, stay_in_subbox_for_6folds)
     end
 
-    def tweak_exonic_sequence(strategy, ese_strategy, score_eses_at_all_sites, cpg_enrichment_score)
-        scorer = ScoreSynonymousCodons.new(strategy, ese_strategy, score_eses_at_all_sites, cpg_enrichment_score,
+    def tweak_exonic_sequence(strategy, ese_strategy, score_eses_at_all_sites, cpg_enrichment_score, tpa_enrichment_score)
+        scorer = ScoreSynonymousCodons.new(strategy, ese_strategy, score_eses_at_all_sites, cpg_enrichment_score, tpa_enrichment_score,
             @synonymous_sites, @ese_motifs)
         init_codon_replacement_log
         init_exon_copy

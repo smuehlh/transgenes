@@ -1,8 +1,9 @@
 class StrategyScores
 
-    def initialize(strategy, cpg_enrichment_score=nil)
+    def initialize(strategy, cpg_enrichment_score=nil, tpa_enrichment_score=nil)
         @strategy = strategy
         @cpg_enrichment_score = cpg_enrichment_score # only needed for attenuate strategy
+        @tpa_enrichment_score = tpa_enrichment_score # only needed for attenuate strategy
         ErrorHandling.abort_with_error_message(
             "unknown_strategy", "StrategyScores"
         ) unless is_known_strategy
