@@ -2,8 +2,9 @@ class StrategyScores
 
     def initialize(strategy, cpg_enrichment_score=nil, tpa_enrichment_score=nil)
         @strategy = strategy
-        @cpg_enrichment_score = cpg_enrichment_score # only needed for attenuate strategy
-        @tpa_enrichment_score = tpa_enrichment_score # only needed for attenuate strategy
+        # both scores only needed for attenuate strategy
+        @cpg_enrichment_score = cpg_enrichment_score
+        @tpa_enrichment_score = tpa_enrichment_score
         ErrorHandling.abort_with_error_message(
             "unknown_strategy", "StrategyScores"
         ) unless is_known_strategy
@@ -100,16 +101,13 @@ class StrategyScores
     def attenuate_count(codon, codon_synonyms, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
         scores = []
         if yields_most_CpG(codon, codon_synonyms, next_codon_synonyms)
-            scores.push 2 / @cpg_enrichment_score.to_f
-        end
-        if yields_most_T(codon, codon_synonyms)
-            scores.push 2 / @cpg_enrichment_score.to_f
+            scores.push 1.0 / @cpg_enrichment_score
         end
         if yields_most_TpA(codon, codon_synonyms, next_codon_synonyms)
-            scores.push 1 / @cpg_enrichment_score.to_f
+            scores.push 1.0 / @tpa_enrichment_score
         end
-        if yields_most_A(codon, codon_synonyms)
-            scores.push 1 / @cpg_enrichment_score.to_f
+        if yields_most_T(codon, codon_synonyms)
+            scores.push 1.5
         end
         if scores.any?
             scores.max
@@ -154,11 +152,6 @@ class StrategyScores
     def yields_most_T(codon, codon_synonyms)
         max_T = codon_synonyms.collect{|c| c.count("T")}.max
         codon.include?("T") && codon.count("T") == max_T
-    end
-
-    def yields_most_A(codon, codon_synonyms)
-        max_A = codon_synonyms.collect{|c| c.count("A")}.max
-        codon.include?("A") && codon.count("A") == max_A
     end
 
     def inverted_human_score(synonymous_codon, pos, is_near_intron, dist_to_intron)
