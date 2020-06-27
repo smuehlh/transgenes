@@ -98,9 +98,6 @@ class StrategyScores
     end
 
     def attenuate_count(codon, codon_synonyms, next_codon_synonyms, pos, is_near_intron, dist_to_intron)
-        # NOTE:
-        # if / elsif means that order of checks determines score
-        # however, there is not better solution as scores can't be added either (due to potentially negative score)
         scores = []
         if yields_most_CpG(codon, codon_synonyms, next_codon_synonyms)
             scores.push 2 / @cpg_enrichment_score.to_f
