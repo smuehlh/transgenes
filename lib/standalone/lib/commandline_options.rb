@@ -5,6 +5,7 @@ class CommandlineOptions
         # optional params
         :select_by,
         :CpG_enrichment,
+        :TpA_enrichment,
         :utr5prime, :utr3prime,
         :input_line, :utr5prime_line, :utr3prime_line,
         :remove_first_intron,
@@ -65,6 +66,7 @@ class CommandlineOptions
             @input_line
             @utr5prime @utr5prime_line @utr3prime @utr3prime_line
             @CpG_enrichment
+            @TpA_enrichment
             @remove_first_intron
             @ese
             @ese_strategy
@@ -160,7 +162,7 @@ class CommandlineOptions
                 "humanize - Match human codon usage.", "May be specified with/ without an ESE list.",
                 "gc - Match position-dependent GC content of 1- or 2-exon genes.", "May be specified with/ without an ESE list.",
                 "max-gc - Maximize GC3 content.", "May be specified with/ without an ESE list.", "Strategy to select the best variant must be set to 'high'.",
-                "attenuate - De-optimize sequence by increasing CpG+TpA or T+A.", "Must be combined with a 'CpG-enrichment-score'", "to modulate CpG and T content as a function of CpG enrichment.") do |opt|
+                "attenuate - De-optimize sequence by increasing CpG+TpA or T+A.", "Must be combined with 'CpG-enrichment-score' and 'TpA-enrichment-score'", "to modulate CpG and T content as a function of CpG enrichment.") do |opt|
                 @strategy = opt
             end
 
@@ -232,11 +234,18 @@ class CommandlineOptions
                 @select_by = opt
             end
             opts.on("--CpG-enrichment-score SCORE", Float,
-                "CpG enrichment score with value best in interval [0,1].",
+                "CpG enrichment score with value in interval [0,1.5].",
                 "Must be specified with 'attenuate' strategy only.",
                 "Modulates attenuation strategy from 'increasing CpG' (low score)",
                 "to 'increasing T' (high score).") do |opt|
                 @CpG_enrichment = opt
+            end
+            opts.on("--TpA-enrichment-score SCORE", Float,
+                "TpA enrichment score with value in interval [0,1.5].",
+                "Must be specified with 'attenuate' strategy only.",
+                "Modulates attenuation strategy from 'increasing TpA' (low score)",
+                "to 'increasing T' (high score).") do |opt|
+                @TpA_enrichment = opt
             end
             opts.on("--motif-to-keep FILE",
                 "Path to restriction enzyme file, one sequence per line.",
@@ -293,8 +302,8 @@ class CommandlineOptions
         ) if strategy_raw_specified_without_ese_list
         ErrorHandling.abort_with_error_message(
             "invalid_argument_combination", "CommandlineOptions",
-            "Cannot alter sequence by 'attenuate' strategy without CpG enrichment score"
-        ) if attenuate_strategy_specified_without_cpg_enrichment
+            "Cannot alter sequence by 'attenuate' strategy without CpG and TpA enrichment scores"
+        ) if attenuate_strategy_specified_without_enrichment_scores
         ErrorHandling.warn_with_error_message(
             "unused_ese_strategy", "CommandlineOptions"
         ) if ese_strategy_specified_without_ese_list
@@ -314,6 +323,9 @@ class CommandlineOptions
         ErrorHandling.warn_with_error_message(
             "unused_cpg_enrichment", "CommandlineOptions"
         ) if cpg_enrichment_set_without_attenuate_strategy
+        ErrorHandling.warn_with_error_message(
+            "unused_TpA_enrichment", "CommandlineOptions"
+        ) if tpa_enrichment_set_without_attenuate_strategy
     end
 
     def utr_line_specified_without_file(file, line)
@@ -336,11 +348,15 @@ class CommandlineOptions
         @strategy == "max-gc" && @select_by != "high"
     end
 
-    def attenuate_strategy_specified_without_cpg_enrichment
-        @strategy == "attenuate" && ! @CpG_enrichment
+    def attenuate_strategy_specified_without_enrichment_scores
+        @strategy == "attenuate" && ! (@CpG_enrichment && @TpA_enrichment)
     end
 
     def cpg_enrichment_set_without_attenuate_strategy
         @CpG_enrichment && @strategy != "attenuate"
+    end
+
+    def tpa_enrichment_set_without_attenuate_strategy
+        @TpA_enrichment && @strategy != "attenuate"
     end
 end
