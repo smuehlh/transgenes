@@ -110,6 +110,10 @@ module ErrorHandling
             "ESE scoring was requested for all sites but no ESE motif file was provided. Will ignore ESE scoring setting."
         when "no_codons_replaced"
             "Sequence has not been altered."
+        when "unused_cpg_enrichment"
+            "Will ignore CpG enrichment score."
+        when "unused_TpA_enrichment"
+            "Will ignore TpA enrichment score."
         end
     end
 
