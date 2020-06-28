@@ -95,7 +95,7 @@ variants.each_with_index do |v_seq, ind|
     end
 
     if cpg_enrichment <= 1
-        if after.CpG > before.CpG && after.U > before.U
+        if after.CpG > before.CpG && after.U > before.U && after.UpA > before.UpA
             n_good_variants += 1
         end
     else
