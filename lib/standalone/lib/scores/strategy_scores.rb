@@ -106,7 +106,7 @@ class StrategyScores
             scores.push 1.0 / @tpa_enrichment_score
         end
         if yields_most_T(codon, codon_synonyms)
-            scores.push 1.5
+            scores.push 5
         end
         if scores.any?
             scores.max
