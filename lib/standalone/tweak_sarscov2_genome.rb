@@ -93,7 +93,7 @@ def select_variants_by_GC(gene, enhancer, cpg_enrichment)
 
     # select variants below maximum tolerable GC
     variants.select do |variant|
-        variant.count("GC") / gene.sequence.size.to_f <= max_GC
+        variant.count("GC") / variant.size.to_f <= max_GC
     end
 end
 
