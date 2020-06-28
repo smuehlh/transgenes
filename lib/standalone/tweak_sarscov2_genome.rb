@@ -1,6 +1,7 @@
 # !/usr/bin/env ruby
-require 'byebug'
+require 'byebug' # FIXME - remove if byebug gem is not installed!
 require 'ostruct'
+require 'optparse'
 
 =begin
     Tweak coding regions individually and output generated variants.
@@ -13,21 +14,63 @@ require 'ostruct'
 
 =end
 
-input = "/Users/sm2547/Documents/sars-cov2/data/GISAID_EPI_ISL_402124_complete_genome.fasta"
-output_basepath = "/Users/sm2547/Documents/sars-cov2/data/tweaked_GISAID_EPI_ISL_402124"
-
 # require .rb files in library (including all subfolders)
 Dir[File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')].each do |file|
     require File.absolute_path(file)
 end
-Logging.setup
 
-def set_attenuate_options(cpg_enrichment)
-    # standard sequence optimiser options
-    OpenStruct.new(
-        strategy: "attenuate", stay_in_subbox_for_6folds: false,
-        CpG_enrichment: cpg_enrichment
-    )
+class OptParser
+    def self.parse(args)
+
+        options = Hash.new
+
+        # mandatory parameters
+        options[:input] = nil
+        options[:output] = nil
+
+        opt_parser = OptionParser.new do |opts|
+            opts.banner = "Attenuate SARS-CoV-2 genes."
+            opts.separator ""
+            opts.separator "Copyright (c) 2020, by University of Bath"
+            opts.separator "Contributors: Stefanie Mühlhausen"
+            opts.separator "Affiliation: Laurence D Hurst"
+            opts.separator "Contact: l.d.hurst@bath.ac.uk"
+            opts.separator "This program comes with ABSOLUTELY NO WARRANTY"
+
+            opts.separator ""
+            opts.separator "Usage: ruby #{File.basename($PROGRAM_NAME)} -i input -o output"
+
+            opts.on("-i", "--input FILE",
+                "Path to input file, in FASTA format.") do |path|
+                FileHelper.file_exist_or_die(path)
+                options[:input] = path
+            end
+            opts.on("-o", "--output FILE",
+                "Path to output file, in FASTA format.") do |path|
+                options[:output] = path
+            end
+            opts.separator ""
+            opts.on_tail("-h", "--help", "Show this message") do
+                puts opts
+                exit
+            end
+
+        end # optionparser
+
+        ## main part of function ##
+        if args.empty? then
+            # display help and exit if program is called without any argument
+            puts opt_parser.help
+            exit
+        end
+
+        opt_parser.parse(args)
+
+        # ensure mandatory arguments are present
+        abort "Missing mandatory argument: --input" unless options[:input]
+        abort "Missing mandatory argument: --output" unless options[:output]
+        return options
+    end # parse()
 end
 
 def select_variants_by_GC(gene, enhancer, cpg_enrichment)
@@ -49,14 +92,25 @@ def select_variants_by_GC(gene, enhancer, cpg_enrichment)
         end
 
     # select variants below maximum tolerable GC
-    variants.select do
-        |variant| variant.count("GC") / gene.sequence.size.to_f <= max_GC
+    variants.select do |variant|
+        variant.count("GC") / gene.sequence.size.to_f <= max_GC
     end
 end
 
+def set_attenuate_options(cpg_enrichment)
+    # standard sequence optimiser options
+    OpenStruct.new(
+        strategy: "attenuate", stay_in_subbox_for_6folds: false,
+        CpG_enrichment: cpg_enrichment
+    )
+end
+
+Logging.setup
+options = OptParser.parse(ARGV)
+
 # read in file
 header, seq = "", ""
-IO.foreach(input) do |line|
+IO.foreach(optins[:input]) do |line|
     line = line.chomp
     if line.start_with?(">")
         raise EnhancerError, "Input expected to be single fasta" if header.start_with?(">")
@@ -121,7 +175,7 @@ pos.each do |key, data|
     variants = select_variants_by_GC(gene, enhancer, options.CpG_enrichment)
 
     puts variants.size
-    fh = File.open(output_basepath + "_#{key}.csv", "w")
+    fh = File.open(options[:output] + "_#{key}.csv", "w")
     fh.puts key
     fh.puts variants.join("\n")
     fh.close
