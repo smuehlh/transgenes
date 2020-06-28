@@ -97,11 +97,12 @@ def select_variants_by_GC(gene, enhancer, cpg_enrichment)
     end
 end
 
-def set_attenuate_options(cpg_enrichment)
-    # standard sequence optimiser options
+def set_attenuate_options(data)
     OpenStruct.new(
-        strategy: "attenuate", stay_in_subbox_for_6folds: false,
-        CpG_enrichment: cpg_enrichment
+        strategy: "attenuate",
+        stay_in_subbox_for_6folds: false,
+        CpG_enrichment: data.CpGe,
+        TpA_enrichment: data.UpAe,
     )
 end
 
@@ -110,7 +111,7 @@ options = OptParser.parse(ARGV)
 
 # read in file
 header, seq = "", ""
-IO.foreach(optins[:input]) do |line|
+IO.foreach(options[:input]) do |line|
     line = line.chomp
     if line.start_with?(">")
         raise EnhancerError, "Input expected to be single fasta" if header.start_with?(">")
@@ -124,59 +125,42 @@ end
 # NOTE - overlapping genes are ORF1a/b and ORF7a/b
 # positions are according to manuscript
 # in addition, advoid mutating region forming pseudonot between 13476 and 13542
-pos = {
-    "orf1a" => [265, 13464],
-    "orf1b" => [13542, 21551],
-    "s" => [21562, 25383],
-    "orf3a" => [25392, 26219],
-    "e" => [26244, 26471],
-    "m" => [26522, 27190],
-    "orf6" => [27201, 27386],
-    "orf7a" => [27393, 27752],
-    "orf7b" => [27761, 27886],
-    "orf8" => [27893, 28258],
-    "n" => [28273, 29532],
-    "orf10" => [29557, 29673]
-}
-cpg_enrichment = {
-    "orf1a" => 0.3423539707737651,
-    "orf1b" => 0.4127108603224809,
-    "s" => 0.21812663685889996,
-    "orf3a" => 0.5293749739398741,
-    "m" => 0.6602951581807313,
-    "orf6" => 0.27663521509675365,
-    "orf7a" => 0.5331021328246923,
-    "orf7b" => 0.32599910193084863,
-    "orf8" => 0.684706603966469,
-    "n" => 0.5575853852263701,
-    "e" => 1.3328298720369205,
-    "orf10" => 1.4788047705470573,
+# NOTE - CpG enrichment and UpA enrichment are calculated according to manuscript
+genes = {
+    "ORF1A" => OpenStruct.new(start: 265, stop: 13464, CpGe: 0.3423539707737651, UpAe: 0.8496535598611519, propU: 0.3239393939393939),
+    "ORF1B" =>OpenStruct.new(start: 13542, stop: 21551, CpGe: 0.4017345703798582, UpAe: 0.8852687578224665, propU: 0.3240948813982522),
+    "S" => OpenStruct.new(start: 21562, stop: 25383, CpGe: 0.21812663685889996, UpAe: 0.7111936844935985, propU: 0.3325484039769754),
+    "ORF3A" => OpenStruct.new(start: 25392, stop: 26219, CpGe: 0.5293749739398741, UpAe: 0.7208706166868201, propU: 0.3333333333333333),
+    "E" => OpenStruct.new(start: 26244, stop: 26471, CpGe: 1.3328298720369205, UpAe: 1.066790707855638, propU: 0.40350877192982454),
+    "M" => OpenStruct.new(start: 26522, stop: 27190, CpGe: 0.6602951581807313, UpAe: 0.846170520338123, propU: 0.3183856502242152),
+    "ORF6" => OpenStruct.new(start: 27201, stop: 27386, CpGe: 0.27663521509675365, UpAe: 0.8333574215927158, propU: 0.3548387096774194),
+    "ORF7A" => OpenStruct.new(start: 27393, stop: 27752, CpGe: 0.5421625184739847, UpAe: 0.6464844347852703, propU: 0.325),
+    "ORF7B" => OpenStruct.new(start: 27761, stop: 27886, CpGe: 0.33075000000000004, UpAe: 0.7683484573502724, propU: 0.4523809523809524),
+    "ORF8" => OpenStruct.new(start: 27893, stop: 28258, CpGe: 0.684706603966469, UpAe: 0.894864076471029, propU: 0.366120218579235),
+    "N" => OpenStruct.new(start: 28273, stop: 29532, CpGe: 0.5575853852263701, UpAe: 0.5115380580574581, propU: 0.21031746031746032),
+    "ORF10" => OpenStruct.new(start: 29557, stop: 29673, CpGe: 1.4788047705470573, UpAe: 1.2844475721323012, propU: 0.358974358974359)
 }
 
+genes.each do |gene_name, data|
+    orf = seq[data.start..data.stop]
+    raise "sequence not a multiple of" if orf.size % 3 != 0
 
-pos.each do |key, data|
-    start, stop = data
-    mod = seq[start..stop].size % 3
-    if mod != 0
-        raise "should not happen!"
-    end
-    puts "#{key}: [#{Counting.ruby_to_human(start)} - #{Counting.ruby_to_human(stop)}]"
-    orf = seq[start..stop]
+    puts "#{gene_name}: [#{Counting.ruby_to_human(data.start)} - #{Counting.ruby_to_human(data.stop)}]"
+    $logger.info("Tweaking gene #{gene_name} located at [#{data.start}..#{data.stop}]")
 
-    $logger.info("Tweaking gene #{key.upcase} located at [#{start}..#{stop}]")
     gene = Gene.new
-    gene.add_cds([orf.upcase], [], key.upcase)
+    gene.add_cds([orf.upcase], [], gene_name)
     gene.log_statistics
 
-    options = set_attenuate_options(cpg_enrichment[key])
+    options = set_attenuate_options(data)
     enhancer = GeneEnhancer.new(options)
 
     enhancer.generate_synonymous_genes(gene)
-    variants = select_variants_by_GC(gene, enhancer, options.CpG_enrichment)
+    variants = select_variants_by_GC(gene, enhancer, data.CpGe)
 
     puts variants.size
-    fh = File.open(options[:output] + "_#{key}.csv", "w")
-    fh.puts key
+    fh = File.open(options[:output] + "_#{gene_name}.csv", "w")
+    fh.puts gene_name
     fh.puts variants.join("\n")
     fh.close
 end
