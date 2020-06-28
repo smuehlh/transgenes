@@ -99,7 +99,7 @@ variants.each_with_index do |v_seq, ind|
             n_good_variants += 1
         end
     else
-        if after.U > before.U
+        if after.U > before.U && after.CpG < before.CpG
             n_good_variants += 1
         end
     end
