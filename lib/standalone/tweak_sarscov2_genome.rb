@@ -97,6 +97,19 @@ def select_variants_by_GC(gene, enhancer, cpg_enrichment)
     end
 end
 
+def calculate_key_values(seq)
+    len = seq.size.to_f
+    propC = seq.upcase.count("C")/len
+    propG = seq.upcase.count("G")/len
+    propA = seq.upcase.count("A")/len
+    propU = seq.upcase.count("T")/len
+    propCG = seq.upcase.scan("CG").size/(len-1)
+    propUA = seq.upcase.scan("TA").size/(len-1)
+    cpge = propCG/(propC * propG)
+    upae = propUA/(propU * propA)
+    return [cpge, upae, propU]
+end
+
 def set_attenuate_options(data)
     OpenStruct.new(
         strategy: "attenuate",
@@ -141,6 +154,7 @@ genes = {
     "ORF10" => OpenStruct.new(start: 29557, stop: 29673, CpGe: 1.4788047705470573, UpAe: 1.2844475721323012, propU: 0.358974358974359)
 }
 
+fh = File.open(options[:output], "w")
 genes.each do |gene_name, data|
     orf = seq[data.start..data.stop]
     raise "sequence not a multiple of" if orf.size % 3 != 0
@@ -159,8 +173,21 @@ genes.each do |gene_name, data|
     variants = select_variants_by_GC(gene, enhancer, data.CpGe)
 
     puts variants.size
-    fh = File.open(options[:output] + "_#{gene_name}.csv", "w")
-    fh.puts gene_name
-    fh.puts variants.join("\n")
-    fh.close
+    variants.each_with_index do |variant, ind|
+        v_CpGe, v_UpAe, v_propU = calculate_key_values(variant)
+        header = "#{gene_name}_variant#{Counting.ruby_to_human(ind)}"
+        header += " CpGe:#{v_CpGe.round(2)}|UpAe:#{v_UpAe.round(2)}|Prop U:#{v_propU.round(2)}"
+        # flag variants with key values raised above wild-type
+        if data.CpGe <= 1
+            if v_CpGe > data.CpGe && v_UpAe > data.UpAe && v_propU > data.propU
+                header += " above wild-type"
+            end
+        else
+            if v_propU > data.propU && v_CpGe < data.CpGe
+                header += " above wild-type"
+            end
+        end
+        fh.puts GeneToFasta.new(header, variant).fasta
+    end
 end
+fh.close
