@@ -50,6 +50,7 @@ GEM
     builder (3.2.2)
     byebug (9.0.6)
     concurrent-ruby (1.0.2)
+    crass (1.0.6)
     debug_inspector (0.0.2)
     dotenv (2.1.1)
     dotenv-rails (2.1.1)
@@ -73,7 +74,8 @@ GEM
       railties (>= 3.1.0)
       turbolinks
     json (1.8.3)
-    loofah (2.0.3)
+    loofah (2.8.0)
+      crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
