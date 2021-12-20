@@ -35,7 +35,6 @@ A basic rails web service for interacting with the sequence optimizer.
 ```bash
 rake assets:precompile # pre-compile assets
 rake db:schema:load # prepare DB
-rake autocompletion:update # set up Ensemble auto-completion
 
 rails s # start rails server
 ```

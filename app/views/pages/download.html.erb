@@ -1,26 +1,8 @@
 <h1>Download</h1>
     <p>
-        Use your own version rather than this website?
-        <%= link_to "Click here to download the latest version.", standalone_path, data: {turbolinks: false} %>
-    </p>
-<h3>Archive content</h3>
-    <dl class="row">
-        <dt class="col-sm-2"><%= @main %></dt>
-        <dd class="col-sm-10">Main script</dd>
-        <dt class="col-sm-2">data (folder)</dt>
-        <dd class="col-sm-10">Sample data (genes and ESE lists)</dd>
-        <dt class="col-sm-2">lib (folder)</dt>
-        <dd class="col-sm-10">Software library</dd>
-    </dl>
+        Use your own version rather than this website? <a target="blank" href="https://github.com/smuehlh/transgenes">Check out our project on github <i class="fa fa-external-link" aria-hidden="true"></i></a>
+    .</p>
 
-<h3>Installation</h3>
-    <p>The <%= @archive.camelize %> software is written in pure Ruby. You will need to have Ruby v.2.3 or higher installed. Other than that, no compilation is required.</p>
-    <p>To unzip the archive, simply enter in a command prompt
-    <pre>$ unzip <%= @archive %>.zip -d <%= @archive %></pre>
-    </p>
-    <p>To execute <%= @archive.camelize %> and inspect all available options
-    <pre>$ cd <%= @archive %><br>$ ruby <%= @main %> -h</pre>
-    </p>
 <h3>Restrictions and License</h3>
     <p>The <%= @archive.camelize %> software can be used under a GNU General Public License <a class="text-muted" target="blank" href="http://www.gnu.org/licenses/gpl-3.0.html"><i class="fa fa-external-link" aria-hidden="true"></i></a>
     .</p>
