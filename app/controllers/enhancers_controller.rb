@@ -306,7 +306,7 @@ class EnhancersController < ApplicationController
             enhanced_gene_params
         )
         if optimizer.was_success?
-            gene, variants, overall_gc3 = optimizer.get_tweaked_gene
+            gene, variants, overall_gc3, individual_gc3s = optimizer.get_tweaked_gene
             options = optimizer.get_options
             sites_to_keep, sites_to_avoid = get_restriction_enzymes
 
@@ -315,6 +315,7 @@ class EnhancersController < ApplicationController
                 data: gene.sequence,
                 gene_variants: variants,
                 gc3_over_all_gene_variants: overall_gc3,
+                gc3_per_individual_variant: individual_gc3s,
                 log: optimizer.log,
                 strategy: options.strategy,
                 keep_first_intron: options.is_keep_first_intron,

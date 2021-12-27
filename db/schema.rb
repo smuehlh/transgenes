@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 20180105145619) do
     t.boolean  "score_eses_at_all_sites"
     t.boolean  "keep_restriction_sites"
     t.boolean  "avoid_restriction_sites"
+    t.text     "gc3_per_individual_variant"
   end
 
   add_index "enhanced_genes", ["session_id"], name: "index_enhanced_genes_on_session_id"

@@ -30,7 +30,8 @@ class SequenceOptimizerForWeb
 
     def get_tweaked_gene
         # NOTE: call only if there wasn't an error
-        [@enhanced_gene, @enhancer.fasta_formatted_gene_variants, @enhancer.cross_variant_gc3_per_pos]
+        gc3_contents = @enhancer.gc3_contents.collect{|gc3| gc3 * 100}
+        [@enhanced_gene, @enhancer.fasta_formatted_gene_variants, @enhancer.cross_variant_gc3_per_pos, gc3_contents]
     end
 
     def get_options

@@ -1,5 +1,5 @@
 class GeneEnhancer
-    attr_reader :cross_variant_gc3_per_pos, :fasta_formatted_gene_variants
+    attr_reader :cross_variant_gc3_per_pos, :fasta_formatted_gene_variants, :gc3_contents
 
     def initialize(options)
         @n_variants = 1000
