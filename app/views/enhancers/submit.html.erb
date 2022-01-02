@@ -57,7 +57,11 @@
             </div>
         </div>
 
-    <legend class="text-primary">Enhanced Gene</legend>
+    <legend class="text-primary">Enhanced gene</legend>
+        <h3><small>
+            Selected based on GC3 content
+                <%= "and ESE resemblance" if @enhanced_gene.destroy_ese_motifs %>
+        </small></h3>
         <div class="well well-sm clearfix">
             <%= content_tag(:span,
                 patch_multiline_text_for_web(
@@ -66,13 +70,14 @@
                 class: "text-muted monospaced text-wrap"
             ) %>
         </div>
+    <h3>Overview of all generated variants</h3>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-6">
-                <legend class="text-primary">GC3 content of all generated gene variants</legend>
+            <div class="col-sm-8">
+                <legend class="text-primary">Mean position-wise GC3 content of all generated gene variants</legend>
                 <canvas id="gc3Plot"></canvas>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <legend class="text-primary">Downloads</legend>
                 <ul class="fa-ul">
                     <li><i class="fa-li fa fa-download"></i>
@@ -88,11 +93,32 @@
             </div>
         </div>
     </div>
+    <h3>Interactive variant selection</h3>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-8">
+                <legend class="text-primary">GC3 content per generated gene variant</legend>
+                <canvas id="gc3SelectionPlot"></canvas>
+            </div>
+            <div class="col-sm-4">
+                <legend class="text-primary">Selected variant</legend>
+                <div id="customSelected" class="text-muted monospaced text-wrap" style="word-break:break-all;">
+                    <i>Hover over a data point to display a variant</i>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <%
+        # mean GC3 per position
         points = @enhanced_gene.gc3_over_all_gene_variants
         labels = (1..points.size).to_a
+
+        # GC3 per variant; for interactive variant selection
+        sel_points = @enhanced_gene.gc3_per_individual_variant
+        sel_labels = (1..sel_points.size).to_a
     %>
+
     <script>
         var ctx = $("#gc3Plot");
         var scatterChart = new Chart(ctx, {
@@ -104,5 +130,39 @@
             options: chartOptions
         });
     </script>
+
+    <script>
+        var lastHoveredId = -1;
+        var selectionChartOptions = JSON.parse(JSON.stringify(chartOptions));
+        selectionChartOptions.scales.xAxes[0].scaleLabel.labelString = "Generated variant";
+        selectionChartOptions.tooltips.callbacks = {
+            label: function(tooltipItems, data) {
+                var id = tooltipItems.xLabel - 1;
+                if (id !== lastHoveredId) {
+                    // keep first line break to separate fasta header from sequence and discard all line breaks in sequence
+                    $("#customSelected").html(
+                        <%= raw @enhanced_gene.gene_variants %>[id].replace(/\n/, "<br>").replace(/\n/g, "")
+                    );
+                    lastHoveredId = id;
+                }
+                return tooltipItems.yLabel.toFixed(2) + '% GC3';
+            },
+            title: function(tooltipItems, data) {
+                return 'Variant ' + tooltipItems[0].xLabel;
+            },
+        };
+
+
+        var ctx = $("#gc3SelectionPlot");
+        var selScatterChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: <%= raw sel_labels %>,
+                datasets: [{ data: <%= raw sel_points %> }],
+            },
+            options: selectionChartOptions
+        });
+    </script>
+
     <!-- TODO: submit form via ajax to stay on same page... -->
 <% end %>
