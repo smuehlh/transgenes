@@ -1,6 +1,6 @@
 # README
 
-transgenes is a standalone software to enhance mammalian transgenes through synonymous mutations. It is coupled to a basic web interface.
+transgenes is a standalone software to enhance mammalian transgenes through synonymous mutations. It is coupled to a basic [web interface](http://transgene-design.bath.ac.uk/).
 
 This software has been developed at the Hurst lab, University of Bath, UK, as part of the Horizon 2020 project [Evolutionary genomics: new perspectives and novel medical applications (EvoGenMed)](https://cordis.europa.eu/project/id/669207).
 
