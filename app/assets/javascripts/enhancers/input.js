@@ -41,6 +41,7 @@ function bind_eventhandlers_to_input_elements() {
     bind_to_input_textarea();
     bind_to_input_file();
     bind_to_input_text();
+    bind_to_sample_input();
     bind_to_select();
     bind_to_save_button();
     bind_to_reset_button();
@@ -89,6 +90,18 @@ function bind_to_input_text() {
     inputs.find("input:text").on('change', function() {
         var thisform = $(this).closest("form");
         thisform.find("textarea").val('');
+        thisform.find("input:file").val('');
+        common_to_all_inputs(thisform);
+        thisform.submit();
+    });
+};
+
+function bind_to_sample_input() {
+    inputs.find("[id$=sample-btn]").bind("click", function() {
+        var thisform = $(this).closest("form");
+        var text = document.getElementById($(this).attr("data-sample")).innerText;
+        thisform.find("textarea").val(text);
+        thisform.find("input:text").val('');
         thisform.find("input:file").val('');
         common_to_all_inputs(thisform);
         thisform.submit();

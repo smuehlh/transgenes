@@ -4,12 +4,8 @@
     ).join(",")
 
     id = html_compatible_enhancer_name(resource_name)
-    legend =
-        if is_cds_resource(resource_name)
-            "Please enter or upload a sequence, or provide a gene ID."
-        else
-            "Please enter or upload a sequence."
-        end
+    sample_id = "#{id}-sample-data"
+    legend = "Please enter or upload a sequence."
 
     maxlength_textinput = 10_000
     valid_textinput = "^(?:LOCUS|>\\S+)" # regex to validate start of string conforms to Genbank or Fasta header
@@ -22,6 +18,17 @@
 
     <%= f.hidden_field :name, value: resource_name %>
     <%= f.hidden_field :commit, value: "" %>
+
+    <%=
+        # sample data needs to be child of form
+        if is_cds_resource(resource_name)
+            render partial: "enhancers/sample_input/cds_fasta", locals: {hidden: true, id: sample_id}
+        elsif is_5prime_resource(resource_name)
+            render partial: "enhancers/sample_input/five_prime_utr", locals: {hidden: true, id: sample_id}
+        else
+            render partial: "enhancers/sample_input/three_prime_utr", locals: {hidden: true, id: sample_id}
+        end
+    %>
 
     <h4>Enter <%= resource_name %>
         <small id="unsaved-data-<%= id %>" class="bg-success" style="display: none;">
@@ -65,6 +72,14 @@
                     <div class="form-group-validation">
                         <%= f.file_field :file, accept: valid_extensions %>
                         <small class="form-text text-muted">Plain text file in Genbank or FASTA format.</small>
+                    </div>
+                </div>
+                <div class="row">
+                    <legend class="text-primary">Or, load sample data</legend>
+                    <div class="form-group-validation">
+                        <%= f.button "Load sample", id: "#{id}-sample-btn",  class: "btn btn-primary btn-outline btn-xs", title: "Load #{resource_name} sample", data: {toggle: "tooltip", sample: sample_id}, type: "button"%>
+                        <br>
+                        <small class="form-text text-muted">Use Homo sapiens hemoglobin subunit beta (HBB) <%= resource_name %> as sample gene. </small>
                     </div>
                 </div>
                 <% if false # is_cds_resource(resource_name) %>

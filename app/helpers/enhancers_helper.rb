@@ -27,4 +27,8 @@ module EnhancersHelper
     def is_cds_resource(name)
         name == "CDS" || name == html_compatible_enhancer_name("CDS")
     end
+
+    def is_5prime_resource(name)
+        name == "5'UTR" || name == html_compatible_enhancer_name("5'UTR")
+    end
 end
