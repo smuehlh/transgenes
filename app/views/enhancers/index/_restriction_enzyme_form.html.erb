@@ -13,10 +13,10 @@
         end
 %>
 
-<%= form_for RestrictionEnzyme.new, :url => {action: "create_restriction_site"}, remote: true, html: { style: "display:inline;", role: "form", multipart: true } do |f| %>
+<%= form_for RestrictionEnzyme.new, :url => {action: "create_restriction_site"}, remote: true, html: { style: "display:inline;", role: "form", multipart: true, id: "new-#{id}" } do |f| %>
 
-    <%= f.hidden_field :name, value: resource_name %>
-    <%= f.hidden_field :commit, value: "" %>
+    <%= f.hidden_field :name, value: resource_name, id: "#{id}-name" %>
+    <%= f.hidden_field :commit, value: "", id: "#{id}-value" %>
 
     <%= render partial: "enhancers/sample_input/restriction_enzyme", locals: {hidden: true, id: sample_id} %>
 
@@ -51,7 +51,7 @@
             <div class="col-sm-6">
                 <legend class="text-primary">Enter motifs</legend>
                 <div class="form-group-validation">
-                    <%= f.text_area :data, rows: 6, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 2000, data: {valid: valid_textinput} %>
+                    <%= f.text_area :data, rows: 6, class: "form-control monospaced", placeholder: "Enter motifs", maxlength: 2000, data: {valid: valid_textinput}, id: "#{id}-data" %>
                     <small class="form-text text-muted">DNA sequence motifs, one motif per line.
                     </small>
                 </div>
@@ -60,7 +60,7 @@
                 <div class="row">
                     <legend class="text-primary">Or, upload file</legend>
                     <div class="form-group-validation">
-                        <%= f.file_field :file, accept: ".txt" %>
+                        <%= f.file_field :file, accept: ".txt", id: "#{id}-file" %>
                         <small class="form-text text-muted">Plain text file containing one motif per line.</small>
                     </div>
                 </div>

@@ -14,10 +14,10 @@
     # /^>\S+[\n\r][ATGCatgc\s]+$/ # validates entire fasta
 %>
 
-<%= form_for Enhancer.new, :url => {action: "create_enhancer"}, remote: true, html: { style: "display:inline;", role: "form", :multipart => true } do |f| %>
+<%= form_for Enhancer.new, :url => {action: "create_enhancer"}, remote: true, html: { style: "display:inline;", role: "form", :multipart => true, id: "new-#{id}" } do |f| %>
 
-    <%= f.hidden_field :name, value: resource_name %>
-    <%= f.hidden_field :commit, value: "" %>
+    <%= f.hidden_field :name, value: resource_name, id: "#{id}-name" %>
+    <%= f.hidden_field :commit, value: "", id: "#{id}-value" %>
 
     <%=
         # sample data needs to be child of form
@@ -61,7 +61,7 @@
             <div class="col-sm-6">
                 <legend class="text-primary">Enter Genbank or FASTA sequence</legend>
                 <div class="form-group-validation">
-                    <%= f.text_area :data, rows: 6, class: "form-control monospaced", placeholder: "Enter sequence", maxlength: maxlength_textinput, data: {valid: valid_textinput} %>
+                    <%= f.text_area :data, rows: 6, class: "form-control monospaced", placeholder: "Enter sequence", maxlength: maxlength_textinput, data: {valid: valid_textinput}, id: "#{id}-data" %>
                     <small class="form-text text-muted">Complete Genbank or FASTA entries. FASTA entries must specify exons in upper case and introns in lower case.
                     </small>
                 </div>
@@ -70,7 +70,7 @@
                 <div class="row">
                     <legend class="text-primary">Or, upload file</legend>
                     <div class="form-group-validation">
-                        <%= f.file_field :file, accept: valid_extensions %>
+                        <%= f.file_field :file, accept: valid_extensions, id: "#{id}-file" %>
                         <small class="form-text text-muted">Plain text file in Genbank or FASTA format.</small>
                     </div>
                 </div>
