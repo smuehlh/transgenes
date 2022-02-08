@@ -22,4 +22,5 @@
 //= require enhancers
 //= require enhancers/input
 //= require enhancers/chartSettings
+//= require pages
 //= require turbolinks

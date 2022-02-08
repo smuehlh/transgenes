@@ -95,11 +95,11 @@ You may provide sites to keep intact and sites to avoid both combined or individ
     <div class="col-sm-8">
         <div class="tab-content monospaced text-muted">
             <div class="tab-pane active line-wrap" id="sample-fasta" style="word-break:break-all;">
-                <button id="sample-fasta-btn" class="btn btn-primary btn-outline btn-xs pull-right control-panel" title="Copy to clipboard" data-toggle="tooltip" onclick="copyToClipboard('sample-fasta-text', 'sample-fasta-btn')">Copy</button>
+                <button class="btn btn-primary btn-outline btn-xs pull-right control-panel" title="Copy to clipboard" data-toggle="tooltip" data-sample="sample-fasta-text">Copy</button>
                 <%= render partial: "enhancers/sample_input/cds_fasta", locals: {id: "sample-fasta-text", hidden: false} %>
             </div>
             <div class="tab-pane line-wrap" id="sample-genbank" style="white-space: pre-wrap;">
-                <button id="sample-genbank-btn" class="btn btn-primary btn-outline btn-xs pull-right control-panel" title="Copy to clipboard" data-toggle="tooltip" onclick="copyToClipboard('sample-genbank-text', 'sample-genbank-btn')">Copy</button>
+                <button class="btn btn-primary btn-outline btn-xs pull-right control-panel" title="Copy to clipboard" data-toggle="tooltip" data-sample="sample-genbank-text">Copy</button>
                 <%= render partial: "enhancers/sample_input/cds_genbank", locals: {id: "sample-genbank-text", hidden: false} %>
             </div>
             <!-- <div class="tab-pane line-wrap" id="sample-ensembl">
@@ -107,21 +107,12 @@ You may provide sites to keep intact and sites to avoid both combined or individ
                 ENST00000397262
             </div> -->
             <div class="tab-pane line-wrap" id="sample-ese">
-                <button id="sample-ese-btn" class="btn btn-primary btn-outline btn-xs pull-right control-panel" title="Copy to clipboard" data-toggle="tooltip" onclick="copyToClipboard('sample-ese-text', 'sample-ese-btn')">Copy</button>
+                <button class="btn btn-primary btn-outline btn-xs pull-right control-panel" title="Copy to clipboard" data-toggle="tooltip" data-sample="sample-ese-text">Copy</button>
                 <%= render partial: "enhancers/sample_input/ese", locals: {id: "sample-ese-text", hidden: false} %>
             </div>
             <div class="tab-pane line-wrap" id="sample-restriction-enzyme">
-                <button id="sample-restriction-enzyme-btn" class="btn btn-primary btn-outline btn-xs pull-right control-panel" title="Copy to clipboard" data-toggle="tooltip" onclick="copyToClipboard('sample-restriction-enzyme-text', 'sample-restriction-enzyme-btn')">Copy</button>
+                <button class="btn btn-primary btn-outline btn-xs pull-right control-panel" title="Copy to clipboard" data-toggle="tooltip" data-sample="sample-restriction-enzyme-text">Copy</button>
                 <%= render partial: "enhancers/sample_input/restriction_enzyme", locals: {id: "sample-restriction-enzyme-text", hidden: false} %>
             </div>
     </div>
 </div>
-
-
-<script type="text/javascript">
-    function copyToClipboard(textId, btnId) {
-        var copyText = document.getElementById(textId);
-        navigator.clipboard.writeText(copyText.innerText);
-        $(`#${btnId}`).attr("data-original-title", "Copied!").tooltip("show");
-    }
-</script>
