@@ -4,6 +4,7 @@
     valid_textinput = "^(#{valid_chars}[\\n\\r]+)*(#{valid_chars}){1}$"
 
     id = "sites-#{resource_name}"
+    sample_id = "#{id}-sample-data"
     header_text =
         if resource_name == "keep"
             "Enter sites that should be kept intact"
@@ -16,6 +17,8 @@
 
     <%= f.hidden_field :name, value: resource_name %>
     <%= f.hidden_field :commit, value: "" %>
+
+    <%= render partial: "enhancers/sample_input/restriction_enzyme", locals: {hidden: true, id: sample_id} %>
 
     <h4><%= header_text %>
         <small id="unsaved-data-<%= id %>" class="bg-success" style="display: none;">
@@ -59,6 +62,14 @@
                     <div class="form-group-validation">
                         <%= f.file_field :file, accept: ".txt" %>
                         <small class="form-text text-muted">Plain text file containing one motif per line.</small>
+                    </div>
+                </div>
+                <div class="row">
+                    <legend class="text-primary">Or, load sample data</legend>
+                    <div class="form-group-validation">
+                        <%= f.button "Load sample", id: "#{id}-sample-btn",  class: "btn btn-primary btn-outline btn-xs", title: "Load restriction motif sample", data: {toggle: "tooltip", sample: sample_id}, type: "button"%>
+                        <br>
+                        <small class="form-text text-muted">Use BamHI and EcoRI restriction sites as sample. </small>
                     </div>
                 </div>
             </div>
