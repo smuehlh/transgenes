@@ -24,6 +24,7 @@ function clear_forms() {
     inputs.find("textarea").val('');
     inputs.find("input:file").val('');
     inputs.find("input:text").val('');
+    inputs.find("select").val("Please select");
     inputs.find("[id^=multigene-options]").empty();
 };
 
@@ -59,6 +60,7 @@ function bind_to_input_textarea() {
         var thisform = $(this).closest("form");
         thisform.find("input:file").val('');
         thisform.find("input:text").val('');
+        thisform.find("select").val("Please select");
 
         var thisinput_size = $(this).val().length;
         var thisinput_maxsize = $(this).attr('maxlength');
@@ -81,6 +83,7 @@ function bind_to_input_file() {
         var thisform = $(this).closest("form");
         thisform.find("textarea").val('');
         thisform.find("input:text").val('');
+        thisform.find("select").val("Please select");
         common_to_all_inputs(thisform);
         thisform.submit();
     });
@@ -91,6 +94,7 @@ function bind_to_input_text() {
         var thisform = $(this).closest("form");
         thisform.find("textarea").val('');
         thisform.find("input:file").val('');
+        thisform.find("select").val("Please select");
         common_to_all_inputs(thisform);
         thisform.submit();
     });
@@ -161,8 +165,10 @@ function bind_to_reset_button() {
         thisform.find("input:file").val('');
         thisform.find("input:text").val('');
         thisform.find("textarea").val('');
+        thisform.find("select").val("Please select");
         thisform.find(":submit").prop('disabled', true);
         thisform.find("input[type=hidden][name*=commit]").val("Reset");
+        // todo: select auf please select zuruecksetzen
         thisform.submit();
     });
 }

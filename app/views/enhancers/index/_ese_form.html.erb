@@ -36,7 +36,7 @@
             </div>
             <div class="row">
                 <legend class="text-primary">Or, select dataset</legend>
-                <%= select :ese, :dataset, options_for_select(["INT3", "ESR", "Ke-ESE400", "PESE", "RESCUE-ESE"]), {}, {class: "form-control"} %>
+                <%= select :ese, :dataset, options_for_select(["Please select", "INT3", "ESR", "Ke-ESE400", "PESE", "RESCUE-ESE"], selected: "Please select", disabled: "Please select"), {}, {class: "form-control"} %>
             </div>
         </div>
     </div>
