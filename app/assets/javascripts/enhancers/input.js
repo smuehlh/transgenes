@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).on("turbolinks:load", function() {
     inputs = $("[id^=input-tab]>form");
     params = $("#new_enhanced_gene .params-form");
 
@@ -11,13 +11,6 @@ $(document).ready(function() {
     bind_validate_to_input();
     bind_autocomplete_to_input();
     bind_eventhandlers_to_params_elements();
-});
-
-$(document).on('page:load', function() {
-    clear_forms();
-    hide_alerts();
-    set_defaults_params_partial();
-    disable_form_elements();
 });
 
 function clear_forms() {
