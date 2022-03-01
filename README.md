@@ -1,14 +1,28 @@
 # README
 
-transgenes is a standalone software to enhance mammalian transgenes through synonymous mutations. It is coupled to a basic [web interface](http://transgene-design.bath.ac.uk/).
+transgenes is a standalone software to enhance mammalian transgenes by introducing synonymous mutations to match site-specific codon usage in human one- or two-exon genes. It is coupled to a basic web interface.
 
 This software has been developed at the Hurst lab, University of Bath, UK, as part of the Horizon 2020 project [Evolutionary genomics: new perspectives and novel medical applications (EvoGenMed)](https://cordis.europa.eu/project/id/669207).
+
+This software is written in Ruby and Ruby on Rails. It can be invoked as a Ruby script via the command line or accessed through its web interface. The folder structure of this software project is that of a Ruby on Rails web application. Folders of note are:
+
+ - [app/](./app): holding model, view, controller components of the web application
+ - [app/assets/javascripts](./app/assets/javascripts): holding javascript files
+ - [db/](./db): holding current database schema and migrations
+ - [lib/standalone/](./lib/standalone): holding the standalone software
+ - [lib/standalone/data](./lib/standalone/data): holding sample data
+
+__Author__ Stefanie Mühlhausen
+__Affiliation__ Laurence D Hurst
+__Contact__ Laurence Hurst (l.d.hurst@bath.ac.uk)
+
+This program comes with ABSOLUTELY NO WARRANTY
 
 ## Standalone software
 
 A software to make a gene work better as a transgene by introducing synonymous mutations to match site-specific codon usage in human one- or two-exon genes.
 
-For more details, please visit [lib/standalone folder](./lib/standalone).
+For more details, please visit [lib/standalone folder](./tree/corvid19/lib/standalone).
 
 ### Requirements
 
@@ -23,12 +37,16 @@ ruby sequence_optimizer.rb
 
 ## Web interface
 
-A basic rails web service for interacting with the sequence optimizer.
+[transgene-design](http://transgene-design.bath.ac.uk/) is a basic rails web service for interacting with the sequence optimizer.
 
 ### Requirements
 
 - Rails 4.2
 - Ruby 2.4
+- SQLite 3
+
+or, alternatively:
+- Docker
 
 ### Deployment
 
@@ -37,6 +55,12 @@ rake assets:precompile # pre-compile assets
 rake db:schema:load # prepare DB
 
 rails s # start rails server
+```
+
+Alternatively, download the latest image from [docker hub](https://hub.docker.com/r/smuehlh/transgenes) and run it:
+```bash
+docker pull smuehlh/transgenes:<version>
+docker run -p 80:80 smuehlh/transgenes:<version> # visit http://localhost:80
 ```
 
 ##  corvid19 branch
