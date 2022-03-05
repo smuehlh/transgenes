@@ -24,7 +24,6 @@ A software to make a gene work better as a transgene by introducing synonymous m
 
 For more details, please visit [lib/standalone folder](./transgenes/blob/corvid19/lib/standalone).
 
-
 ### Requirements
 
  - Ruby 2.4
