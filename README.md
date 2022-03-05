@@ -22,7 +22,9 @@ This program comes with ABSOLUTELY NO WARRANTY
 
 A software to make a gene work better as a transgene by introducing synonymous mutations to match site-specific codon usage in human one- or two-exon genes.
 
-For more details, please visit [lib/standalone folder](./transgenes/blob/corvid19/lib/standalone).
+For more details, please visit [lib/standalone folder](/smuehlh/transgenes/tree/corvid19/lib/standalone).
+For more details, please visit [lib/standalone folder](../../tree/corvid19/lib/standalone).
+
 
 ### Requirements
 
