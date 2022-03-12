@@ -22,7 +22,6 @@ This program comes with ABSOLUTELY NO WARRANTY
 
 A software to make a gene work better as a transgene by introducing synonymous mutations to match site-specific codon usage in human one- or two-exon genes.
 
-For more details, please visit [lib/standalone folder](/smuehlh/transgenes/tree/corvid19/lib/standalone).
 For more details, please visit [lib/standalone folder](../../tree/corvid19/lib/standalone).
 
 
@@ -40,6 +39,13 @@ ruby sequence_optimizer.rb
 ## Web interface
 
 [transgene-design](http://transgene-design.bath.ac.uk/) is a basic rails web service for interacting with the sequence optimizer.
+
+When using this web service, please cite:
+
+> Stefanie Mühlhausen, Laurence D Hurst.
+> Transgene-design: a web application for the design of mammalian transgenes
+> _Bioinformatics_, btac139, 2022,
+> [https://doi.org/10.1093/bioinformatics/btac139](https://doi.org/10.1093/bioinformatics/btac139)
 
 ### Requirements
 
