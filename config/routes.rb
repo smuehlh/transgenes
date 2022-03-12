@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get '/contact' => 'pages#contact'
   get '/help' => 'pages#help'
   get '/download' => 'pages#download'
+  get '/cite' => 'pages#cite'
   # get '/standalone' => 'pages#get_standalone_tool'
 
   resources :enhancers, only: [:index] do
